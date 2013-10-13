@@ -14,8 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
 	// Edit menu items
-	connect(ui->actionUndo, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
-	connect(ui->actionRedo, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
+	connect(ui->actionUndo, SIGNAL(triggered()), this, SLOT(undo()));
+	connect(ui->actionRedo, SIGNAL(triggered()), this, SLOT(redo()));
 
 	// Help menu items
 	connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(startHelpDialog()));
