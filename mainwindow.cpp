@@ -39,12 +39,8 @@ void MainWindow::startHelpDialog() {
 
 /** Opens about dialog */
 void MainWindow::startAboutDialog() {
-	QMessageBox msgBox;
-	msgBox.setWindowTitle("About");
-	msgBox.setInformativeText("<h2>Equivalence Tutor</h2><br>Based on " QT_VERSION_STR);
-	msgBox.setStandardButtons(QMessageBox::Close);
-	msgBox.setDefaultButton(QMessageBox::Close);
-	msgBox.exec();
+	QMessageBox::about(this, "Equivalence Tutor",
+					   "<h2>Equivalence Tutor</h2><br>Based on Qt " QT_VERSION_STR);
 }
 
 /** Undo the last operation */
