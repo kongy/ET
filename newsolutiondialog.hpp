@@ -2,6 +2,7 @@
 #define NEWSOLUTIONDIALOG_HPP
 
 #include <QDialog>
+#include <QAbstractButton>
 
 namespace Ui {
 class NewSolutionDialog;
@@ -16,6 +17,8 @@ public:
 
 private:
 	Ui::NewSolutionDialog *ui;
+private slots:
+    void onClick(QAbstractButton* btn);
 };
 
 #endif // NEWSOLUTIONDIALOG_HPP
