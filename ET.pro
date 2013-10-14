@@ -11,16 +11,18 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ET
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     newsolutiondialog.cpp \
-    welcomepagewidget.cpp
+    welcomepagewidget.cpp \
+	AST.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
-    welcomepagewidget.hpp
+    welcomepagewidget.hpp \
+    AST.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
