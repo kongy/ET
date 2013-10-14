@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "newsolutiondialog.hpp"
+#include "welcomepagewidget.hpp"
 
 #include <QMessageBox>
 
@@ -20,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	// Help menu items
 	connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(startHelpDialog()));
 	connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
+
+	// Add welcome page widget to tab widget
+	ui->tabWidget->addTab(new WelcomePageWidget, "Welcome");
 }
 
 MainWindow::~MainWindow() {

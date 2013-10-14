@@ -15,10 +15,13 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    newsolutiondialog.cpp
+    newsolutiondialog.cpp \
+    welcomepagewidget.cpp
 
 HEADERS  += mainwindow.hpp \
-    newsolutiondialog.hpp
+    newsolutiondialog.hpp \
+    welcomepagewidget.hpp
 
 FORMS    += mainwindow.ui \
-    newsolutiondialog.ui
+    newsolutiondialog.ui \
+    welcomepagewidget.ui
