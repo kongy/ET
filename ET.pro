@@ -11,8 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ET
 TEMPLATE = app
 
-QMAKE_CC=clang
-QMAKE_CXX=clang++
 QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCES += main.cpp\
@@ -27,6 +25,7 @@ HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
     welcomepagewidget.hpp \
     AST.hpp \
+    symbol.hpp \
     myinputpanelcontext.hpp \
     myinputpanel.hpp
 

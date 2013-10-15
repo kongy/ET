@@ -1,10 +1,11 @@
 #include "AST.hpp"
+#include "symbol.hpp"
 
 using namespace AST;
 
 /* Truth Class */
-string Truth::print() {
-	return "TRUTH";
+QString Truth::print() {
+	return SYMBOL_TRUTH;
 }
 
 bool Truth::isFirstOrderLogic() {
@@ -12,8 +13,8 @@ bool Truth::isFirstOrderLogic() {
 }
 
 /* Falsity Class */
-string Falsity::print() {
-	return "FALSITY";
+QString Falsity::print() {
+	return SYMBOL_FALSITY;
 }
 
 bool Falsity::isFirstOrderLogic() {
@@ -21,19 +22,19 @@ bool Falsity::isFirstOrderLogic() {
 }
 
 /* Variable Class */
-Variable::Variable(string *name) {
+Variable::Variable(QString *name) {
 	setName(name);
 }
 
-string Variable::print() {
+QString Variable::print() {
 	return (getName());
 }
 
-string Variable::getName() {
+QString Variable::getName() {
 	return *name;
 }
 
-void Variable::setName(string *name) {
+void Variable::setName(QString *name) {
 	this->name = name;
 }
 
@@ -59,9 +60,9 @@ bool NotStatement::isFirstOrderLogic() {
 	return getStatement()->isFirstOrderLogic();
 }
 
-string NotStatement::print() {
-	return string("NOT ") + string("(") +
-			getStatement()->print() + string(")");
+QString NotStatement::print() {
+	return QString(SYMBOL_NOT) + QString("(") +
+			getStatement()->print() + QString(")");
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -86,10 +87,10 @@ bool BinaryOpStatement::isFirstOrderLogic() {
 			|| getRightStatement()->isFirstOrderLogic();
 }
 
-string BinaryOpStatement::print() {
-	return string("(") + getLeftStatement()->print() + string(")")
-			+ symbol() +
-			string("(") + getRightStatement()->print() + string(")");
+QString BinaryOpStatement::print() {
+	return QString("(") + getLeftStatement()->print() + QString(")") +
+			QString(" ") + symbol() + QString(" ") +
+			QString("(") + getRightStatement()->print() + QString(")");
 }
 
 /* AndStatement Class */
@@ -98,8 +99,8 @@ AndStatement::AndStatement(LogicStatement *left, LogicStatement *right) {
 	setRightStatement(right);
 }
 
-string AndStatement::symbol() {
-	return " AND ";
+QString AndStatement::symbol() {
+	return SYMBOL_AND;
 }
 
 /* OrStatement Class */
@@ -108,8 +109,8 @@ OrStatement::OrStatement(LogicStatement *left, LogicStatement *right) {
 	setRightStatement(right);
 }
 
-string OrStatement::symbol() {
-	return " OR ";
+QString OrStatement::symbol() {
+	return SYMBOL_OR;
 }
 
 /* IffStatement Class */
@@ -118,8 +119,8 @@ IffStatement::IffStatement(LogicStatement *left, LogicStatement *right) {
 	setRightStatement(right);
 }
 
-string IffStatement::symbol() {
-	return " IFF ";
+QString IffStatement::symbol() {
+	return SYMBOL_IFF;
 }
 
 /* ImpliesStatement Class */
@@ -128,8 +129,8 @@ ImpliesStatement::ImpliesStatement(LogicStatement *left, LogicStatement *right) 
 	setRightStatement(right);
 }
 
-string ImpliesStatement::symbol() {
-	return " IMPLIES ";
+QString ImpliesStatement::symbol() {
+	return SYMBOL_IMPLIES;
 }
 
 /* FirstOrderStatement Class */
@@ -142,10 +143,9 @@ ForAllStatement::ForAllStatement(LogicStatement *forAllStatement) {
 	setStatement(forAllStatement);
 }
 
-string ForAllStatement::print() {
-	return string("FORALL ") + string("(")
-			+ getStatement()->print() +
-			string(")");
+QString ForAllStatement::print() {
+	return QString(SYMBOL_FORALL) + QString("(")
+			+ getStatement()->print() + QString(")");
 }
 
 LogicStatement * ForAllStatement::getStatement() {
@@ -161,9 +161,9 @@ ThereExistsStatement::ThereExistsStatement(LogicStatement *thereExistsStatement)
 	setStatement(thereExistsStatement);
 }
 
-string ThereExistsStatement::print() {
-	return string("THEREEXISTS ") + string("(")
-			+ getStatement()->print() + string(")");
+QString ThereExistsStatement::print() {
+	return QString(SYMBOL_THEREEXISTS) + QString("(")
+			+ getStatement()->print() + QString(")");
 }
 
 LogicStatement * ThereExistsStatement::getStatement() {
@@ -196,11 +196,11 @@ void Parameters::setRemainingParameters(Parameters *remainingParameters) {
 	rest = remainingParameters;
 }
 
-string Parameters::print() {
-	string param = getParameter()->print();
+QString Parameters::print() {
+	QString param = getParameter()->print();
 
 	if (rest != NULL) {
-		return param + string(", ") + getRemainingParameters()->print();
+		return param + QString(", ") + getRemainingParameters()->print();
 	}
 	else {
 		return param;
@@ -213,7 +213,7 @@ PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Para
 	setParameters(params);
 }
 
-string PredicateSymbolStatement::getPredicateSymbolName() {
+QString PredicateSymbolStatement::getPredicateSymbolName() {
 	return getPredicateSymbol()->getName();
 }
 
@@ -233,8 +233,8 @@ void PredicateSymbolStatement::setParameters(Parameters *params) {
 	parameters = params;
 }
 
-string PredicateSymbolStatement::print() {
-	return getPredicateSymbolName() + string("(") + getParameters()->print() + string(")");
+QString PredicateSymbolStatement::print() {
+	return getPredicateSymbolName() + QString("(") + getParameters()->print() + QString(")");
 }
 
 /* EqualityStatement Class */
@@ -259,6 +259,6 @@ void EqualityStatement::setRightVariable(Variable *newRight) {
 	rightVariable = newRight;
 }
 
-string EqualityStatement::print() {
-	return getLeftVariable()->print() + " EQUALS " + getRightVariable()->print();
+QString EqualityStatement::print() {
+	return getLeftVariable()->print() + QString(" ") + QString(SYMBOL_EQUALS) + QString(" ") + getRightVariable()->print();
 }
