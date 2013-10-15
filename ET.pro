@@ -17,13 +17,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     newsolutiondialog.cpp \
     welcomepagewidget.cpp \
-	AST.cpp
+	AST.cpp \
+    myinputpanelcontext.cpp \
+    myinputpanel.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
     welcomepagewidget.hpp \
-    AST.hpp
+    AST.hpp \
+    myinputpanelcontext.hpp \
+    myinputpanel.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
-    welcomepagewidget.ui
+    welcomepagewidget.ui \
+    myinputpanel.ui
