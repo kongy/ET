@@ -15,7 +15,7 @@ ID [a-zA-Z][a-zA-Z0-9]*
 "⊤" return TOKEN(TRUTH);
 "⊥" return TOKEN(FALSITY);
 "=" return TOKEN(EQUALS);
-"→" return TOKEN(IMPLY);
+"→" return TOKEN(IMPLIES);
 "¬" return TOKEN(NOT);
 "∀" return TOKEN(FORALL);
 "∃" return TOKEN(THEREEXISTS);
