@@ -20,21 +20,19 @@ SOURCES += main.cpp\
     newsolutiondialog.cpp \
     welcomepagewidget.cpp \
     AST.cpp \
-    myinputpanelcontext.cpp \
-    myinputpanel.cpp \
-    solutiontabwidget.cpp
+    solutiontabwidget.cpp \
+    inputpanel.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
     welcomepagewidget.hpp \
     AST.hpp \
     symbol.hpp \
-    myinputpanelcontext.hpp \
-    myinputpanel.hpp \
-    solutiontabwidget.hpp
+    solutiontabwidget.hpp \
+    inputpanel.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
     welcomepagewidget.ui \
-    myinputpanel.ui \
-    solutiontabwidget.ui
+    solutiontabwidget.ui \
+    inputpanel.ui

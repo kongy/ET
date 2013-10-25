@@ -9,6 +9,7 @@ NewSolutionDialog::NewSolutionDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onClick(QAbstractButton*)));
+	connect(ui->inputPanel, SIGNAL(stringGenerated(QString)), this, SLOT(insertString(QString)));
 }
 
 NewSolutionDialog::~NewSolutionDialog() {
@@ -29,6 +30,16 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 		ui->endFormulaLineEdit->clear();
 		break;
 	default:
-		qDebug()<<"Unimplemented button clicked\n";
+		qWarning()<<"Unimplemented button clicked\n";
+	}
+}
+
+void NewSolutionDialog::insertString(QString str) {
+	QWidget *w = QWidget::focusWidget();
+	if (w == ui->startFormulaLineEdit) {
+		ui->startFormulaLineEdit->insert(str);
+	}
+	else if (w == ui->endFormulaLineEdit) {
+		ui->endFormulaLineEdit->insert(str);
 	}
 }

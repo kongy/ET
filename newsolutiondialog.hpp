@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QAbstractButton>
+#include <QString>
 
 #include "AST.hpp"
 
@@ -24,6 +25,7 @@ private:
 	Ui::NewSolutionDialog *ui;
 private slots:
 	void onClick(QAbstractButton* btn);
+	void insertString(QString str);
 };
 
 #endif // NEWSOLUTIONDIALOG_HPP
