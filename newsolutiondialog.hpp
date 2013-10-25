@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QAbstractButton>
 
+#include "AST.hpp"
+
 namespace Ui {
 class NewSolutionDialog;
 }
@@ -15,10 +17,13 @@ public:
 	explicit NewSolutionDialog(QWidget *parent = 0);
 	~NewSolutionDialog();
 
+signals:
+	void accepted(AST::LogicStatement *start, AST::LogicStatement *end);
+
 private:
 	Ui::NewSolutionDialog *ui;
 private slots:
-    void onClick(QAbstractButton* btn);
+	void onClick(QAbstractButton* btn);
 };
 
 #endif // NEWSOLUTIONDIALOG_HPP

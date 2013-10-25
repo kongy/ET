@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "AST.hpp"
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,6 +22,7 @@ private slots:
 	void startNewSolutionDialog();
 	void startHelpDialog();
 	void startAboutDialog();
+	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end);
 	void undo();
 	void redo();
 };
