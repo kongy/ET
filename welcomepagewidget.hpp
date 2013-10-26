@@ -15,8 +15,14 @@ public:
 	explicit WelcomePageWidget(QWidget *parent = 0);
 	~WelcomePageWidget();
 
+signals:
+	void startNewSolution();
+
 private:
 	Ui::WelcomePageWidget *ui;
+
+private slots:
+	void startNewSolutionSlot();
 };
 
 #endif // WELCOMEPAGEWIDGET_HPP

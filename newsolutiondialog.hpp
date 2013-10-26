@@ -23,6 +23,7 @@ signals:
 
 private:
 	Ui::NewSolutionDialog *ui;
+
 private slots:
 	void onClick(QAbstractButton* btn);
 	void insertString(QString str);

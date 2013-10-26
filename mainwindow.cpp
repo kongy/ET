@@ -25,7 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
 
 	// Set up tabWidget
-	ui->tabWidget->addTab(new WelcomePageWidget(ui->tabWidget), "Welcome");
+	WelcomePageWidget *welcome = new WelcomePageWidget(ui->tabWidget);
+	ui->tabWidget->addTab(welcome, "Welcome");
+	connect(welcome, SIGNAL(startNewSolution()), this, SLOT(startNewSolutionDialog()));
 	connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 }
 
