@@ -25,6 +25,7 @@ private slots:
 	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end);
 	void undo();
 	void redo();
+	void closeTab(int index);
 };
 
 #endif // MAINWINDOW_HPP

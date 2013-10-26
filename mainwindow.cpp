@@ -24,8 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(startHelpDialog()));
 	connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
 
-	// Add welcome page widget to tab widget
+	// Set up tabWidget
 	ui->tabWidget->addTab(new WelcomePageWidget(ui->tabWidget), "Welcome");
+	connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 }
 
 MainWindow::~MainWindow() {
@@ -59,7 +60,9 @@ void MainWindow::startAboutDialog() {
 void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end) {
 	// TODO: Check AST equivalence
 	qDebug()<<"createSolutionTab called with AST"<<start<<end;
-	ui->tabWidget->addTab(new SolutionTabWidget(start, end, ui->tabWidget), "Solution");
+	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
+	ui->tabWidget->addTab(tab, "Solution");
+	ui->tabWidget->setCurrentWidget(tab);
 }
 
 /** Undo the last operation */
@@ -70,4 +73,14 @@ void MainWindow::undo() {
 /** Redo the last operation */
 void MainWindow::redo() {
 	// TODO
+}
+
+/** Close the requested tab
+ *  \param index index of the tab in tabwidget
+ */
+void MainWindow::closeTab(int index) {
+	QWidget* tabItem = ui->tabWidget->widget(index);
+	ui->tabWidget->removeTab(index);
+
+	delete(tabItem);
 }
