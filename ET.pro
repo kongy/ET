@@ -11,9 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ET
 TEMPLATE = app
 
-QMAKE_CC = clang
-QMAKE_CXX = clang++
-QMAKE_CXXFLAGS += -std=c++0x
+unix{
+    QMAKE_CC = clang
+    QMAKE_CXX = clang++
+    QMAKE_CXXFLAGS += -std=c++0x
+}
 
 SOURCES += main.cpp\
     mainwindow.cpp \
