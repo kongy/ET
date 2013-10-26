@@ -20,7 +20,7 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 	switch(ui->buttonBox->standardButton(btn)) {
 	case QDialogButtonBox::Ok:
 		// TODO: parse input and generate AST
-		emit accepted(nullptr, nullptr);
+		emit accepted(nullptr, nullptr, ui->nameLineEdit->text());
 		break;
 	case QDialogButtonBox::Cancel:
 		// TODO

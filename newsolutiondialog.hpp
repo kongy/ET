@@ -19,7 +19,7 @@ public:
 	~NewSolutionDialog();
 
 signals:
-	void accepted(AST::LogicStatement *start, AST::LogicStatement *end);
+	void accepted(AST::LogicStatement *start, AST::LogicStatement *end, QString name);
 
 private:
 	Ui::NewSolutionDialog *ui;

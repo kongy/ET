@@ -22,7 +22,7 @@ private slots:
 	void startNewSolutionDialog();
 	void startHelpDialog();
 	void startAboutDialog();
-	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end);
+	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end, QString name);
 	void undo();
 	void redo();
 	void closeTab(int index);

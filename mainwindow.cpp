@@ -38,8 +38,8 @@ MainWindow::~MainWindow() {
 /** Start the new solution dialog */
 void MainWindow::startNewSolutionDialog() {
 	NewSolutionDialog *dialog = new NewSolutionDialog();
-	connect(dialog, SIGNAL(accepted(AST::LogicStatement*,AST::LogicStatement*)), this,
-			SLOT(createSolutionTab(AST::LogicStatement*,AST::LogicStatement*)));
+	connect(dialog, SIGNAL(accepted(AST::LogicStatement*,AST::LogicStatement*, QString)), this,
+			SLOT(createSolutionTab(AST::LogicStatement*,AST::LogicStatement*, QString)));
 	dialog->show();
 }
 
@@ -59,11 +59,12 @@ void MainWindow::startAboutDialog() {
  *  \param start Well-formed start formula AST
  *  \param end Well-formed end formula AST
  */
-void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end) {
+void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end,
+								   QString name) {
 	// TODO: Check AST equivalence
 	qDebug()<<"createSolutionTab called with AST"<<start<<end;
 	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
-	ui->tabWidget->addTab(tab, "Solution");
+	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);
 }
 
