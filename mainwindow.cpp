@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// File menu items
 	connect(ui->actionNewSolution, SIGNAL(triggered()), this, SLOT(startNewSolutionDialog()));
+	connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeTab()));
 	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
 	// Edit menu items
@@ -84,6 +85,14 @@ void MainWindow::redo() {
 void MainWindow::closeTab(int index) {
 	QWidget* tabItem = ui->tabWidget->widget(index);
 	ui->tabWidget->removeTab(index);
+
+	delete(tabItem);
+}
+
+/** Close current tab */
+void MainWindow::closeTab() {
+	QWidget* tabItem = ui->tabWidget->currentWidget();
+	ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
 
 	delete(tabItem);
 }

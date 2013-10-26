@@ -26,6 +26,7 @@ private slots:
 	void undo();
 	void redo();
 	void closeTab(int index);
+	void closeTab();
 };
 
 #endif // MAINWINDOW_HPP
