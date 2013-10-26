@@ -13,6 +13,7 @@ class InputPanel : public QWidget
 
 public:
 	InputPanel(QWidget *parent = 0);
+	~InputPanel();
 
 signals:
 	void stringGenerated(QString str);
@@ -21,7 +22,7 @@ private slots:
 	void buttonClicked(QWidget *w);
 
 private:
-	Ui::InputPanelForm form;
+	Ui::InputPanelForm *ui;
 	QSignalMapper signalMapper;
 };
 

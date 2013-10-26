@@ -1,32 +1,38 @@
 #include "inputpanel.hpp"
 
-InputPanel::InputPanel(QWidget *parent) : QWidget(parent)
+InputPanel::InputPanel(QWidget *parent) :
+	QWidget(parent),
+	ui(new Ui::InputPanelForm)
 {
-	form.setupUi(this);
+	ui->setupUi(this);
 
-	signalMapper.setMapping(form.panelButton_and, form.panelButton_and);
-	signalMapper.setMapping(form.panelButton_or, form.panelButton_or);
-	signalMapper.setMapping(form.panelButton_not, form.panelButton_not);
-	signalMapper.setMapping(form.panelButton_truth, form.panelButton_truth);
-	signalMapper.setMapping(form.panelButton_falsity, form.panelButton_falsity);
-	signalMapper.setMapping(form.panelButton_implies, form.panelButton_implies);
-	signalMapper.setMapping(form.panelButton_equiv, form.panelButton_equiv);
-	signalMapper.setMapping(form.panelButton_forall, form.panelButton_forall);
-	signalMapper.setMapping(form.panelButton_exist, form.panelButton_exist);
-	signalMapper.setMapping(form.panelButton_equal, form.panelButton_equal);
+	signalMapper.setMapping(ui->panelButton_and, ui->panelButton_and);
+	signalMapper.setMapping(ui->panelButton_or, ui->panelButton_or);
+	signalMapper.setMapping(ui->panelButton_not, ui->panelButton_not);
+	signalMapper.setMapping(ui->panelButton_truth, ui->panelButton_truth);
+	signalMapper.setMapping(ui->panelButton_falsity, ui->panelButton_falsity);
+	signalMapper.setMapping(ui->panelButton_implies, ui->panelButton_implies);
+	signalMapper.setMapping(ui->panelButton_equiv, ui->panelButton_equiv);
+	signalMapper.setMapping(ui->panelButton_forall, ui->panelButton_forall);
+	signalMapper.setMapping(ui->panelButton_exist, ui->panelButton_exist);
+	signalMapper.setMapping(ui->panelButton_equal, ui->panelButton_equal);
 
-	connect(form.panelButton_and, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_or, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_not, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_truth, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_falsity, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_implies, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_equiv, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_forall, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_exist, SIGNAL(clicked()), &signalMapper, SLOT(map()));
-	connect(form.panelButton_equal, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_and, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_or, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_not, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_truth, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_falsity, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_implies, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_equiv, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_forall, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_exist, SIGNAL(clicked()), &signalMapper, SLOT(map()));
+	connect(ui->panelButton_equal, SIGNAL(clicked()), &signalMapper, SLOT(map()));
 
 	connect(&signalMapper, SIGNAL(mapped(QWidget*)), this, SLOT(buttonClicked(QWidget*)));
+}
+
+InputPanel::~InputPanel() {
+	delete ui;
 }
 
 void InputPanel::buttonClicked(QWidget *w)
