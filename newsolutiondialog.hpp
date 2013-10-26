@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QAbstractButton>
-#include <QString>
 
 #include "AST.hpp"
 

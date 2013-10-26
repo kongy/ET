@@ -1,8 +1,6 @@
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
 
-#include <QString>
-
 #define SYMBOL_NOT ("¬")
 #define SYMBOL_AND ("∧")
 #define SYMBOL_OR ("∨")
