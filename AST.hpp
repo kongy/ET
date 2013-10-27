@@ -99,9 +99,11 @@ public:
 
 class ForAllStatement : public FirstOrderStatement {
 	LogicStatement *statement;
+	Variable *identifier;
 
 public:
-	ForAllStatement(LogicStatement *);
+	ForAllStatement(Variable *,LogicStatement *);
+	void setIdentifier(Variable *);
 	QString print();
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
@@ -109,12 +111,14 @@ public:
 
 class ThereExistsStatement : public FirstOrderStatement {
 	LogicStatement *statement;
+	Variable *identifier;
 
 public:
-	ThereExistsStatement(LogicStatement *);
+	ThereExistsStatement(Variable *,LogicStatement *);
 	QString print();
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
+	void setIdentifier(Variable *);
 };
 
 class Parameters : public LogicStatement {
@@ -127,6 +131,7 @@ public:
 	void setParameter(Variable *);
 	Parameters * getRemainingParameters();
 	void setRemainingParameters(Parameters *);
+	bool isFirstOrderLogic();
 	QString print();
 };
 
@@ -144,7 +149,7 @@ public:
 	QString print();
 };
 
-class EqualityStatement : FirstOrderStatement {
+class EqualityStatement : public FirstOrderStatement {
 	Variable *leftVariable;
 	Variable *rightVariable;
 

@@ -1,31 +1,37 @@
 %{
-	#include "AST.hpp"
-	using namespace AST;
-	
-	LogicStatement *entireStatement; // Top of the LogicStatement
-	
-	
+        #include "AST.hpp"
+        #include <QString>
+        #include <iostream>
+
+        AST::LogicStatement *entireStatement; // Top of the LogicStatement
+
+        extern int yylineno;
+        void yyerror(const char *s) {
+            std::cerr << "Line " << yylineno << ": " << s << std::endl;
+        }
+        extern int yylex(void);
 %}
 
+%error-verbose
 
 %union {
-	LogicStatement* logicStatement;
-//	Truth* truth;
-//	Falsity* falsity;
-	Variable* variable;
-	UnaryOpStatement* unaryOpStatement;
-	NotStatement* notStatement;
-	BinaryOpStatement* binaryOpStatement;
-	AndStatement* andStatement;
-	OrStatement* orStatement;
-	IffStatement* iffStatement;
-	ImpliesStatement* impliesStatement;
-	FirstOrderStatement* firstOrderStatement;
-	ForAllStatement* forAllStatement;
-	ThereExistsStatement* thereExistsStatement;
-	Parameters* parameters;
-	PredicateSymbolStatement* predicateSymbolStatement;
-	EqualityStatement* equalityStatement;
+        AST::LogicStatement* logicStatement;
+//	AST::Truth* truth;
+//	AST::Falsity* falsity;
+        AST::Variable* variable;
+        AST::UnaryOpStatement* unaryOpStatement;
+        AST::NotStatement* notStatement;
+        AST::BinaryOpStatement* binaryOpStatement;
+        AST::AndStatement* andStatement;
+        AST::OrStatement* orStatement;
+        AST::IffStatement* iffStatement;
+        AST::ImpliesStatement* impliesStatement;
+        AST::FirstOrderStatement* firstOrderStatement;
+        AST::ForAllStatement* forAllStatement;
+        AST::ThereExistsStatement* thereExistsStatement;
+        AST::Parameters* parameters;
+        AST::PredicateSymbolStatement* predicateSymbolStatement;
+        AST::EqualityStatement* equalityStatement;
 	QString* qString;
 	int token;
 }
@@ -86,9 +92,9 @@ MainStatement : {entireStatement = NULL;}
 			  { entireStatement = $1; }
 
 LogicStatement : TRUTH
-			   { $$ = new Truth(); }
+                           { $$ = new AST::Truth(); }
 			   | FALSITY
-			   { $$ = new Falsity(); }
+                           { $$ = new AST::Falsity(); }
                | Variable
                { $$ = $1; }
                | FirstOrderStatement
@@ -100,7 +106,7 @@ LogicStatement : TRUTH
                ;
                
 Variable : IDENTIFIER
-         { $$ = new Variable($1); }
+         { $$ = new AST::Variable($1); }
          ;
 			   
 FirstOrderStatement : ForAllStatement
@@ -113,26 +119,26 @@ FirstOrderStatement : ForAllStatement
                     { $$ = $1; }
 					;
 
-ForAllStatement : FORALL IDENTIFIER LBRACKET LogicStatement RBRACKET
-                { $$ = new ForAllStatement($2, $4); }
+ForAllStatement : FORALL Variable LBRACKET LogicStatement RBRACKET
+                { $$ = new AST::ForAllStatement($2, $4); }
 				;
 				
-EqualityStatement : IDENTIFIER EQUALS IDENTIFIER
-                  { $$ = new EqualityStatement($1, $3); }
+EqualityStatement : Variable EQUALS Variable
+                  { $$ = new AST::EqualityStatement($1, $3); }
 				  ;
 				  
-PredicateSymbolStatement : IDENTIFIER LBRACKET Params RBRACKET
-                         { $$ = new PredicateSymbolStatement($1, $3); }
+PredicateSymbolStatement : Variable LBRACKET Params RBRACKET
+                         { $$ = new AST::PredicateSymbolStatement($1, $3); }
 						 ;
 						 
-Params : IDENTIFIER
-       { $$ = new Parameters(new Variable($1), NULL); }
-       | IDENTIFIER COMMA Params
-       { $$ = new Parameters(new Variable($1), $3); }
+Params : Variable
+       { $$ = new AST::Parameters($1, NULL); }
+       | Variable COMMA Params
+       { $$ = new AST::Parameters($1, $3); }
        ;
 						 
-ThereExistsStatement : THEREEXISTS IDENTIFIER LBRACKET LogicStatement RBRACKET
-                     { $$ = new ThereExistsStatement($2, $4); }
+ThereExistsStatement : THEREEXISTS Variable LBRACKET LogicStatement RBRACKET
+                     { $$ = new AST::ThereExistsStatement($2, $4); }
 					 ;
 					 
 UnaryOpStatement : NotStatement
@@ -140,7 +146,7 @@ UnaryOpStatement : NotStatement
 				 ;
 
 NotStatement : NOT LogicStatement
-             { $$ = new NotStatement($2); }
+             { $$ = new AST::NotStatement($2); }
 			 ;
 			 
 BinaryOpStatement : AndStatement
@@ -154,17 +160,21 @@ BinaryOpStatement : AndStatement
 				  ;
 				  
 AndStatement : LogicStatement AND LogicStatement
-             { $$ = new AndStatement($1, $3); }
+             { $$ = new AST::AndStatement($1, $3); }
 			 ;
 
 OrStatement : LogicStatement OR LogicStatement
-            { $$ = new OrStatement($1, $3); }
+            { $$ = new AST::OrStatement($1, $3); }
 			;
 			
 ImpliesStatement : LogicStatement IMPLIES LogicStatement
-                 { $$ = new ImpliesStatement($1, $3); }
+                 { $$ = new AST::ImpliesStatement($1, $3); }
 				 ;
 				 
 IffStatement : LogicStatement IFF LogicStatement
-             { $$ = new IffStatement($1, $3); }
+             { $$ = new AST::IffStatement($1, $3); }
 			 ;
+%%
+int yywrap(void) {
+    return 1;
+}

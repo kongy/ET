@@ -139,8 +139,13 @@ bool FirstOrderStatement::isFirstOrderLogic() {
 }
 
 /* ForAllStatement Class */
-ForAllStatement::ForAllStatement(LogicStatement *forAllStatement) {
+ForAllStatement::ForAllStatement(Variable *identifier, LogicStatement *forAllStatement) {
 	setStatement(forAllStatement);
+	setIdentifier(identifier);
+}
+
+void ForAllStatement::setIdentifier(Variable *identifier) {
+	this->identifier = identifier;
 }
 
 QString ForAllStatement::print() {
@@ -157,8 +162,13 @@ void ForAllStatement::setStatement(LogicStatement *newstatement) {
 }
 
 /* ThereExistsStatement Class */
-ThereExistsStatement::ThereExistsStatement(LogicStatement *thereExistsStatement) {
+ThereExistsStatement::ThereExistsStatement(Variable *identifier, LogicStatement *thereExistsStatement) {
 	setStatement(thereExistsStatement);
+	setIdentifier(identifier);
+}
+
+void ThereExistsStatement::setIdentifier(Variable *identifier) {
+	this->identifier = identifier;
 }
 
 QString ThereExistsStatement::print() {
@@ -194,6 +204,10 @@ Parameters * Parameters::getRemainingParameters() {
 
 void Parameters::setRemainingParameters(Parameters *remainingParameters) {
 	rest = remainingParameters;
+}
+
+bool Parameters::isFirstOrderLogic() {
+	return true;
 }
 
 QString Parameters::print() {
