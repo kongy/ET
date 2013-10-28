@@ -89,12 +89,14 @@
 
 MainStatement : {entireStatement = NULL;}
               | LogicStatement
-			  { entireStatement = $1; }
+              { entireStatement = $1; }
 
-LogicStatement : TRUTH
-                           { $$ = new AST::Truth(); }
-			   | FALSITY
-                           { $$ = new AST::Falsity(); }
+LogicStatement : LBRACKET LogicStatement RBRACKET
+               { $$ = $2; }
+               | TRUTH
+               { $$ = new AST::Truth(); }
+               | FALSITY
+               { $$ = new AST::Falsity(); }
                | Variable
                { $$ = $1; }
                | FirstOrderStatement
@@ -117,19 +119,19 @@ FirstOrderStatement : ForAllStatement
                     { $$ = $1; }
                     | ThereExistsStatement
                     { $$ = $1; }
-					;
+                    ;
 
 ForAllStatement : FORALL Variable LBRACKET LogicStatement RBRACKET
                 { $$ = new AST::ForAllStatement($2, $4); }
-				;
+                ;
 				
 EqualityStatement : Variable EQUALS Variable
                   { $$ = new AST::EqualityStatement($1, $3); }
-				  ;
+                  ;
 				  
 PredicateSymbolStatement : Variable LBRACKET Params RBRACKET
                          { $$ = new AST::PredicateSymbolStatement($1, $3); }
-						 ;
+                         ;
 						 
 Params : Variable
        { $$ = new AST::Parameters($1, NULL); }
@@ -139,41 +141,41 @@ Params : Variable
 						 
 ThereExistsStatement : THEREEXISTS Variable LBRACKET LogicStatement RBRACKET
                      { $$ = new AST::ThereExistsStatement($2, $4); }
-					 ;
+                     ;
 					 
 UnaryOpStatement : NotStatement
                  { $$ = $1; }
-				 ;
+                 ;
 
 NotStatement : NOT LogicStatement
              { $$ = new AST::NotStatement($2); }
-			 ;
+             ;
 			 
 BinaryOpStatement : AndStatement
                   { $$ = $1; }
-				  | OrStatement
-				  { $$ = $1; }
-				  | ImpliesStatement
-				  { $$ = $1; }
-				  | IffStatement
-				  { $$ = $1; }
-				  ;
+                  | OrStatement
+                  { $$ = $1; }
+                  | ImpliesStatement
+                  { $$ = $1; }
+                  | IffStatement
+                  { $$ = $1; }
+                  ;
 				  
 AndStatement : LogicStatement AND LogicStatement
              { $$ = new AST::AndStatement($1, $3); }
-			 ;
+             ;
 
 OrStatement : LogicStatement OR LogicStatement
             { $$ = new AST::OrStatement($1, $3); }
-			;
+            ;
 			
 ImpliesStatement : LogicStatement IMPLIES LogicStatement
                  { $$ = new AST::ImpliesStatement($1, $3); }
-				 ;
+                 ;
 				 
 IffStatement : LogicStatement IFF LogicStatement
              { $$ = new AST::IffStatement($1, $3); }
-			 ;
+             ;
 %%
 int yywrap(void) {
     return 1;
