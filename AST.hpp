@@ -2,6 +2,7 @@
 #define AST_HPP
 
 #include <QString>
+#include "symbol.hpp"
 
 namespace AST {
 
@@ -9,18 +10,21 @@ class LogicStatement {
 public:
 	virtual QString print() = 0;
 	virtual bool isFirstOrderLogic() = 0;
+    virtual Symbol getSymbol() = 0;
 };
 
 class Truth : public LogicStatement {
 public:
 	QString print();
 	bool isFirstOrderLogic();
+    Symbol getSymbol();
 };
 
 class Falsity : public LogicStatement {
 public:
 	QString print();
 	bool isFirstOrderLogic();
+    Symbol getSymbol();
 };
 
 class Variable : public LogicStatement {
@@ -32,6 +36,7 @@ public:
 	QString getName();
 	void setName(QString *name);
 	bool isFirstOrderLogic();
+    Symbol getSymbol();
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -42,6 +47,7 @@ public:
 	virtual bool isFirstOrderLogic() = 0;
 	void setStatement(LogicStatement *);
 	LogicStatement *getStatement();
+    virtual Symbol getSymbol() = 0;
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -49,6 +55,7 @@ public:
 	NotStatement(LogicStatement *);
 	bool isFirstOrderLogic();
 	QString print();
+    Symbol getSymbol();
 };
 
 class BinaryOpStatement : public LogicStatement {
@@ -63,36 +70,42 @@ public:
 	void setRightStatement(LogicStatement *);
 	LogicStatement * getLeftStatement();
 	LogicStatement * getRightStatement();
+    Symbol getSymbol() = 0;
 };
 
 class AndStatement : public BinaryOpStatement {
 public:
 	AndStatement(LogicStatement *, LogicStatement *);
 	QString symbol();
+    Symbol getSymbol();
 };
 
 class OrStatement : public BinaryOpStatement {
 public:
 	OrStatement(LogicStatement *, LogicStatement *);
 	QString symbol();
+    Symbol getSymbol();
 };
 
 class IffStatement : public BinaryOpStatement {
 public:
 	IffStatement(LogicStatement *, LogicStatement *);
 	QString symbol();
+    Symbol getSymbol();
 };
 
 class ImpliesStatement : public BinaryOpStatement {
 public:
 	ImpliesStatement(LogicStatement *, LogicStatement *);
 	QString symbol();
+    Symbol getSymbol();
 };
 
 class FirstOrderStatement : public LogicStatement {
 public:
 	virtual QString print() = 0;
 	bool isFirstOrderLogic();
+    Symbol getSymbol() = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -105,6 +118,7 @@ public:
 	QString print();
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
+    Symbol getSymbol();
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -117,6 +131,7 @@ public:
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
 	void setIdentifier(Variable *);
+    Symbol getSymbol();
 };
 
 class Parameters : public LogicStatement {
@@ -131,6 +146,7 @@ public:
 	void setRemainingParameters(Parameters *);
 	bool isFirstOrderLogic();
 	QString print();
+    Symbol getSymbol();
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -145,6 +161,7 @@ public:
 	Parameters * getParameters();
 	void setParameters(Parameters *);
 	QString print();
+    Symbol getSymbol();
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -158,6 +175,7 @@ public:
 	void setLeftVariable(Variable *);
 	void setRightVariable(Variable *);
 	QString print();
+    Symbol getSymbol();
 };
 
 LogicStatement *parse(QString expression);

@@ -16,6 +16,10 @@ bool Truth::isFirstOrderLogic() {
 	return false;
 }
 
+Symbol Truth::getSymbol() {
+    return Symbol::TRUTH_SYMBOL;
+}
+
 /* Falsity Class */
 QString Falsity::print() {
 	return SYMBOL_FALSITY;
@@ -23,6 +27,10 @@ QString Falsity::print() {
 
 bool Falsity::isFirstOrderLogic() {
 	return false;
+}
+
+Symbol Falsity::getSymbol() {
+    return Symbol::FALSITY_SYMBOL;
 }
 
 /* Variable Class */
@@ -46,6 +54,10 @@ bool Variable::isFirstOrderLogic() {
 	return false;
 }
 
+Symbol Variable::getSymbol() {
+    return Symbol::VARIABLE_SYMBOL;
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -67,6 +79,10 @@ bool NotStatement::isFirstOrderLogic() {
 QString NotStatement::print() {
 	return QString(SYMBOL_NOT) + QString("(") +
 			getStatement()->print() + QString(")");
+}
+
+Symbol NotStatement::getSymbol() {
+    return Symbol::NOT_SYMBOL;
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -107,6 +123,10 @@ QString AndStatement::symbol() {
 	return SYMBOL_AND;
 }
 
+Symbol AndStatement::getSymbol() {
+    return Symbol::AND_SYMBOL;
+}
+
 /* OrStatement Class */
 OrStatement::OrStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -115,6 +135,10 @@ OrStatement::OrStatement(LogicStatement *left, LogicStatement *right) {
 
 QString OrStatement::symbol() {
 	return SYMBOL_OR;
+}
+
+Symbol OrStatement::getSymbol() {
+    return Symbol::OR_SYMBOL;
 }
 
 /* IffStatement Class */
@@ -127,6 +151,10 @@ QString IffStatement::symbol() {
 	return SYMBOL_IFF;
 }
 
+Symbol IffStatement::getSymbol() {
+    return Symbol::IFF_SYMBOL;
+}
+
 /* ImpliesStatement Class */
 ImpliesStatement::ImpliesStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -135,6 +163,10 @@ ImpliesStatement::ImpliesStatement(LogicStatement *left, LogicStatement *right) 
 
 QString ImpliesStatement::symbol() {
 	return SYMBOL_IMPLIES;
+}
+
+Symbol ImpliesStatement::getSymbol() {
+    return Symbol::IMPLIES_SYMBOL;
 }
 
 /* FirstOrderStatement Class */
@@ -165,6 +197,10 @@ void ForAllStatement::setStatement(LogicStatement *newstatement) {
 	statement = newstatement;
 }
 
+Symbol ForAllStatement::getSymbol() {
+    return Symbol::FORALL_SYMBOL;
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(Variable *identifier, LogicStatement *thereExistsStatement) {
 	setStatement(thereExistsStatement);
@@ -186,6 +222,10 @@ LogicStatement * ThereExistsStatement::getStatement() {
 
 void ThereExistsStatement::setStatement(LogicStatement *newStatement) {
 	statement = newStatement;
+}
+
+Symbol ThereExistsStatement::getSymbol() {
+    return Symbol::THEREEXISTS_SYMBOL;
 }
 
 /* Parameters Class */
@@ -225,6 +265,10 @@ QString Parameters::print() {
 	}
 }
 
+Symbol Parameters::getSymbol() {
+    return Symbol::PARAMETERS_SYMBOL;
+}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -255,6 +299,10 @@ QString PredicateSymbolStatement::print() {
 	return getPredicateSymbolName() + QString("(") + getParameters()->print() + QString(")");
 }
 
+Symbol PredicateSymbolStatement::getSymbol() {
+    return Symbol::PREDICATE_SYMBOL;
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -280,6 +328,12 @@ void EqualityStatement::setRightVariable(Variable *newRight) {
 QString EqualityStatement::print() {
 	return getLeftVariable()->print() + QString(" ") + QString(SYMBOL_EQUALS) + QString(" ") + getRightVariable()->print();
 }
+
+Symbol EqualityStatement::getSymbol() {
+    return Symbol::EQUALS_SYMBOL;
+}
+
+extern int yyparse();
 
 LogicStatement *AST::parse(QString expression) {
 	yy_scan_string(expression.toLocal8Bit().data());

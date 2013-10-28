@@ -12,11 +12,6 @@
 #define SYMBOL_THEREEXISTS ("∃")
 #define SYMBOL_EQUALS ("=")
 
-const QString symbols[] = {SYMBOL_NOT, SYMBOL_AND, SYMBOL_OR, SYMBOL_IMPLIES,
-						   SYMBOL_IFF, SYMBOL_FALSITY, SYMBOL_TRUTH, SYMBOL_FORALL,
-						   SYMBOL_THEREEXISTS, SYMBOL_EQUALS
-						  };
-
 enum Symbol {
 	NOT_SYMBOL,
 	AND_SYMBOL,
@@ -27,11 +22,10 @@ enum Symbol {
 	TRUTH_SYMBOL,
 	FORALL_SYMBOL,
 	THEREEXISTS_SYMBOL,
-	EQUALS_SYMBOL
+    EQUALS_SYMBOL,
+    VARIABLE_SYMBOL,
+    PARAMETERS_SYMBOL,
+    PREDICATE_SYMBOL
 };
-
-QString getSymbol(enum Symbol symbol) {
-	return symbols[symbol];
-}
 
 #endif // SYMBOL_HPP
