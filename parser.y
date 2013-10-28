@@ -68,21 +68,20 @@
 %type <impliesStatement> ImpliesStatement;
 %type <iffStatement> IffStatement;
 
-%left LBRACKET
-%left RBRACKET
-%left FORALL
-%left THEREEXISTS
-%left EQUALS
-%left NOT
-%left AND
-%left OR
-%left IMPLIES
-%left IFF
-%left TRUTH
-%left FALSITY
-%left IDENTIFIER
 %left COMMA
-
+%left IDENTIFIER
+%left FALSITY
+%left TRUTH
+%left IFF
+%left IMPLIES
+%left OR
+%left AND
+%left NOT
+%left EQUALS
+%left THEREEXISTS
+%left FORALL
+%left RBRACKET
+%left LBRACKET
 
 %%
 
