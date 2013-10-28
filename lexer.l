@@ -2,18 +2,17 @@
 
 %{
 /*left for includes*/
-	#include "AST.hpp"
-	#include "parser.hpp"
-	#include <QString>
-	#define SAVE_TOKEN (yylval.qString = new QString(yytext))
-	#define TOKEN(t) (yylval.token = t)
+        #include "AST.hpp"
+        #include "parser.hpp"
+        #include <QString>
+        #define SAVE_TOKEN (yylval.qString = new QString(yytext))
+        #define TOKEN(t) (yylval.token = t)
 %}
 
 /*definitions*/
 /* %option c++ */
 %option yylineno
 
-IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 %%
 "∧" return TOKEN(AND);
 "↔" return TOKEN(IFF);
@@ -28,7 +27,7 @@ IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 "(" return TOKEN(LBRACKET);
 ")" return TOKEN(RBRACKET);
 "," return TOKEN(COMMA);
-IDENTIFIER SAVE_TOKEN;return IDENTIFIER;
+[a-zA-Z][a-zA-Z0-9]* SAVE_TOKEN;return IDENTIFIER;
 
 %%
 
