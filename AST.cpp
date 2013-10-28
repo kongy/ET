@@ -20,6 +20,10 @@ Symbol Truth::getSymbol() {
     return Symbol::TRUTH_SYMBOL;
 }
 
+bool Truth::evaluate() {
+    return true;
+}
+
 /* Falsity Class */
 QString Falsity::print() {
     return SYMBOL_FALSITY;
@@ -33,13 +37,17 @@ Symbol Falsity::getSymbol() {
     return Symbol::FALSITY_SYMBOL;
 }
 
+bool Falsity::evaluate() {
+    return false;
+}
+
 /* Variable Class */
 Variable::Variable(QString *name) {
     setName(name);
 }
 
 QString Variable::print() {
-    return (getName());
+    return getName();
 }
 
 QString Variable::getName() {
@@ -56,6 +64,10 @@ bool Variable::isFirstOrderLogic() {
 
 Symbol Variable::getSymbol() {
     return Symbol::VARIABLE_SYMBOL;
+}
+
+bool Variable::evaluate() {
+    return value;
 }
 
 /* UnaryOpStatement Class (Virtual) */
@@ -83,6 +95,10 @@ QString NotStatement::print() {
 
 Symbol NotStatement::getSymbol() {
     return Symbol::NOT_SYMBOL;
+}
+
+bool NotStatement::evaluate() {
+    return !getStatement()->evaluate();
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -127,6 +143,10 @@ Symbol AndStatement::getSymbol() {
     return Symbol::AND_SYMBOL;
 }
 
+bool AndStatement::evaluate() {
+    return getLeftStatement()->evaluate() && getRightStatement()->evaluate();
+}
+
 /* OrStatement Class */
 OrStatement::OrStatement(LogicStatement *left, LogicStatement *right) {
     setLeftStatement(left);
@@ -139,6 +159,10 @@ QString OrStatement::symbol() {
 
 Symbol OrStatement::getSymbol() {
     return Symbol::OR_SYMBOL;
+}
+
+bool OrStatement::evaluate() {
+    return getLeftStatement()->evaluate() || getRightStatement()->evaluate();
 }
 
 /* IffStatement Class */
@@ -155,6 +179,10 @@ Symbol IffStatement::getSymbol() {
     return Symbol::IFF_SYMBOL;
 }
 
+bool IffStatement::evaluate() {
+    return getLeftStatement()->evaluate() == getRightStatement()->evaluate();
+}
+
 /* ImpliesStatement Class */
 ImpliesStatement::ImpliesStatement(LogicStatement *left, LogicStatement *right) {
     setLeftStatement(left);
@@ -169,9 +197,23 @@ Symbol ImpliesStatement::getSymbol() {
     return Symbol::IMPLIES_SYMBOL;
 }
 
+bool ImpliesStatement::evaluate() {
+    bool leftStatementEvaluation = getLeftStatement()->evaluate();
+    bool rightStatementEvaluation = getRightStatement()->evaluate();
+
+    if (!leftStatementEvaluation)
+        return true;
+    else
+        return rightStatementEvaluation;
+}
+
 /* FirstOrderStatement Class */
 bool FirstOrderStatement::isFirstOrderLogic() {
     return true;
+}
+
+bool FirstOrderStatement::evaluate() {
+    return false;
 }
 
 /* ForAllStatement Class */
@@ -273,6 +315,10 @@ Symbol Parameters::getSymbol() {
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
     setPredicateSymbol(predicateName);
     setParameters(params);
+}
+
+bool Parameters::evaluate() {
+    return false;
 }
 
 QString PredicateSymbolStatement::getPredicateSymbolName() {

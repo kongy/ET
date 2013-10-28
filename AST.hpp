@@ -11,6 +11,7 @@ public:
     virtual QString print() = 0;
     virtual bool isFirstOrderLogic() = 0;
     virtual Symbol getSymbol() = 0;
+    virtual bool evaluate() = 0;
 };
 
 class Truth : public LogicStatement {
@@ -18,6 +19,7 @@ public:
     QString print();
     bool isFirstOrderLogic();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class Falsity : public LogicStatement {
@@ -25,10 +27,12 @@ public:
     QString print();
     bool isFirstOrderLogic();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class Variable : public LogicStatement {
     QString *name;
+    bool value = false;
 
 public:
     Variable(QString *name);
@@ -37,6 +41,7 @@ public:
     void setName(QString *name);
     bool isFirstOrderLogic();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -48,6 +53,7 @@ public:
     void setStatement(LogicStatement *);
     LogicStatement *getStatement();
     virtual Symbol getSymbol() = 0;
+    bool evaluate() = 0;
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -56,6 +62,7 @@ public:
     bool isFirstOrderLogic();
     QString print();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class BinaryOpStatement : public LogicStatement {
@@ -71,6 +78,7 @@ public:
     LogicStatement * getLeftStatement();
     LogicStatement * getRightStatement();
     Symbol getSymbol() = 0;
+    bool evaluate() = 0;
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -78,6 +86,7 @@ public:
     AndStatement(LogicStatement *, LogicStatement *);
     QString symbol();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class OrStatement : public BinaryOpStatement {
@@ -85,6 +94,7 @@ public:
     OrStatement(LogicStatement *, LogicStatement *);
     QString symbol();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class IffStatement : public BinaryOpStatement {
@@ -92,6 +102,7 @@ public:
     IffStatement(LogicStatement *, LogicStatement *);
     QString symbol();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class ImpliesStatement : public BinaryOpStatement {
@@ -99,6 +110,7 @@ public:
     ImpliesStatement(LogicStatement *, LogicStatement *);
     QString symbol();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class FirstOrderStatement : public LogicStatement {
@@ -106,6 +118,7 @@ public:
     virtual QString print() = 0;
     bool isFirstOrderLogic();
     Symbol getSymbol() = 0;
+    bool evaluate();
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -147,6 +160,7 @@ public:
     bool isFirstOrderLogic();
     QString print();
     Symbol getSymbol();
+    bool evaluate();
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
