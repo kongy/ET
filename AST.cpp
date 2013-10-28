@@ -1,7 +1,11 @@
 #include "AST.hpp"
 #include "symbol.hpp"
+#include "parser.hpp"
+#include "lexer.hpp"
 
 using namespace AST;
+
+extern LogicStatement *entireStatement;
 
 /* Truth Class */
 QString Truth::print() {
@@ -275,4 +279,10 @@ void EqualityStatement::setRightVariable(Variable *newRight) {
 
 QString EqualityStatement::print() {
 	return getLeftVariable()->print() + QString(" ") + QString(SYMBOL_EQUALS) + QString(" ") + getRightVariable()->print();
+}
+
+LogicStatement *AST::parse(QString expression) {
+	yy_scan_string(expression.toLocal8Bit().data());
+	yyparse();
+	return entireStatement;
 }

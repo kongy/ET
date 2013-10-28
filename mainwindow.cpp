@@ -64,6 +64,8 @@ void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStateme
 								   QString name) {
 	// TODO: Check AST equivalence
 	qDebug()<<"createSolutionTab called with AST"<<start<<end;
+	if(start != nullptr) qDebug()<<"Begin"<<start->print();
+	if(end != nullptr) qDebug()<<"End"<<end->print();
 	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
 	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);

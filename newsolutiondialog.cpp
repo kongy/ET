@@ -19,9 +19,13 @@ NewSolutionDialog::~NewSolutionDialog() {
 void NewSolutionDialog::onClick(QAbstractButton *btn) {
 	switch(ui->buttonBox->standardButton(btn)) {
 	case QDialogButtonBox::Ok:
+	{
 		// TODO: parse input and generate AST
-		emit accepted(nullptr, nullptr, ui->nameLineEdit->text());
+		AST::LogicStatement *begin = AST::parse(ui->startFormulaLineEdit->text());
+		AST::LogicStatement *end = AST::parse(ui->endFormulaLineEdit->text());
+		emit accepted(begin, end, ui->nameLineEdit->text());
 		break;
+	}
 	case QDialogButtonBox::Cancel:
 		// TODO
 		break;

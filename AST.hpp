@@ -5,8 +5,6 @@
 
 namespace AST {
 
-using namespace std;
-
 class LogicStatement {
 public:
 	virtual QString print() = 0;
@@ -162,6 +160,7 @@ public:
 	QString print();
 };
 
+LogicStatement *parse(QString expression);
 }
 
 #endif // AST_HPP
