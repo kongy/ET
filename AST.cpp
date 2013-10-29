@@ -198,13 +198,7 @@ Symbol ImpliesStatement::getSymbol() {
 }
 
 bool ImpliesStatement::evaluate() {
-    bool leftStatementEvaluation = getLeftStatement()->evaluate();
-    bool rightStatementEvaluation = getRightStatement()->evaluate();
-
-    if (!leftStatementEvaluation)
-        return true;
-    else
-        return rightStatementEvaluation;
+    return (!getLeftStatement()->evaluate() || getRightStatement()->evaluate());
 }
 
 /* FirstOrderStatement Class */
@@ -299,12 +293,10 @@ bool Parameters::isFirstOrderLogic() {
 QString Parameters::print() {
     QString param = getParameter()->print();
 
-    if (rest != NULL) {
+    if (rest != NULL)
         return param + QString(", ") + getRemainingParameters()->print();
-    }
-    else {
+    else
         return param;
-    }
 }
 
 Symbol Parameters::getSymbol() {
