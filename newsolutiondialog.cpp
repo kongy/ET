@@ -2,6 +2,7 @@
 #include "ui_newsolutiondialog.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 NewSolutionDialog::NewSolutionDialog(QWidget *parent) :
 	QDialog(parent),
@@ -23,11 +24,20 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 		// TODO: parse input and generate AST
 		AST::LogicStatement *begin = AST::parse(ui->startFormulaLineEdit->text());
 		AST::LogicStatement *end = AST::parse(ui->endFormulaLineEdit->text());
+		if(begin == nullptr) {
+			QMessageBox msg;
+			msg.warning(this, "Parsing failure", "Failed to parse start formula");
+			return;
+		}
+		if(end == nullptr) {
+			QMessageBox msg;
+			msg.warning(this, "Parsing failure", "Failed to parse end formula");
+			return;
+		}
 		emit accepted(begin, end, ui->nameLineEdit->text());
 		break;
 	}
 	case QDialogButtonBox::Cancel:
-		// TODO
 		break;
 	case QDialogButtonBox::Reset:
 		ui->startFormulaLineEdit->clear();

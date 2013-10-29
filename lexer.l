@@ -4,7 +4,7 @@
 /*left for includes*/
         #include "AST.hpp"
         #include "parser.hpp"
-        #include <QString>
+        #include <QDebug>
         #define SAVE_TOKEN (yylval.qString = new QString(yytext))
         #define TOKEN(t) (yylval.token = t)
 %}
@@ -28,6 +28,7 @@
 ")" return TOKEN(RBRACKET);
 "," return TOKEN(COMMA);
 [a-zA-Z][a-zA-Z0-9]* SAVE_TOKEN;return IDENTIFIER;
+. qWarning() << "Unknown token" << yytext; yyterminate();
 
 %%
 

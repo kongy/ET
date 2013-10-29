@@ -6,7 +6,7 @@
 
         extern int yylineno;
         void yyerror(const char *s) {
-            qWarning() << "Line" << yylineno << ":" << s;
+            qWarning() << s;
         }
         extern int yylex(void);
 %}

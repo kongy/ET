@@ -63,9 +63,8 @@ void MainWindow::startAboutDialog() {
 void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end,
 								   QString name) {
 	// TODO: Check AST equivalence
-	qDebug()<<"createSolutionTab called with AST"<<start<<end;
-	if(start != nullptr) qDebug()<<"Begin"<<start->print();
-	if(end != nullptr) qDebug()<<"End"<<end->print();
+	if(start == nullptr) qWarning()<<"Begin is NULL";
+	if(end == nullptr) qWarning()<<"End is NULL";
 	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
 	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);
