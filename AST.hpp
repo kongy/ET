@@ -3,6 +3,8 @@
 
 #include <QString>
 #include "symbol.hpp"
+#include <list>
+using namespace std;
 
 namespace AST {
 
@@ -12,6 +14,8 @@ public:
     virtual bool isFirstOrderLogic() = 0;
     virtual Symbol getSymbol() = 0;
     virtual bool evaluate() = 0;
+    bool isEquivalent(LogicStatement *);
+    virtual void collectVariables(list<list<LogicStatement *> *> *) = 0;
 };
 
 class Truth : public LogicStatement {
@@ -20,6 +24,7 @@ public:
     bool isFirstOrderLogic();
     Symbol getSymbol();
     bool evaluate();
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class Falsity : public LogicStatement {
@@ -28,11 +33,12 @@ public:
     bool isFirstOrderLogic();
     Symbol getSymbol();
     bool evaluate();
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class Variable : public LogicStatement {
     QString *name;
-    bool value = false;
+    bool value;
 
 public:
     Variable(QString *name);
@@ -41,7 +47,10 @@ public:
     void setName(QString *name);
     bool isFirstOrderLogic();
     Symbol getSymbol();
+    void setBooleanValue(bool);
     bool evaluate();
+    void collectVariables(list<list<LogicStatement *> *> *);
+    bool equals(Variable *);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -54,6 +63,7 @@ public:
     LogicStatement *getStatement();
     virtual Symbol getSymbol() = 0;
     bool evaluate() = 0;
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -79,6 +89,7 @@ public:
     LogicStatement * getRightStatement();
     Symbol getSymbol() = 0;
     bool evaluate() = 0;
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -119,6 +130,7 @@ public:
     bool isFirstOrderLogic();
     Symbol getSymbol() = 0;
     bool evaluate();
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -161,6 +173,7 @@ public:
     QString print();
     Symbol getSymbol();
     bool evaluate();
+    void collectVariables(list<list<LogicStatement *> *> *);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
