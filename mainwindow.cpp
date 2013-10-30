@@ -55,10 +55,12 @@ void MainWindow::startAboutDialog() {
 					   "<h2>Equivalence Tutor</h2><br>Based on Qt " QT_VERSION_STR);
 }
 
-/** Opens new solution tab with given formulae
- *  iff start and end are equivalent given they are not first-order
- *  \param start Well-formed start formula AST
- *  \param end Well-formed end formula AST
+/**
+ * @brief Opens new solution tab with given formulae
+ *        iff start and end are equivalent given they are not first-order
+ * @param start Well-formed start formula AST
+ * @param end Well-formed end formula AST
+ * @param name Name of the new solution
  */
 void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end,
 								   QString name) {
