@@ -8,6 +8,13 @@ using namespace AST;
 extern LogicStatement *entireStatement;
 
 /* LogicStatement Class */
+void LogicStatement::list_destroy(list<list<Variable *> *> *var_list) {
+	for (list<Variable *> *identicalVar_list : *var_list)
+		delete identicalVar_list;
+
+	delete var_list;
+}
+
 bool LogicStatement::isEquivalent(LogicStatement *statement) {
 
 	if (isFirstOrderLogic() || statement->isFirstOrderLogic())
@@ -18,8 +25,10 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 	collectVariables(var_list);
 	statement->collectVariables(var_list);
 
-	if (var_list->empty())
+	if (var_list->empty()) {
+		list_destroy(var_list);
 		return evaluate() == statement->evaluate();
+	}
 
 	int list_size = var_list->size();
 	unsigned int total_combinations = list_size * list_size;
@@ -28,25 +37,25 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 	bool value;
 
 	for (current_combination = 0; current_combination < total_combinations; ++current_combination) {
+		shifted_combination = current_combination;
 
 		for (list<Variable *> *identicalVar_list : *var_list) {
-			shifted_combination = current_combination;
 			value = shifted_combination % 2;
 
-			for (Variable *variable : *identicalVar_list) {
+			for (Variable *variable : *identicalVar_list)
 				variable->setBooleanValue(value);
-			}
 
 			shifted_combination /= 2;
 		}
 
-		if (evaluate() != statement->evaluate())
+		if (evaluate() != statement->evaluate()) {
+			list_destroy(var_list);
 			return false;
+		}
 	}
 
+	list_destroy(var_list);
 	return true;
-
-
 }
 
 /* Truth Class */
@@ -137,8 +146,9 @@ void Variable::collectVariables(list<list<Variable *> *> *var_list) {
 				return;
 			}
 
-	var_list->push_back(new list<Variable *>{this});
-
+	list<Variable *> *new_list = new list<Variable *>();
+	new_list->push_back(this);
+	var_list->push_back(new_list);
 }
 
 /* UnaryOpStatement Class (Virtual) */

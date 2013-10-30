@@ -18,6 +18,7 @@ public:
 	virtual bool evaluate() = 0;
 	bool isEquivalent(LogicStatement *);
 	virtual void collectVariables(list<list<Variable *> *> *) = 0;
+	void list_destroy(list<list<Variable *> *> *);
 };
 
 class Truth : public LogicStatement {
