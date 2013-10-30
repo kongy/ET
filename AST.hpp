@@ -3,7 +3,7 @@
 
 #include <QString>
 #include "symbol.hpp"
-#include <list>
+#include <vector>
 using namespace std;
 
 namespace AST {
@@ -17,8 +17,8 @@ public:
 	virtual Symbol getSymbol() = 0;
 	virtual bool evaluate() = 0;
 	bool isEquivalent(LogicStatement *);
-	virtual void collectVariables(list<list<Variable *> *> *) = 0;
-	void list_destroy(list<list<Variable *> *> *);
+	virtual void collectVariables(vector<vector<Variable *> *> *) = 0;
+	void list_destroy(vector<vector<Variable *> *> *);
 };
 
 class Truth : public LogicStatement {
@@ -27,7 +27,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class Falsity : public LogicStatement {
@@ -36,7 +36,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class Variable : public LogicStatement {
@@ -52,7 +52,7 @@ public:
 	Symbol getSymbol();
 	void setBooleanValue(bool);
 	bool evaluate();
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(Variable *);
 };
 
@@ -66,7 +66,7 @@ public:
 	LogicStatement *getStatement();
 	virtual Symbol getSymbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -92,7 +92,7 @@ public:
 	LogicStatement * getRightStatement();
 	Symbol getSymbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -133,7 +133,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol() = 0;
 	bool evaluate();
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -176,7 +176,7 @@ public:
 	QString print();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(list<list<Variable *> *> *);
+	void collectVariables(vector<vector<Variable *> *> *);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
