@@ -27,12 +27,17 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 		if(begin == nullptr) {
 			QMessageBox msg;
 			msg.warning(this, "Parsing failure", "Failed to parse start formula");
-			return;
+			break;
 		}
 		if(end == nullptr) {
 			QMessageBox msg;
 			msg.warning(this, "Parsing failure", "Failed to parse end formula");
-			return;
+			break;
+		}
+		if(!begin->isEquivalent(end)) {
+			QMessageBox msg;
+			msg.warning(this, "Not provable", "Start formula is not equivalent to end formula");
+			break;
 		}
 		emit accepted(begin, end, ui->nameLineEdit->text());
 		break;
