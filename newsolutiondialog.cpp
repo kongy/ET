@@ -21,7 +21,7 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 	switch(ui->buttonBox->standardButton(btn)) {
 	case QDialogButtonBox::Ok:
 	{
-		// TODO: parse input and generate AST
+		// TODO: Do not close the dialog if input in not well-formed
 		AST::LogicStatement *begin = AST::parse(ui->startFormulaLineEdit->text());
 		AST::LogicStatement *end = AST::parse(ui->endFormulaLineEdit->text());
 		if(begin == nullptr) {
