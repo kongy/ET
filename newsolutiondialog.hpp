@@ -26,6 +26,7 @@ private:
 private slots:
 	void onClick(QAbstractButton* btn);
 	void insertString(QString str);
+	void accept();
 };
 
 #endif // NEWSOLUTIONDIALOG_HPP
