@@ -1,12 +1,11 @@
 %{
         #include "AST.hpp"
-        #include <QDebug>
 
         AST::LogicStatement *entireStatement; // Top of the LogicStatement
 
-        extern int yylineno;
+        extern QString parserErrorMessage;
         void yyerror(const char *s) {
-            qWarning() << s;
+            parserErrorMessage = s;
         }
         extern int yylex(void);
 %}

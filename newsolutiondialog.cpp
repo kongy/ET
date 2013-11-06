@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
+QString lexerErrorMessage, parserErrorMessage;
+
 NewSolutionDialog::NewSolutionDialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::NewSolutionDialog) {
@@ -24,20 +26,23 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 		// Clear the warning
 		ui->startFormulaLabel->setStyleSheet("");
 		ui->endFormulaLabel->setStyleSheet("");
+		lexerErrorMessage.clear();
+		parserErrorMessage.clear();
 
-
-		AST::LogicStatement *begin = AST::parse(ui->startFormulaLineEdit->text());
-		AST::LogicStatement *end = AST::parse(ui->endFormulaLineEdit->text());
-		if(begin == nullptr) {
+		AST::LogicStatement *begin;
+		AST::LogicStatement *end;
+		if((begin = AST::parse(ui->startFormulaLineEdit->text())) == nullptr) {
 			QMessageBox msg;
 			ui->startFormulaLabel->setStyleSheet("QLabel { color : red; }");
-			msg.warning(this, "Parsing failure", "Failed to parse start formula");
+			msg.warning(this, "Parsing failure", QString("Failed to parse start formula\n%1\n%2")
+						.arg(lexerErrorMessage).arg(parserErrorMessage));
 			break;
 		}
-		if(end == nullptr) {
+		if((end = AST::parse(ui->endFormulaLineEdit->text())) == nullptr) {
 			QMessageBox msg;
 			ui->endFormulaLabel->setStyleSheet("QLabel { color : red; }");
-			msg.warning(this, "Parsing failure", "Failed to parse end formula");
+			msg.warning(this, "Parsing failure", QString("Failed to parse end formula\n%1\n%2")
+						.arg(lexerErrorMessage).arg(parserErrorMessage));
 			break;
 		}
 		if(!begin->isEquivalent(end)) {
