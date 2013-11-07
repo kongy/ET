@@ -29,31 +29,40 @@ void NewSolutionDialog::onClick(QAbstractButton *btn) {
 		lexerErrorMessage.clear();
 		parserErrorMessage.clear();
 
-		AST::LogicStatement *begin;
-		AST::LogicStatement *end;
+		AST::LogicStatement *begin = nullptr;
+		AST::LogicStatement *end = nullptr;
+
+		bool success = true;
+
 		if((begin = AST::parse(ui->startFormulaLineEdit->text())) == nullptr) {
 			QMessageBox msg;
 			ui->startFormulaLabel->setStyleSheet("QLabel { color : red; }");
 			msg.warning(this, "Parsing failure", QString("Failed to parse start formula\n%1\n%2")
 						.arg(lexerErrorMessage).arg(parserErrorMessage));
-			break;
+			success = false;
 		}
 		if((end = AST::parse(ui->endFormulaLineEdit->text())) == nullptr) {
 			QMessageBox msg;
 			ui->endFormulaLabel->setStyleSheet("QLabel { color : red; }");
 			msg.warning(this, "Parsing failure", QString("Failed to parse end formula\n%1\n%2")
 						.arg(lexerErrorMessage).arg(parserErrorMessage));
-			break;
+			success = false;
 		}
-		if(!begin->isEquivalent(end)) {
+		if(success && !begin->isEquivalent(end)) {
 			QMessageBox msg;
 			ui->startFormulaLabel->setStyleSheet("QLabel { color : red; }");
 			ui->endFormulaLabel->setStyleSheet("QLabel { color : red; }");
 			msg.warning(this, "Not provable", "Start formula is not equivalent to end formula");
-			break;
+			success = false;
 		}
-		emit accepted(begin, end, ui->nameLineEdit->text());
-		close();
+		if(!success) {
+			if(begin != nullptr) delete begin;
+			if(end != nullptr) delete end;
+		}
+		else {
+			emit accepted(begin, end, ui->nameLineEdit->text());
+			close();
+		}
 		break;
 	}
 	case QDialogButtonBox::Cancel:
