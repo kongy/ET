@@ -12,7 +12,7 @@
 #define SYMBOL_THEREEXISTS (QChar(u'∃'))
 #define SYMBOL_EQUALS (QChar(u'='))
 
-enum Symbol {
+enum class Symbol {
 	NOT_SYMBOL,
 	AND_SYMBOL,
 	OR_SYMBOL,
