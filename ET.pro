@@ -11,12 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ET
 TEMPLATE = app
 
-unix {
-    QMAKE_CXXFLAGS += -std=c++11
-}
-
-macx { # extra library for Mac OS X
-    QMAKE_CXXFLAGS += -stdlib=libc++
+greaterThan(QT_MAJOR_VERSION, 5) {
+	CONFIG += -std=c++11
+} else {
+	# Workaround for Qt4
+	QMAKE_CXXFLAGS += -std=c++11
 }
 
 SOURCES += main.cpp\
@@ -41,7 +40,7 @@ FORMS    += mainwindow.ui \
     solutiontabwidget.ui \
     inputpanel.ui
 
-LIBS += -lfl -ly
+LIBS += -ll -ly
 
 FLEXSOURCES = lexer.l
 BISONSOURCES = parser.y
