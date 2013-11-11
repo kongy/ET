@@ -24,7 +24,11 @@ SOURCES += main.cpp\
     welcomepagewidget.cpp \
     AST.cpp \
     solutiontabwidget.cpp \
-    inputpanel.cpp
+    inputpanel.cpp \
+    idtable.cpp \
+    equivalencestatement.cpp \
+    equivalenceengine.cpp \
+    logicset.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
@@ -32,7 +36,11 @@ HEADERS  += mainwindow.hpp \
     AST.hpp \
     symbol.hpp \
     solutiontabwidget.hpp \
-    inputpanel.hpp
+    inputpanel.hpp \
+    idtable.hpp \
+    equivalencestatement.hpp \
+    equivalenceengine.hpp \
+    logicset.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
@@ -44,10 +52,12 @@ LIBS += -ll -ly
 
 FLEXSOURCES = lexer.l
 BISONSOURCES = parser.y
+EQUIVALENCESOURCES = equivalences.txt
 
 OTHER_FILES +=  \
     $$FLEXSOURCES \
-    $$BISONSOURCES
+    $$BISONSOURCES \
+    $$EQUIVALENCESOURCES
 
 flexsource.input = FLEXSOURCES
 flexsource.output = ${QMAKE_FILE_BASE}.cpp

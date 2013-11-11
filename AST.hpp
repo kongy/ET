@@ -1,14 +1,18 @@
 #ifndef AST_HPP
 #define AST_HPP
 
+namespace AST {
+class Variable;
+class LogicStatement;
+}
+
 #include <QString>
 #include "symbol.hpp"
 #include <vector>
 using namespace std;
+#include "idtable.hpp"
 
 namespace AST {
-
-class Variable;
 
 class LogicStatement {
 public:
@@ -19,6 +23,8 @@ public:
 	bool isEquivalent(LogicStatement *);
 	virtual void collectVariables(vector<vector<Variable *> *> *) = 0;
 	void list_destroy(vector<vector<Variable *> *> *);
+	virtual bool equals(LogicStatement *) = 0;
+	virtual bool match(LogicStatement *matching_statement, IDTable *table) = 0;
 };
 
 class Truth : public LogicStatement {
@@ -28,6 +34,8 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *);
 };
 
 class Falsity : public LogicStatement {
@@ -37,6 +45,8 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *);
 };
 
 class Variable : public LogicStatement {
@@ -53,7 +63,8 @@ public:
 	void setBooleanValue(bool);
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
-	bool equals(Variable *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *table);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -67,6 +78,8 @@ public:
 	virtual Symbol getSymbol() = 0;
 	bool evaluate() = 0;
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *table);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -93,6 +106,8 @@ public:
 	Symbol getSymbol() = 0;
 	bool evaluate() = 0;
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *table);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -134,6 +149,8 @@ public:
 	Symbol getSymbol() = 0;
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *table);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -177,6 +194,8 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	bool match(LogicStatement *matching_statement, IDTable *table);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {

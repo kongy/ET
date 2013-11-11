@@ -79,6 +79,14 @@ void Truth::collectVariables(vector<vector<Variable *> *> *) {
 	//DO NOTHING
 }
 
+bool Truth::equals(LogicStatement *statement) {
+	return statement->getSymbol() == getSymbol();
+}
+
+bool Truth::match(LogicStatement *matching_statement, IDTable *) {
+	return matching_statement->getSymbol() == getSymbol();
+}
+
 /* Falsity Class */
 QString Falsity::print() {
 	return SYMBOL_FALSITY;
@@ -98,6 +106,14 @@ bool Falsity::evaluate() {
 
 void Falsity::collectVariables(vector<vector<Variable *> *> *) {
 	//DO NOTHING
+}
+
+bool Falsity::equals(LogicStatement *statement) {
+	return statement->getSymbol() == getSymbol();
+}
+
+bool Falsity::match(LogicStatement *matching_statement, IDTable *) {
+	return matching_statement->getSymbol() == getSymbol();
 }
 
 /* Variable Class */
@@ -133,8 +149,9 @@ bool Variable::evaluate() {
 	return value;
 }
 
-bool Variable::equals(Variable *variable) {
-	return variable->getName().compare(getName()) == 0;
+bool Variable::equals(LogicStatement *statement) {
+	return statement->getSymbol() == getSymbol() &&
+			((Variable *)statement)->getName() == getName();
 }
 
 void Variable::collectVariables(vector<vector<Variable *> *> *var_list) {
@@ -151,6 +168,10 @@ void Variable::collectVariables(vector<vector<Variable *> *> *var_list) {
 	var_list->push_back(new_list);
 }
 
+bool Variable::match(LogicStatement *matching_statement, IDTable *table) {
+	return table->add(this, matching_statement);
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -162,6 +183,16 @@ LogicStatement * UnaryOpStatement::getStatement() {
 
 void UnaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list) {
 	getStatement()->collectVariables(var_list);
+}
+
+bool UnaryOpStatement::equals(LogicStatement *statement) {
+	return statement->getSymbol() == getSymbol() &&
+			getStatement()->equals(((UnaryOpStatement *)statement)->getStatement());
+}
+
+bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
+	return matching_statement->getSymbol() == getSymbol() &&
+			getStatement()->match(((UnaryOpStatement *)matching_statement)->getStatement(), table);
 }
 
 /* NotStatement Class */
@@ -217,6 +248,18 @@ QString BinaryOpStatement::print() {
 void BinaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list) {
 	getLeftStatement()->collectVariables(var_list);
 	getRightStatement()->collectVariables(var_list);
+}
+
+bool BinaryOpStatement::equals(LogicStatement *statement) {
+	return statement->getSymbol() == getSymbol() &&
+			getLeftStatement()->equals(((BinaryOpStatement *)statement)->getLeftStatement()) &&
+			getRightStatement()->equals(((BinaryOpStatement *)statement)->getRightStatement());
+}
+
+bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
+	return matching_statement->getSymbol() == getSymbol() &&
+			getLeftStatement()->match(((BinaryOpStatement *)matching_statement)->getLeftStatement(), table) &&
+			getRightStatement()->match(((BinaryOpStatement *)matching_statement)->getRightStatement(), table);
 }
 
 /* AndStatement Class */
@@ -302,6 +345,14 @@ bool FirstOrderStatement::evaluate() {
 
 void FirstOrderStatement::collectVariables(vector<vector<Variable *> *> *) {
 	//UNUSED
+}
+
+bool FirstOrderStatement::equals(LogicStatement *) {
+	return true;
+}
+
+bool FirstOrderStatement::match(LogicStatement *, IDTable *) {
+	return false;
 }
 
 /* ForAllStatement Class */
@@ -399,6 +450,32 @@ Symbol Parameters::getSymbol() {
 
 void Parameters::collectVariables(vector<vector<Variable *> *> *) {
 	//NOT USED
+}
+
+bool Parameters::equals(LogicStatement *statement) {
+
+	if (getSymbol() == statement->getSymbol()) {
+
+		Parameters *casted_statement = (Parameters *)statement;
+
+		if (getParameter()->equals(casted_statement->getParameter())) {
+			Parameters *casted_statement_params = casted_statement->getRemainingParameters();
+			Parameters *current_statement_params = getRemainingParameters();
+
+			if (casted_statement_params == NULL && current_statement_params == NULL)
+				return true;
+			else if (casted_statement_params == NULL || current_statement_params == NULL)
+				return false;
+			else
+				return current_statement_params->equals(casted_statement_params);
+		}
+	}
+
+	return false;
+}
+
+bool Parameters::match(LogicStatement *, IDTable *) {
+	return false;
 }
 
 /* PredicateSymbolStatement Class */
