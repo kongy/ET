@@ -7,14 +7,12 @@
         #define SAVE_TOKEN (yylval.qString = new QString(yytext))
         #define TOKEN(t) (yylval.token = t)
 
-        #define YY_NO_INPUT
-
         extern QString lexerErrorMessage;
 %}
 
-/*definitions*/
 /* %option c++ */
-%option yylineno
+%option noinput
+%option nounput
 
 %%
 "∧" return TOKEN(AND);
