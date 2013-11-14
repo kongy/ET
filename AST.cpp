@@ -151,7 +151,7 @@ bool Variable::evaluate() {
 
 bool Variable::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			((Variable *)statement)->getName() == getName();
+			(dynamic_cast<Variable *>(statement))->getName() == getName();
 }
 
 void Variable::collectVariables(vector<vector<Variable *> *> *var_list) {
@@ -187,12 +187,12 @@ void UnaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list) 
 
 bool UnaryOpStatement::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			getStatement()->equals(((UnaryOpStatement *)statement)->getStatement());
+			getStatement()->equals((dynamic_cast<UnaryOpStatement *>(statement))->getStatement());
 }
 
 bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
 	return matching_statement->getSymbol() == getSymbol() &&
-			getStatement()->match(((UnaryOpStatement *)matching_statement)->getStatement(), table);
+			getStatement()->match((dynamic_cast<UnaryOpStatement *>(matching_statement))->getStatement(), table);
 }
 
 /* NotStatement Class */
@@ -252,14 +252,14 @@ void BinaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list)
 
 bool BinaryOpStatement::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			getLeftStatement()->equals(((BinaryOpStatement *)statement)->getLeftStatement()) &&
-			getRightStatement()->equals(((BinaryOpStatement *)statement)->getRightStatement());
+			getLeftStatement()->equals((dynamic_cast<BinaryOpStatement *>(statement))->getLeftStatement()) &&
+			getRightStatement()->equals((dynamic_cast<BinaryOpStatement *>(statement))->getRightStatement());
 }
 
 bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
 	return matching_statement->getSymbol() == getSymbol() &&
-			getLeftStatement()->match(((BinaryOpStatement *)matching_statement)->getLeftStatement(), table) &&
-			getRightStatement()->match(((BinaryOpStatement *)matching_statement)->getRightStatement(), table);
+			getLeftStatement()->match((dynamic_cast<BinaryOpStatement *>(matching_statement))->getLeftStatement(), table) &&
+			getRightStatement()->match((dynamic_cast<BinaryOpStatement *>(matching_statement))->getRightStatement(), table);
 }
 
 /* AndStatement Class */
@@ -456,7 +456,7 @@ bool Parameters::equals(LogicStatement *statement) {
 
 	if (getSymbol() == statement->getSymbol()) {
 
-		Parameters *casted_statement = (Parameters *)statement;
+		Parameters *casted_statement = dynamic_cast<Parameters *>(statement);
 
 		if (getParameter()->equals(casted_statement->getParameter())) {
 			Parameters *casted_statement_params = casted_statement->getRemainingParameters();
