@@ -16,14 +16,38 @@ namespace AST {
 
 class LogicStatement {
 public:
+	/* Returns a QString representation of AST */
 	virtual QString print() = 0;
+
+	/* Checks whether an AST contains first order logic */
 	virtual bool isFirstOrderLogic() = 0;
+
+	/* Returns the symbol representing a concrete class */
 	virtual Symbol getSymbol() = 0;
+
+	/* Returns a boolean value of the AST when variables
+	 * gets assigned their boolean values */
 	virtual bool evaluate() = 0;
+
+	/* Used to check whether start and end formula is
+	 * logically equivalent */
 	bool isEquivalent(LogicStatement *);
+
+	/* Iterates through the AST collecting references of
+	 * variables, the inner vector represents a list with
+	 * all variables having the same name */
 	virtual void collectVariables(vector<vector<Variable *> *> *) = 0;
+
+	/* Free up memory used to check start formula is
+	 * equivalent to end one */
 	void list_destroy(vector<vector<Variable *> *> *);
+
+	/* Checks whether two AST are identical in structure
+	 * and name */
 	virtual bool equals(LogicStatement *) = 0;
+
+	/* Called by rule AST to match the actual user AST
+	 * called matching_statement */
 	virtual bool match(LogicStatement *matching_statement, IDTable *table) = 0;
 };
 
@@ -60,6 +84,8 @@ public:
 	void setName(QString *name);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
+
+	/* Used to give variable a boolean value */
 	void setBooleanValue(bool);
 	bool evaluate();
 	void collectVariables(vector<vector<Variable *> *> *);
