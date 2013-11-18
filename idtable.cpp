@@ -19,6 +19,14 @@ vector<pair<Variable *, LogicStatement *> *> *IDTable::getIdTable() {
 	return id_table;
 }
 
+LogicStatement* IDTable::valueOf(Variable *key) {
+    for (pair<Variable *, LogicStatement *> *key_value_pair : *getIdTable())
+        if (key_value_pair->first->equals(key))
+            return key_value_pair->second->clone();
+
+    return nullptr;
+}
+
 void IDTable::clear() {
 	for (pair<Variable *, LogicStatement *> *pairs : *id_table)
 		delete pairs;

@@ -87,6 +87,14 @@ bool Truth::match(LogicStatement *matching_statement, IDTable *) {
 	return matching_statement->getSymbol() == getSymbol();
 }
 
+LogicStatement* Truth::replace(IDTable *) {
+    return this;
+}
+
+LogicStatement* Truth::clone() {
+    return new Truth();
+}
+
 /* Falsity Class */
 QString Falsity::print() {
 	return SYMBOL_FALSITY;
@@ -114,6 +122,14 @@ bool Falsity::equals(LogicStatement *statement) {
 
 bool Falsity::match(LogicStatement *matching_statement, IDTable *) {
 	return matching_statement->getSymbol() == getSymbol();
+}
+
+LogicStatement* Falsity::replace(IDTable *) {
+    return this;
+}
+
+LogicStatement* Falsity::clone() {
+    return new Falsity();
 }
 
 /* Variable Class */
@@ -172,6 +188,14 @@ bool Variable::match(LogicStatement *matching_statement, IDTable *table) {
 	return table->add(this, matching_statement);
 }
 
+LogicStatement* Variable::replace(IDTable *table) {
+    return table->valueOf(this);
+}
+
+LogicStatement* Variable::clone() {
+    return new Variable(new QString(getName()));
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -195,6 +219,11 @@ bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table)
 			getStatement()->match((dynamic_cast<UnaryOpStatement *>(matching_statement))->getStatement(), table);
 }
 
+LogicStatement* UnaryOpStatement::replace(IDTable *table) {
+    setStatement(getStatement()->replace(table));
+    return this;
+}
+
 /* NotStatement Class */
 NotStatement::NotStatement(LogicStatement *statement) {
 	setStatement(statement);
@@ -215,6 +244,10 @@ Symbol NotStatement::getSymbol() {
 
 bool NotStatement::evaluate() {
 	return !getStatement()->evaluate();
+}
+
+LogicStatement* NotStatement::clone() {
+    return new NotStatement(getStatement()->clone());
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -262,6 +295,12 @@ bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table
 			getRightStatement()->match((dynamic_cast<BinaryOpStatement *>(matching_statement))->getRightStatement(), table);
 }
 
+LogicStatement* BinaryOpStatement::replace(IDTable *table) {
+    setLeftStatement(getLeftStatement()->replace(table));
+    setRightStatement(getRightStatement()->replace(table));
+    return this;
+}
+
 /* AndStatement Class */
 AndStatement::AndStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -278,6 +317,10 @@ Symbol AndStatement::getSymbol() {
 
 bool AndStatement::evaluate() {
 	return getLeftStatement()->evaluate() && getRightStatement()->evaluate();
+}
+
+LogicStatement* AndStatement::clone() {
+    return new AndStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* OrStatement Class */
@@ -298,6 +341,10 @@ bool OrStatement::evaluate() {
 	return getLeftStatement()->evaluate() || getRightStatement()->evaluate();
 }
 
+LogicStatement* OrStatement::clone() {
+    return new OrStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+}
+
 /* IffStatement Class */
 IffStatement::IffStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -316,6 +363,10 @@ bool IffStatement::evaluate() {
 	return getLeftStatement()->evaluate() == getRightStatement()->evaluate();
 }
 
+LogicStatement* IffStatement::clone() {
+    return new IffStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+}
+
 /* ImpliesStatement Class */
 ImpliesStatement::ImpliesStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -332,6 +383,10 @@ Symbol ImpliesStatement::getSymbol() {
 
 bool ImpliesStatement::evaluate() {
 	return (!getLeftStatement()->evaluate() || getRightStatement()->evaluate());
+}
+
+LogicStatement* ImpliesStatement::clone() {
+    return new ImpliesStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* FirstOrderStatement Class */
@@ -353,6 +408,14 @@ bool FirstOrderStatement::equals(LogicStatement *) {
 
 bool FirstOrderStatement::match(LogicStatement *, IDTable *) {
 	return false;
+}
+
+LogicStatement* FirstOrderStatement::clone() {
+    return this;
+}
+
+LogicStatement* FirstOrderStatement::replace(IDTable *table) {
+    return this;
 }
 
 /* ForAllStatement Class */
@@ -419,6 +482,10 @@ Variable * Parameters::getParameter() {
 	return parameter;
 }
 
+bool Parameters::evaluate() {
+    return false;
+}
+
 void Parameters::setParameter(Variable *newParameter) {
 	parameter = newParameter;
 }
@@ -478,14 +545,30 @@ bool Parameters::match(LogicStatement *, IDTable *) {
 	return false;
 }
 
+LogicStatement* Parameters::clone() {
+    Parameters *newRemainingParameters = nullptr;
+    Parameters *remainingParameters = getRemainingParameters();
+
+    if (remainingParameters != nullptr)
+        newRemainingParameters = dynamic_cast<Parameters *>(remainingParameters->clone());
+
+    return new Parameters(dynamic_cast<Variable *>(getParameter()->clone()), newRemainingParameters);
+}
+
+LogicStatement* Parameters::replace(IDTable *table) {
+    setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
+
+    Parameters *remainingParameter = getRemainingParameters();
+    if (remainingParameter != nullptr)
+        setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
+
+    return this;
+}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
 	setParameters(params);
-}
-
-bool Parameters::evaluate() {
-	return false;
 }
 
 QString PredicateSymbolStatement::getPredicateSymbolName() {

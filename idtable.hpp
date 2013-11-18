@@ -16,6 +16,7 @@ public:
 	IDTable();
 	bool add(Variable *key, LogicStatement *value);
 	vector<pair<Variable *, LogicStatement *> *> *getIdTable();
+    LogicStatement *valueOf(Variable *key);
 	void clear();
 };
 
