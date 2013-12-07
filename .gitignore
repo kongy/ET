@@ -1,4 +1,5 @@
 # C++ objects and libs
+
 *.slo
 *.lo
 *.o
@@ -10,9 +11,15 @@
 *.dylib
 
 # Qt-es
+
 *.pro.user
 *.pro.user.*
 moc_*.cpp
 qrc_*.cpp
-Makefile
+ui_*.h
+Makefile*
 *-build-*
+
+# QtCreator
+
+*.autosave
