@@ -12,10 +12,10 @@ TARGET = ET
 TEMPLATE = app
 
 greaterThan(QT_MAJOR_VERSION, 5) {
-	CONFIG += -std=c++11
+        CONFIG += -std=c++11
 } else {
-	# Workaround for Qt4
-	QMAKE_CXXFLAGS += -std=c++11
+        # Workaround for Qt4
+        QMAKE_CXXFLAGS += -std=c++11
 }
 
 SOURCES += main.cpp\
@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     idtable.cpp \
     equivalencestatement.cpp \
     equivalenceengine.cpp \
-    logicset.cpp
+    logicset.cpp \
+    solutionmodel.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
@@ -40,7 +41,8 @@ HEADERS  += mainwindow.hpp \
     idtable.hpp \
     equivalencestatement.hpp \
     equivalenceengine.hpp \
-    logicset.hpp
+    logicset.hpp \
+    solutionmodel.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
