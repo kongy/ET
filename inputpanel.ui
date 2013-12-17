@@ -34,10 +34,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Truth</string>
+        <string>Truth(Alt+T)</string>
        </property>
        <property name="text">
         <string>⊤</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+T</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>⊤</string>
@@ -62,10 +65,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Or</string>
+        <string>Or(Alt+O)</string>
        </property>
        <property name="text">
         <string>∨</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+O</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>∨</string>
@@ -90,10 +96,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Not</string>
+        <string>Not(Alt+N)</string>
        </property>
        <property name="text">
         <string>¬</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+N</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>¬</string>
@@ -118,10 +127,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Falsity</string>
+        <string>Falsity(Alt+F)</string>
        </property>
        <property name="text">
         <string>⊥</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+F</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>⊥</string>
@@ -146,10 +158,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Implies</string>
+        <string>Implies(Alt+I)</string>
        </property>
        <property name="text">
         <string>→</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+I</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>→</string>
@@ -174,10 +189,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Equivalent</string>
+        <string>Equivalent(Alt+Q)</string>
        </property>
        <property name="text">
         <string>↔</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+Q</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>↔</string>
@@ -202,10 +220,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>And</string>
+        <string>And(Alt+A)</string>
        </property>
        <property name="text">
         <string>∧</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+A</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>∧</string>
@@ -230,10 +251,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>For All</string>
+        <string>For All(Alt+W)</string>
        </property>
        <property name="text">
         <string>∀</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+W</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>∀</string>
@@ -258,10 +282,13 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>There Exists</string>
+        <string>There Exists(Alt+E)</string>
        </property>
        <property name="text">
         <string>∃</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+E</string>
        </property>
        <property name="buttonValue" stdset="0">
         <string>∃</string>
