@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropositionalEquivalences>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <ID>B</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>B</ID>
+                <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Truth></Truth>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Truth></Truth>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <Falsity></Falsity>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Falsity></Falsity>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Falsity></Falsity>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+                <ID>C</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <And>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </And>
+            </And>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <ID>B</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>B</ID>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <Truth></Truth>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <Truth></Truth>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Truth></Truth>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <Falsity></Falsity>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <Falsity></Falsity>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+                <ID>C</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <Or>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </Or>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <Truth></Truth>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Falsity></Falsity>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <Falsity></Falsity>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Truth></Truth>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <ID>A</ID>
+                <ID>A</ID>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Truth></Truth>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <Truth></Truth>
+                <ID>A</ID>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <ID>A</ID>
+                <Truth></Truth>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Truth></Truth>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <Falsity></Falsity>
+                <ID>A</ID>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Truth></Truth>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <ID>A</ID>
+                <Falsity></Falsity>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Not>
+                <ID>A</ID>
+            </Not>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Implies>
+                <ID>A</ID>
+                <ID>B</ID>
+            </Implies>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <ID>B</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Not>
+                <And>
+                    <ID>A</ID>
+                    <Not>
+                        <ID>B</ID>
+                    </Not>
+                </And>
+            </Not>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <Implies>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Implies>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Not>
+                    <ID>B</ID>
+                </Not>
+            </And>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <IFF>
+                <ID>A</ID>
+                <ID>B</ID>
+            </IFF>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Implies>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Implies>
+                <Implies>
+                    <ID>B</ID>
+                    <ID>A</ID>
+                </Implies>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+                <And>
+                    <Not>
+                        <ID>A</ID>
+                    </Not>
+                    <Not>
+                        <ID>B</ID>
+                    </Not>
+                </And>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <IFF>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <Not>
+                    <ID>B</ID>
+                </Not>
+            </IFF>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <IFF>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </IFF>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <IFF>
+                <ID>A</ID>
+                <Not>
+                    <ID>B</ID>
+                </Not>
+            </IFF>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <IFF>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <ID>B</ID>
+            </IFF>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <Not>
+                        <ID>B</ID>
+                    </Not>
+                </And>
+                <And>
+                    <Not>
+                        <ID>A</ID>
+                    </Not>
+                    <ID>B</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <Not>
+                    <ID>B</ID>
+                </Not>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Not>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+            </Not>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Not>
+                    <ID>A</ID>
+                </Not>
+                <Not>
+                    <ID>B</ID>
+                </Not>
+            </And>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Or>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </Or>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+                <And>
+                    <ID>A</ID>
+                    <ID>C</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+                <ID>C</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <ID>C</ID>
+                </And>
+                <And>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <And>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+                <Or>
+                    <ID>A</ID>
+                    <ID>C</ID>
+                </Or>
+            </And>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+                <ID>C</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Or>
+                    <ID>A</ID>
+                    <ID>C</ID>
+                </Or>
+                <Or>
+                    <ID>B</ID>
+                    <ID>C</ID>
+                </Or>
+            </And>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+    <EquivalentStatements>
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <ID>A</ID>
+                <Or>
+                    <ID>B</ID>
+                    <ID>A</ID>
+                </Or>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Or>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </Or>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <And>
+                <Or>
+                    <ID>B</ID>
+                    <ID>A</ID>
+                </Or>
+                <ID>A</ID>
+            </And>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <ID>A</ID>
+                <And>
+                    <ID>B</ID>
+                    <ID>A</ID>
+                </And>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>A</ID>
+                    <ID>B</ID>
+                </And>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <Or>
+                <And>
+                    <ID>B</ID>
+                    <ID>A</ID>
+                </And>
+                <ID>A</ID>
+            </Or>
+        </LogicStatement>
+        
+        <LogicStatement>
+            <ID>A</ID>
+        </LogicStatement>
+    </EquivalentStatements>
+    
+    
+</PropositionalEquivalences>
