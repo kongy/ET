@@ -18,14 +18,14 @@ bool LogicSet::add(LogicStatement *item) {
 }
 
 LogicSet::LogicSet() {
-	set = new vector<LogicStatement *>();
+	set = new QVector<LogicStatement *>();
 }
 
 LogicSet::~LogicSet() {
 	delete set;
 }
 
-vector<LogicStatement *> *LogicSet::getSet() {
+QVector<LogicStatement *> *LogicSet::getSet() {
 	return set;
 }
 

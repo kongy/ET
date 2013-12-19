@@ -43,7 +43,7 @@ EquivalenceEngine::EquivalenceEngine() {
 	QString line;
 	QStringList fields;
 	LogicSet *rule_set;
-	rules = new vector<LogicSet *>();
+	rules = new QVector<LogicSet *>();
 
 	while(!in.atEnd()) {
 
@@ -66,9 +66,9 @@ EquivalenceEngine::~EquivalenceEngine() {
 	delete rules;
 }
 
-vector<EquivalenceStatement *> *EquivalenceEngine::match(LogicStatement *input) {
+QVector<EquivalenceStatement *> *EquivalenceEngine::match(LogicStatement *input) {
 
-	vector<EquivalenceStatement *> *related_equivalence = new vector<EquivalenceStatement *>();
+	QVector<EquivalenceStatement *> *related_equivalence = new QVector<EquivalenceStatement *>();
 	IDTable *id_table = new IDTable();
 
 	for (LogicSet *rule_set : *rules) {

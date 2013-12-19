@@ -1,7 +1,7 @@
 #ifndef LOGICSET_HPP
 #define LOGICSET_HPP
 
-#include <vector>
+#include <QVector>
 #include <AST.hpp>
 using namespace AST;
 using namespace std;
@@ -10,7 +10,7 @@ using namespace std;
 class LogicSet
 {
 private:
-	vector<LogicStatement *> *set;
+	QVector<LogicStatement *> *set;
 	bool inSet(LogicStatement *);
 public:
 	LogicSet();
@@ -20,7 +20,7 @@ public:
 	bool add(LogicStatement *);
 
 	/* Returns a vector representing the set */
-	vector<LogicStatement *> *getSet();
+	QVector<LogicStatement *> *getSet();
 
 	/* Same Operation for Set difference to delete certain element of the set */
 	LogicSet *diff(LogicStatement *item);

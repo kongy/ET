@@ -8,7 +8,7 @@ class LogicStatement;
 
 #include <QString>
 #include "symbol.hpp"
-#include <vector>
+#include <QVector>
 using namespace std;
 #include "idtable.hpp"
 
@@ -36,11 +36,11 @@ public:
 	/* Iterates through the AST collecting references of
 	 * variables, the inner vector represents a list with
 	 * all variables having the same name */
-	virtual void collectVariables(vector<vector<Variable *> *> *) = 0;
+	virtual void collectVariables(QVector<QVector<Variable *> *> *) = 0;
 
 	/* Free up memory used to check start formula is
 	 * equivalent to end one */
-	void list_destroy(vector<vector<Variable *> *> *);
+	void list_destroy(QVector<QVector<Variable *> *> *);
 
 	/* Checks whether two AST are identical in structure
 	 * and name */
@@ -67,7 +67,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *);
 	LogicStatement* replace(IDTable *);
@@ -81,7 +81,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *);
 	LogicStatement* replace(IDTable *);
@@ -104,7 +104,7 @@ public:
 	/* Used to give variable a boolean value */
 	void setBooleanValue(bool);
 	bool evaluate();
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
@@ -122,7 +122,7 @@ public:
 	LogicStatement *getStatement();
 	virtual Symbol getSymbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
@@ -154,7 +154,7 @@ public:
 	LogicStatement * getRightStatement();
 	Symbol getSymbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
@@ -204,7 +204,7 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol() = 0;
 	bool evaluate();
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* clone();
@@ -252,7 +252,7 @@ public:
 	QString print();
 	Symbol getSymbol();
 	bool evaluate();
-	void collectVariables(vector<vector<Variable *> *> *);
+	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* clone();

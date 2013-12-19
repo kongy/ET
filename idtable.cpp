@@ -2,7 +2,7 @@
 
 IDTable::IDTable()
 {
-	id_table = new vector<pair<Variable *, LogicStatement *> *>();
+	id_table = new QVector<pair<Variable *, LogicStatement *> *>();
 }
 
 bool IDTable::add(Variable *key, LogicStatement *value) {
@@ -15,7 +15,7 @@ bool IDTable::add(Variable *key, LogicStatement *value) {
 	return true;
 }
 
-vector<pair<Variable *, LogicStatement *> *> *IDTable::getIdTable() {
+QVector<pair<Variable *, LogicStatement *> *> *IDTable::getIdTable() {
 	return id_table;
 }
 

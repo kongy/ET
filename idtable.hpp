@@ -11,7 +11,7 @@ using namespace std;
 class IDTable
 {
 private:
-	vector<pair<Variable *, LogicStatement *> *> *id_table;
+	QVector<pair<Variable *, LogicStatement *> *> *id_table;
 public:
 	IDTable();
 
@@ -20,7 +20,7 @@ public:
 	bool add(Variable *key, LogicStatement *value);
 
 	/* Returns the vector of entire mapping from identifier to LogicStatement */
-	vector<pair<Variable *, LogicStatement *> *> *getIdTable();
+	QVector<pair<Variable *, LogicStatement *> *> *getIdTable();
 
 	/* Provided a key, returns the corresponding Logicstatement or null if
 	 * none found */

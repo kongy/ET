@@ -8,8 +8,8 @@ using namespace AST;
 extern LogicStatement *entireStatement;
 
 /* LogicStatement Class */
-void LogicStatement::list_destroy(vector<vector<Variable *> *> *var_list) {
-	for (vector<Variable *> *identicalVar_list : *var_list)
+void LogicStatement::list_destroy(QVector<QVector<Variable *> *> *var_list) {
+	for (QVector<Variable *> *identicalVar_list : *var_list)
 		delete identicalVar_list;
 
 	delete var_list;
@@ -20,7 +20,7 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 	if (isFirstOrderLogic() || statement->isFirstOrderLogic())
 		return true;
 
-	vector<vector<Variable *>*> *var_list = new vector<vector<Variable *> *>();
+	QVector<QVector<Variable *>*> *var_list = new QVector<QVector<Variable *> *>();
 
 	collectVariables(var_list);
 	statement->collectVariables(var_list);
@@ -39,7 +39,7 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 	for (current_combination = 0; current_combination < total_combinations; ++current_combination) {
 		shifted_combination = current_combination;
 
-		for (vector<Variable *> *identicalVar_list : *var_list) {
+		for (QVector<Variable *> *identicalVar_list : *var_list) {
 			value = shifted_combination % 2;
 
 			for (Variable *variable : *identicalVar_list)
@@ -75,7 +75,7 @@ bool Truth::evaluate() {
 	return true;
 }
 
-void Truth::collectVariables(vector<vector<Variable *> *> *) {
+void Truth::collectVariables(QVector<QVector<Variable *> *> *) {
 	//DO NOTHING
 }
 
@@ -116,7 +116,7 @@ bool Falsity::evaluate() {
 	return false;
 }
 
-void Falsity::collectVariables(vector<vector<Variable *> *> *) {
+void Falsity::collectVariables(QVector<QVector<Variable *> *> *) {
 	//DO NOTHING
 }
 
@@ -178,16 +178,16 @@ bool Variable::equals(LogicStatement *statement) {
 			(dynamic_cast<Variable *>(statement))->getName() == getName();
 }
 
-void Variable::collectVariables(vector<vector<Variable *> *> *var_list) {
+void Variable::collectVariables(QVector<QVector<Variable *> *> *var_list) {
 
 	if (!var_list->empty())
-		for (vector<Variable *> *identicalVar_list : *var_list)
+		for (QVector<Variable *> *identicalVar_list : *var_list)
 			if (identicalVar_list->front()->equals(this)) {
 				identicalVar_list->push_back(this);
 				return;
 			}
 
-	vector<Variable *> *new_list = new vector<Variable *>();
+	QVector<Variable *> *new_list = new QVector<Variable *>();
 	new_list->push_back(this);
 	var_list->push_back(new_list);
 }
@@ -218,7 +218,7 @@ LogicStatement * UnaryOpStatement::getStatement() {
 	return nestedStatement;
 }
 
-void UnaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list) {
+void UnaryOpStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
 	getStatement()->collectVariables(var_list);
 }
 
@@ -296,7 +296,7 @@ QString BinaryOpStatement::print() {
 			QString("(") + getRightStatement()->print() + QString(")");
 }
 
-void BinaryOpStatement::collectVariables(vector<vector<Variable *> *> *var_list) {
+void BinaryOpStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
 	getLeftStatement()->collectVariables(var_list);
 	getRightStatement()->collectVariables(var_list);
 }
@@ -422,7 +422,7 @@ bool FirstOrderStatement::evaluate() {
 	return false;
 }
 
-void FirstOrderStatement::collectVariables(vector<vector<Variable *> *> *) {
+void FirstOrderStatement::collectVariables(QVector<QVector<Variable *> *> *) {
 	//UNUSED
 }
 
@@ -543,7 +543,7 @@ Symbol Parameters::getSymbol() {
 	return Symbol::PARAMETERS_SYMBOL;
 }
 
-void Parameters::collectVariables(vector<vector<Variable *> *> *) {
+void Parameters::collectVariables(QVector<QVector<Variable *> *> *) {
 	//NOT USED
 }
 
