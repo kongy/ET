@@ -88,11 +88,11 @@ bool Truth::match(LogicStatement *matching_statement, IDTable *) {
 }
 
 LogicStatement* Truth::replace(IDTable *) {
-    return this;
+	return this;
 }
 
 LogicStatement* Truth::clone() {
-    return new Truth();
+	return new Truth();
 }
 
 /* Falsity Class */
@@ -125,11 +125,11 @@ bool Falsity::match(LogicStatement *matching_statement, IDTable *) {
 }
 
 LogicStatement* Falsity::replace(IDTable *) {
-    return this;
+	return this;
 }
 
 LogicStatement* Falsity::clone() {
-    return new Falsity();
+	return new Falsity();
 }
 
 /* Variable Class */
@@ -142,11 +142,11 @@ QString Variable::print() {
 }
 
 QString Variable::getName() {
-	return *name;
+	return name;
 }
 
 void Variable::setName(QString *name) {
-	this->name = name;
+	this->name = *name;
 }
 
 bool Variable::isFirstOrderLogic() {
@@ -189,11 +189,11 @@ bool Variable::match(LogicStatement *matching_statement, IDTable *table) {
 }
 
 LogicStatement* Variable::replace(IDTable *table) {
-    return table->valueOf(this);
+	return table->valueOf(this);
 }
 
 LogicStatement* Variable::clone() {
-    return new Variable(new QString(getName()));
+	return new Variable(new QString(getName()));
 }
 
 /* UnaryOpStatement Class (Virtual) */
@@ -247,7 +247,7 @@ bool NotStatement::evaluate() {
 }
 
 LogicStatement* NotStatement::clone() {
-    return new NotStatement(getStatement()->clone());
+	return new NotStatement(getStatement()->clone());
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -320,7 +320,7 @@ bool AndStatement::evaluate() {
 }
 
 LogicStatement* AndStatement::clone() {
-    return new AndStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+	return new AndStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* OrStatement Class */
@@ -342,7 +342,7 @@ bool OrStatement::evaluate() {
 }
 
 LogicStatement* OrStatement::clone() {
-    return new OrStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+	return new OrStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* IffStatement Class */
@@ -364,7 +364,7 @@ bool IffStatement::evaluate() {
 }
 
 LogicStatement* IffStatement::clone() {
-    return new IffStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+	return new IffStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* ImpliesStatement Class */
@@ -386,7 +386,7 @@ bool ImpliesStatement::evaluate() {
 }
 
 LogicStatement* ImpliesStatement::clone() {
-    return new ImpliesStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+	return new ImpliesStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
 /* FirstOrderStatement Class */
@@ -411,11 +411,11 @@ bool FirstOrderStatement::match(LogicStatement *, IDTable *) {
 }
 
 LogicStatement* FirstOrderStatement::clone() {
-    return this;
+	return this;
 }
 
-LogicStatement* FirstOrderStatement::replace(IDTable *table) {
-    return this;
+LogicStatement* FirstOrderStatement::replace(IDTable *) {
+	return this;
 }
 
 /* ForAllStatement Class */
@@ -483,7 +483,7 @@ Variable * Parameters::getParameter() {
 }
 
 bool Parameters::evaluate() {
-    return false;
+	return false;
 }
 
 void Parameters::setParameter(Variable *newParameter) {

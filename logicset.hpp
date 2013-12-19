@@ -16,19 +16,14 @@ public:
 	LogicSet();
 	~LogicSet();
 
-    /* Set Implementation of add()
-     */
+	/* Set Implementation of add() */
 	bool add(LogicStatement *);
 
-	/* Returns a vector representing
-	 * the set
-	 */
+	/* Returns a vector representing the set */
 	vector<LogicStatement *> *getSet();
 
-    /* Same Operation for Set difference
-     * to delete certain element of the set
-     */
-    LogicSet *diff(LogicStatement *item);
+	/* Same Operation for Set difference to delete certain element of the set */
+	LogicSet *diff(LogicStatement *item);
 };
 
 #endif // LOGICSET_HPP

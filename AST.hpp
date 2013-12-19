@@ -50,11 +50,12 @@ public:
 	 * called matching_statement */
 	virtual bool match(LogicStatement *matching_statement, IDTable *table) = 0;
 
-    /* Called from the replace rule, creates identical copies
-     * on heap with variables cloned using id_table */
-    virtual LogicStatement* replace(IDTable *table) = 0;
+	/* Called from the replace rule, creates identical copies
+	 * on heap with variables cloned using id_table */
+	virtual LogicStatement* replace(IDTable *table) = 0;
 
-    virtual LogicStatement* clone() = 0;
+	/* A function that deep clones a logicstatement */
+	virtual LogicStatement* clone() = 0;
 };
 
 class Truth : public LogicStatement {
@@ -66,8 +67,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *);
-    LogicStatement* replace(IDTable *);
-    LogicStatement* clone();
+	LogicStatement* replace(IDTable *);
+	LogicStatement* clone();
 };
 
 class Falsity : public LogicStatement {
@@ -79,12 +80,12 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *);
-    LogicStatement* replace(IDTable *);
-    LogicStatement* clone();
+	LogicStatement* replace(IDTable *);
+	LogicStatement* clone();
 };
 
 class Variable : public LogicStatement {
-	QString *name;
+	QString name;
 	bool value;
 
 public:
@@ -101,8 +102,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
-    LogicStatement* replace(IDTable *table);
-    LogicStatement* clone();
+	LogicStatement* replace(IDTable *table);
+	LogicStatement* clone();
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -118,8 +119,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
-    LogicStatement* replace(IDTable *table);
-    virtual LogicStatement* clone() = 0;
+	LogicStatement* replace(IDTable *table);
+	virtual LogicStatement* clone() = 0;
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -128,8 +129,8 @@ public:
 	bool isFirstOrderLogic();
 	QString print();
 	Symbol getSymbol();
-    bool evaluate();
-    LogicStatement* clone();
+	bool evaluate();
+	LogicStatement* clone();
 };
 
 class BinaryOpStatement : public LogicStatement {
@@ -149,8 +150,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
-    LogicStatement* replace(IDTable *table);
-    virtual LogicStatement* clone() = 0;
+	LogicStatement* replace(IDTable *table);
+	virtual LogicStatement* clone() = 0;
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -159,7 +160,7 @@ public:
 	QString symbol();
 	Symbol getSymbol();
 	bool evaluate();
-    LogicStatement* clone();
+	LogicStatement* clone();
 };
 
 class OrStatement : public BinaryOpStatement {
@@ -168,7 +169,7 @@ public:
 	QString symbol();
 	Symbol getSymbol();
 	bool evaluate();
-    LogicStatement* clone();
+	LogicStatement* clone();
 };
 
 class IffStatement : public BinaryOpStatement {
@@ -177,7 +178,7 @@ public:
 	QString symbol();
 	Symbol getSymbol();
 	bool evaluate();
-    LogicStatement* clone();
+	LogicStatement* clone();
 };
 
 class ImpliesStatement : public BinaryOpStatement {
@@ -186,7 +187,7 @@ public:
 	QString symbol();
 	Symbol getSymbol();
 	bool evaluate();
-    LogicStatement* clone();
+	LogicStatement* clone();
 };
 
 class FirstOrderStatement : public LogicStatement {
@@ -198,8 +199,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
-    LogicStatement* clone();
-    LogicStatement* replace(IDTable *table);
+	LogicStatement* clone();
+	LogicStatement* replace(IDTable *table);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -245,8 +246,8 @@ public:
 	void collectVariables(vector<vector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matching_statement, IDTable *table);
-    LogicStatement* clone();
-    LogicStatement* replace(IDTable *table);
+	LogicStatement* clone();
+	LogicStatement* replace(IDTable *table);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
