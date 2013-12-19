@@ -6,6 +6,7 @@
 using namespace AST;
 using namespace std;
 
+/* Alternative for C++ set */
 class LogicSet
 {
 private:
@@ -14,9 +15,20 @@ private:
 public:
 	LogicSet();
 	~LogicSet();
+
+    /* Set Implementation of add()
+     */
 	bool add(LogicStatement *);
+
+	/* Returns a vector representing
+	 * the set
+	 */
 	vector<LogicStatement *> *getSet();
-	LogicSet *diff(LogicStatement *item);
+
+    /* Same Operation for Set difference
+     * to delete certain element of the set
+     */
+    LogicSet *diff(LogicStatement *item);
 };
 
 #endif // LOGICSET_HPP

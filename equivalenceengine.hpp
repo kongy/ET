@@ -10,6 +10,10 @@ private:
 public:
 	EquivalenceEngine();
 	~EquivalenceEngine();
+
+    /* Returns a vector of matching rules under construction
+     * of EquivalenceStatement
+     */
 	vector<EquivalenceStatement *> *match(LogicStatement *);
 };
 
