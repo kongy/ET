@@ -56,6 +56,9 @@ public:
 
 	/* A function that deep clones a logicstatement */
 	virtual LogicStatement* clone() = 0;
+
+	/* Overriding == so that it can be used in standard container library */
+	virtual inline bool operator==(LogicStatement &other) = 0;
 };
 
 class Truth : public LogicStatement {
@@ -69,6 +72,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
+	inline bool operator==(LogicStatement &other);
 };
 
 class Falsity : public LogicStatement {
@@ -82,6 +86,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
+	inline bool operator==(LogicStatement &other);
 };
 
 class Variable : public LogicStatement {
@@ -104,6 +109,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
 	LogicStatement* clone();
+	inline bool operator==(LogicStatement &other);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -121,6 +127,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
 	virtual LogicStatement* clone() = 0;
+	inline bool operator==(LogicStatement &other);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -152,6 +159,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* replace(IDTable *table);
 	virtual LogicStatement* clone() = 0;
+	inline bool operator==(LogicStatement &other);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -201,6 +209,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *table);
+	inline bool operator==(LogicStatement &other);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -248,6 +257,7 @@ public:
 	bool match(LogicStatement *matching_statement, IDTable *table);
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *table);
+	inline bool operator==(LogicStatement &other);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {

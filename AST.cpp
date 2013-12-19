@@ -95,6 +95,10 @@ LogicStatement* Truth::clone() {
 	return new Truth();
 }
 
+inline bool Truth::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol();
+}
+
 /* Falsity Class */
 QString Falsity::print() {
 	return SYMBOL_FALSITY;
@@ -130,6 +134,10 @@ LogicStatement* Falsity::replace(IDTable *) {
 
 LogicStatement* Falsity::clone() {
 	return new Falsity();
+}
+
+inline bool Falsity::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol();
 }
 
 /* Variable Class */
@@ -196,6 +204,11 @@ LogicStatement* Variable::clone() {
 	return new Variable(new QString(getName()));
 }
 
+inline bool Variable::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol() &&
+			getName() == dynamic_cast<Variable&>(other).getName();
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -222,6 +235,11 @@ bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table)
 LogicStatement* UnaryOpStatement::replace(IDTable *table) {
     setStatement(getStatement()->replace(table));
     return this;
+}
+
+inline bool UnaryOpStatement::operator==(LogicStatement &other) {
+    return getSymbol() == other.getSymbol() &&
+            *getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
 }
 
 /* NotStatement Class */
@@ -299,6 +317,12 @@ LogicStatement* BinaryOpStatement::replace(IDTable *table) {
     setLeftStatement(getLeftStatement()->replace(table));
     setRightStatement(getRightStatement()->replace(table));
     return this;
+}
+
+inline bool BinaryOpStatement::operator==(LogicStatement &other) {
+    return getSymbol() == other.getSymbol() &&
+            *getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
+            *getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
 }
 
 /* AndStatement Class */
@@ -416,6 +440,10 @@ LogicStatement* FirstOrderStatement::clone() {
 
 LogicStatement* FirstOrderStatement::replace(IDTable *) {
 	return this;
+}
+
+inline bool FirstOrderStatement::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol();
 }
 
 /* ForAllStatement Class */
@@ -563,6 +591,30 @@ LogicStatement* Parameters::replace(IDTable *table) {
         setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
 
     return this;
+}
+
+inline bool Parameters::operator==(LogicStatement &other) {
+    /* Must have same symbol and parameter match to proceed */
+    if (!(getSymbol() == other.getSymbol() &&
+            *getParameter() == *dynamic_cast<Parameters&>(other).getParameter()))
+        return false;
+
+    /* Symbol and type matched */
+    Parameters *otherCasted = &dynamic_cast<Parameters&>(other);
+    Parameters *currentRemainingParams = getRemainingParameters();
+    Parameters *otherRemainingParams = otherCasted->getRemainingParameters();
+
+    /* No more parameters */
+    if (currentRemainingParams == nullptr &&
+            otherRemainingParams == nullptr)
+        return true;
+
+    /* One has more parameter whilst other one doesn't */
+    if (currentRemainingParams == nullptr || otherRemainingParams == nullptr)
+        return false;
+
+    /* Both has more parameters needs to be matched */
+    return *currentRemainingParams == *otherRemainingParams;
 }
 
 /* PredicateSymbolStatement Class */
