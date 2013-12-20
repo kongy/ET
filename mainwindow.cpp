@@ -38,7 +38,7 @@ MainWindow::~MainWindow() {
 
 /** Start the new solution dialog */
 void MainWindow::startNewSolutionDialog() {
-	NewSolutionDialog *dialog = new NewSolutionDialog();
+	NewSolutionDialog *dialog = new NewSolutionDialog(this);
 	connect(dialog, SIGNAL(accepted(AST::LogicStatement*,AST::LogicStatement*, QString)), this,
 			SLOT(createSolutionTab(AST::LogicStatement*,AST::LogicStatement*, QString)));
 	dialog->show();
