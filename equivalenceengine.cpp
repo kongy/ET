@@ -30,7 +30,7 @@ QString normalise(QString str) {
 	return buffer;
 }
 
-EquivalenceEngine::EquivalenceEngine() {
+void EquivalenceEngine::parseRulesTxt() {
 
 	QFile file("equivalences.txt");
 
@@ -58,6 +58,10 @@ EquivalenceEngine::EquivalenceEngine() {
 	}
 
 	file.close();
+}
+
+EquivalenceEngine::EquivalenceEngine() {
+	parseRulesTxt();
 }
 
 EquivalenceEngine::~EquivalenceEngine() {

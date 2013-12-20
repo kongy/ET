@@ -7,6 +7,7 @@
 class EquivalenceEngine {
 private:
 	QVector<LogicSet *> *rules;
+	void parseRulesTxt();
 public:
 	EquivalenceEngine();
 	~EquivalenceEngine();
