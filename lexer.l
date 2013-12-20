@@ -15,6 +15,7 @@
 %option nounput
 
 %%
+[ \t]+ /* Ignore whitespaces */;
 "∧" return TOKEN(AND);
 "↔" return TOKEN(IFF);
 "∨" return TOKEN(OR);
