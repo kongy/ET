@@ -15,6 +15,7 @@
             <And>
                 <ID>B</ID>
                 <ID>A</ID>
+            </And>
         </LogicStatement>
     </EquivalentStatements>
     
