@@ -1,5 +1,8 @@
 #include "solutiontabwidget.hpp"
+#include "subformulaselectiondialog.hpp"
 #include "ui_solutiontabwidget.h"
+
+#include <QDebug>
 
 SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicStatement *end,
 									 QWidget *parent) :
@@ -17,6 +20,8 @@ SolutionTabWidget::~SolutionTabWidget() {
 
 void SolutionTabWidget::redraw() const {
 	ui->textEdit->clear();
+	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+
 	QVectorIterator<AST::LogicStatement*> forwardStackIt(model->forwardStack);
 	while(forwardStackIt.hasNext()) {
 		ui->textEdit->insertPlainText(forwardStackIt.next()->print().append("\n"));
@@ -29,6 +34,34 @@ void SolutionTabWidget::redraw() const {
 	while(backwardStackIt.hasPrevious()) {
 		ui->textEdit->insertPlainText(backwardStackIt.previous()->print().append("\n"));
 	}
+
+	connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+}
+
+void SolutionTabWidget::lineSelected() {
+	QTextCursor c = ui->textEdit->textCursor();
+
+	int lineno = c.blockNumber();
+	AST::LogicStatement* selectedStatement = nullptr;
+	if(lineno < model->forwardStack.size()) {
+		selectedStatement = model->forwardStack.at(lineno);
+	}
+	else if (lineno > model->forwardStack.size() && lineno < model->forwardStack.size() + model->forwardStack.size() + 1 ) {
+		lineno -= model->forwardStack.size();
+		selectedStatement = model->backwardStack.at(lineno - 1);
+	}
+	else {
+		// Blank line, do nothing and return
+		return;
+	}
+	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, this);
+	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
+	dialog->show();
+}
+
+void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula) {
+	// TODO
+	qDebug() << "Subformula" << formula->print() << "Selected";
 }
 
 void SolutionTabWidget::undo() {

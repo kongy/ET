@@ -27,10 +27,14 @@ public:
 	void redo();
 
 signals:
-	void expressionSelected(AST::LogicStatement* expr);
+	void lineSelected(AST::LogicStatement* expr);
 
 private:
 	void redraw() const;
+
+private slots:
+	void lineSelected();
+	void subformulaSelected(AST::LogicStatement* formula);
 };
 
 #endif // SOLUTIONTABWIDGET_HPP

@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     equivalencestatement.cpp \
     equivalenceengine.cpp \
     logicset.cpp \
-    solutionmodel.cpp
+    solutionmodel.cpp \
+    subformulaselectiondialog.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
@@ -42,13 +43,15 @@ HEADERS  += mainwindow.hpp \
     equivalencestatement.hpp \
     equivalenceengine.hpp \
     logicset.hpp \
-    solutionmodel.hpp
+    solutionmodel.hpp \
+    subformulaselectiondialog.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
     welcomepagewidget.ui \
     solutiontabwidget.ui \
-    inputpanel.ui
+    inputpanel.ui \
+    subformulaselectiondialog.ui
 
 LIBS += -ll -ly
 
