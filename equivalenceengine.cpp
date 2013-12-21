@@ -32,7 +32,7 @@ QString normalise(QString str) {
 
 void EquivalenceEngine::parseRulesTxt() {
 
-	QFile file("equivalences.txt");
+	QFile file(":/equivalences.txt");
 
 	if(!file.open(QIODevice::ReadOnly)) {
 		QMessageBox::information(0, "error", file.errorString());
