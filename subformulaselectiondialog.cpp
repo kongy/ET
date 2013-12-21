@@ -11,7 +11,7 @@ SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formul
 	isForward(isForward)
 {
 	ui->setupUi(this);
-	ui->lineEdit->setText(fullFormula->print());
+	ui->lineEdit->setText(fullFormula->print(false));
 
 	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onClick(QAbstractButton*)));
 }

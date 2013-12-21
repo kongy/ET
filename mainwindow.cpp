@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	// Edit menu items
 	connect(ui->actionUndo, SIGNAL(triggered()), this, SLOT(undo()));
 	connect(ui->actionRedo, SIGNAL(triggered()), this, SLOT(redo()));
+	connect(ui->actionFull_Brackets, SIGNAL(changed()), this, SLOT(bracketStatusChanged()));
 
 	// Help menu items
 	connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(startHelpDialog()));
@@ -67,7 +68,8 @@ void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStateme
 	// TODO: Check AST equivalence
 	if(start == nullptr) qWarning()<<"Begin is NULL";
 	if(end == nullptr) qWarning()<<"End is NULL";
-	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
+	bool fullBracket = ui->actionFull_Brackets->isChecked();
+	QWidget *tab = new SolutionTabWidget(start, end, fullBracket, ui->tabWidget);
 	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);
 }
@@ -86,6 +88,19 @@ void MainWindow::redo() {
 	if(typeid(*curWidget) == typeid(SolutionTabWidget)) {
 		static_cast<SolutionTabWidget*> (curWidget)->redo();
 	}
+}
+
+/** Change bracket status of all tabs */
+void MainWindow::bracketStatusChanged() {
+	bool fullBracket = ui->actionFull_Brackets->isChecked();
+	qDebug() << fullBracket;
+	for(int i = 0; i < ui->tabWidget->count(); i++) {
+		QWidget* widget = ui->tabWidget->widget(i);
+		if(typeid(*widget) == typeid(SolutionTabWidget)) {
+			static_cast<SolutionTabWidget*> (widget)->changeBracketStatus(fullBracket);
+		}
+	}
+	return;
 }
 
 /** Close the requested tab

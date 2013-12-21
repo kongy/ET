@@ -17,17 +17,20 @@ class SolutionTabWidget : public QWidget
 
 	Ui::SolutionTabWidget *ui;
 	solutionModel* model;
+	bool fullBracket;
 
 public:
 	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end,
-							   QWidget *parent = 0);
+							   bool fullBracket = false, QWidget *parent = 0);
 	~SolutionTabWidget();
 
+	void changeBracketStatus(bool fullBracket);
 	void undo();
 	void redo();
 
 signals:
 	void lineSelected(AST::LogicStatement* expr);
+
 
 private:
 	void redraw() const;

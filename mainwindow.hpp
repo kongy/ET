@@ -18,6 +18,7 @@ public:
 
 private:
 	Ui::MainWindow *ui;
+
 private slots:
 	void startNewSolutionDialog();
 	void startHelpDialog();
@@ -25,6 +26,7 @@ private slots:
 	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end, QString name);
 	void undo();
 	void redo();
+	void bracketStatusChanged();
 	void closeTab(int index);
 	void closeTab();
 };

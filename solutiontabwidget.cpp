@@ -5,10 +5,11 @@
 #include <QDebug>
 
 SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicStatement *end,
-									 QWidget *parent) :
+									 bool fullBracket, QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::SolutionTabWidget),
-	model(new solutionModel(begin, end)){
+	model(new solutionModel(begin, end)),
+	fullBracket(fullBracket) {
 	ui->setupUi(this);
 
 	redraw();
@@ -24,7 +25,7 @@ void SolutionTabWidget::redraw() const {
 
 	QVectorIterator<AST::LogicStatement*> forwardStackIt(model->forwardStack);
 	while(forwardStackIt.hasNext()) {
-		ui->textEdit->insertPlainText(forwardStackIt.next()->print().append("\n"));
+		ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
 	}
 
 	ui->textEdit->insertPlainText("\n");
@@ -32,7 +33,7 @@ void SolutionTabWidget::redraw() const {
 	QVectorIterator<AST::LogicStatement*> backwardStackIt(model->backwardStack);
 	backwardStackIt.toBack();
 	while(backwardStackIt.hasPrevious()) {
-		ui->textEdit->insertPlainText(backwardStackIt.previous()->print().append("\n"));
+		ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
 	}
 
 	connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
@@ -63,13 +64,18 @@ void SolutionTabWidget::lineSelected() {
 
 void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula, bool isForward) {
 	// TODO
-	qDebug() << "Subformula" << formula->print() << "Selected";
+	qDebug() << "Subformula" << formula->print(fullBracket) << "Selected";
 	if(isForward) {
 		model->forwardStack.append(formula);
 	}
 	else {
 		model->backwardStack.append(formula);
 	}
+	redraw();
+}
+
+void SolutionTabWidget::changeBracketStatus(bool fullBracket) {
+	this->fullBracket = fullBracket;
 	redraw();
 }
 
