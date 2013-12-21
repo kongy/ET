@@ -75,16 +75,16 @@ void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStateme
 /** Undo the last operation */
 void MainWindow::undo() {
 	QWidget* curWidget = ui->tabWidget->currentWidget();
-	if(typeid(curWidget) == typeid(SolutionTabWidget)) {
-		dynamic_cast<SolutionTabWidget*> (curWidget)->undo();
+	if(typeid(*curWidget) == typeid(SolutionTabWidget)) {
+		static_cast<SolutionTabWidget*> (curWidget)->undo();
 	}
 }
 
 /** Redo the last operation */
 void MainWindow::redo() {
 	QWidget* curWidget = ui->tabWidget->currentWidget();
-	if(typeid(curWidget) == typeid(SolutionTabWidget)) {
-		dynamic_cast<SolutionTabWidget*> (curWidget)->redo();
+	if(typeid(*curWidget) == typeid(SolutionTabWidget)) {
+		static_cast<SolutionTabWidget*> (curWidget)->redo();
 	}
 }
 

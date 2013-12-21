@@ -66,8 +66,10 @@ void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula) {
 
 void SolutionTabWidget::undo() {
 	// TODO
+	qDebug() << "Undo requested";
 }
 
 void SolutionTabWidget::redo() {
 	// TODO
+	qDebug() << "Redo requested";
 }
