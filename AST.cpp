@@ -233,13 +233,13 @@ bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table)
 }
 
 LogicStatement* UnaryOpStatement::replace(IDTable *table) {
-    setStatement(getStatement()->replace(table));
-    return this;
+	setStatement(getStatement()->replace(table));
+	return this;
 }
 
 inline bool UnaryOpStatement::operator==(LogicStatement &other) {
-    return getSymbol() == other.getSymbol() &&
-            *getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
+	return getSymbol() == other.getSymbol() &&
+			*getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
 }
 
 /* NotStatement Class */
@@ -258,11 +258,11 @@ QString NotStatement::print(bool fullBracket) {
 			return QString(SYMBOL_NOT) + getStatement()->print(fullBracket);
 		} else {
 			return QString(SYMBOL_NOT) + QString("(") +
-				getStatement()->print(fullBracket) + QString(")");
+					getStatement()->print(fullBracket) + QString(")");
 		}
 	} else {
 		return QString(SYMBOL_NOT) + QString("(") +
-			getStatement()->print(fullBracket) + QString(")");
+				getStatement()->print(fullBracket) + QString(")");
 	}
 
 }
@@ -321,7 +321,8 @@ QString BinaryOpStatement::print(bool fullBracket) {
 					QString("(") + getRightStatement()->print(fullBracket) + QString(")");
 		}
 	} else {
-
+		left = QString("(") + getLeftStatement()->print(fullBracket) + QString(")") + QString(" ");
+		right = QString(" ") + QString("(") + getRightStatement()->print(fullBracket) + QString(")");
 	}
 
 	return left + symbol() + right;
@@ -346,15 +347,15 @@ bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table
 }
 
 LogicStatement* BinaryOpStatement::replace(IDTable *table) {
-    setLeftStatement(getLeftStatement()->replace(table));
-    setRightStatement(getRightStatement()->replace(table));
-    return this;
+	setLeftStatement(getLeftStatement()->replace(table));
+	setRightStatement(getRightStatement()->replace(table));
+	return this;
 }
 
 inline bool BinaryOpStatement::operator==(LogicStatement &other) {
-    return getSymbol() == other.getSymbol() &&
-            *getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
-            *getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
+	return getSymbol() == other.getSymbol() &&
+			*getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
+			*getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
 }
 
 /* AndStatement Class */
@@ -495,11 +496,11 @@ QString ForAllStatement::print(bool fullBracket) {
 			return QString(SYMBOL_FORALL) + getStatement()->print(fullBracket);
 		} else {
 			return QString(SYMBOL_FORALL) + QString("(") +
-				getStatement()->print(fullBracket) + QString(")");
+					getStatement()->print(fullBracket) + QString(")");
 		}
 	} else {
 		return QString(SYMBOL_FORALL) + QString("(") +
-			getStatement()->print(fullBracket) + QString(")");
+				getStatement()->print(fullBracket) + QString(")");
 	}
 
 }
@@ -533,11 +534,11 @@ QString ThereExistsStatement::print(bool fullBracket) {
 			return QString(SYMBOL_THEREEXISTS) + getStatement()->print(fullBracket);
 		} else {
 			return QString(SYMBOL_THEREEXISTS) + QString("(") +
-				getStatement()->print(fullBracket) + QString(")");
+					getStatement()->print(fullBracket) + QString(")");
 		}
 	} else {
 		return QString(SYMBOL_THEREEXISTS) + QString("(") +
-			getStatement()->print(fullBracket) + QString(")");
+				getStatement()->print(fullBracket) + QString(")");
 	}
 }
 
@@ -627,47 +628,47 @@ bool Parameters::match(LogicStatement *, IDTable *) {
 }
 
 LogicStatement* Parameters::clone() {
-    Parameters *newRemainingParameters = nullptr;
-    Parameters *remainingParameters = getRemainingParameters();
+	Parameters *newRemainingParameters = nullptr;
+	Parameters *remainingParameters = getRemainingParameters();
 
-    if (remainingParameters != nullptr)
-        newRemainingParameters = dynamic_cast<Parameters *>(remainingParameters->clone());
+	if (remainingParameters != nullptr)
+		newRemainingParameters = dynamic_cast<Parameters *>(remainingParameters->clone());
 
-    return new Parameters(dynamic_cast<Variable *>(getParameter()->clone()), newRemainingParameters);
+	return new Parameters(dynamic_cast<Variable *>(getParameter()->clone()), newRemainingParameters);
 }
 
 LogicStatement* Parameters::replace(IDTable *table) {
-    setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
+	setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
 
-    Parameters *remainingParameter = getRemainingParameters();
-    if (remainingParameter != nullptr)
-        setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
+	Parameters *remainingParameter = getRemainingParameters();
+	if (remainingParameter != nullptr)
+		setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
 
-    return this;
+	return this;
 }
 
 inline bool Parameters::operator==(LogicStatement &other) {
-    /* Must have same symbol and parameter match to proceed */
-    if (!(getSymbol() == other.getSymbol() &&
-            *getParameter() == *dynamic_cast<Parameters&>(other).getParameter()))
-        return false;
+	/* Must have same symbol and parameter match to proceed */
+	if (!(getSymbol() == other.getSymbol() &&
+		  *getParameter() == *dynamic_cast<Parameters&>(other).getParameter()))
+		return false;
 
-    /* Symbol and type matched */
-    Parameters *otherCasted = &dynamic_cast<Parameters&>(other);
-    Parameters *currentRemainingParams = getRemainingParameters();
-    Parameters *otherRemainingParams = otherCasted->getRemainingParameters();
+	/* Symbol and type matched */
+	Parameters *otherCasted = &dynamic_cast<Parameters&>(other);
+	Parameters *currentRemainingParams = getRemainingParameters();
+	Parameters *otherRemainingParams = otherCasted->getRemainingParameters();
 
-    /* No more parameters */
-    if (currentRemainingParams == nullptr &&
-            otherRemainingParams == nullptr)
-        return true;
+	/* No more parameters */
+	if (currentRemainingParams == nullptr &&
+			otherRemainingParams == nullptr)
+		return true;
 
-    /* One has more parameter whilst other one doesn't */
-    if (currentRemainingParams == nullptr || otherRemainingParams == nullptr)
-        return false;
+	/* One has more parameter whilst other one doesn't */
+	if (currentRemainingParams == nullptr || otherRemainingParams == nullptr)
+		return false;
 
-    /* Both has more parameters needs to be matched */
-    return *currentRemainingParams == *otherRemainingParams;
+	/* Both has more parameters needs to be matched */
+	return *currentRemainingParams == *otherRemainingParams;
 }
 
 /* PredicateSymbolStatement Class */
