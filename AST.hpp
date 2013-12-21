@@ -17,7 +17,7 @@ namespace AST {
 class LogicStatement {
 public:
 	/* Returns a QString representation of AST */
-	virtual QString print() = 0;
+	virtual QString print(bool fullBracket) = 0;
 
 	/* Checks whether an AST contains first order logic */
 	virtual bool isFirstOrderLogic() = 0;
@@ -59,11 +59,13 @@ public:
 
 	/* Overriding == so that it can be used in standard container library */
 	virtual inline bool operator==(LogicStatement &other) = 0;
+
+	//extern bool removeBrackets;
 };
 
 class Truth : public LogicStatement {
 public:
-	QString print();
+	QString print(bool fullBracket);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
@@ -77,7 +79,7 @@ public:
 
 class Falsity : public LogicStatement {
 public:
-	QString print();
+	QString print(bool fullBracket);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
@@ -95,7 +97,7 @@ class Variable : public LogicStatement {
 
 public:
 	Variable(QString *name);
-	QString print();
+	QString print(bool fullBracket);
 	QString getName();
 	void setName(QString *name);
 	bool isFirstOrderLogic();
@@ -116,7 +118,7 @@ class UnaryOpStatement : public LogicStatement {
 	LogicStatement *nestedStatement;
 
 public:
-	virtual QString print() = 0;
+	virtual QString print(bool fullBracket) = 0;
 	virtual bool isFirstOrderLogic() = 0;
 	void setStatement(LogicStatement *);
 	LogicStatement *getStatement();
@@ -134,7 +136,7 @@ class NotStatement : public UnaryOpStatement {
 public:
 	NotStatement(LogicStatement *);
 	bool isFirstOrderLogic();
-	QString print();
+	QString print(bool fullBracket);
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
@@ -147,7 +149,7 @@ class BinaryOpStatement : public LogicStatement {
 public:
 	virtual QString symbol() = 0;
 	bool isFirstOrderLogic();
-	QString print();
+	QString print(bool fullBracket);
 	void setLeftStatement(LogicStatement *);
 	void setRightStatement(LogicStatement *);
 	LogicStatement * getLeftStatement();
@@ -200,7 +202,7 @@ public:
 
 class FirstOrderStatement : public LogicStatement {
 public:
-	virtual QString print() = 0;
+	virtual QString print(bool fullBrackets) = 0;
 	bool isFirstOrderLogic();
 	Symbol getSymbol() = 0;
 	bool evaluate();
@@ -219,7 +221,7 @@ class ForAllStatement : public FirstOrderStatement {
 public:
 	ForAllStatement(Variable *,LogicStatement *);
 	void setIdentifier(Variable *);
-	QString print();
+	QString print(bool fullBracket);
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
 	Symbol getSymbol();
@@ -231,7 +233,7 @@ class ThereExistsStatement : public FirstOrderStatement {
 
 public:
 	ThereExistsStatement(Variable *,LogicStatement *);
-	QString print();
+	QString print(bool fullBracket);
 	LogicStatement * getStatement();
 	void setStatement(LogicStatement *);
 	void setIdentifier(Variable *);
@@ -249,7 +251,7 @@ public:
 	Parameters * getRemainingParameters();
 	void setRemainingParameters(Parameters *);
 	bool isFirstOrderLogic();
-	QString print();
+	QString print(bool fullBracket);
 	Symbol getSymbol();
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
@@ -271,7 +273,7 @@ public:
 	void setPredicateSymbol(Variable *);
 	Parameters * getParameters();
 	void setParameters(Parameters *);
-	QString print();
+	QString print(bool fullBracket);
 	Symbol getSymbol();
 };
 
@@ -285,7 +287,7 @@ public:
 	Variable * getRightVariable();
 	void setLeftVariable(Variable *);
 	void setRightVariable(Variable *);
-	QString print();
+	QString print(bool fullBracket);
 	Symbol getSymbol();
 };
 

@@ -59,7 +59,7 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 }
 
 /* Truth Class */
-QString Truth::print() {
+QString Truth::print(bool fullBracket) {
 	return SYMBOL_TRUTH;
 }
 
@@ -100,7 +100,7 @@ inline bool Truth::operator==(LogicStatement &other) {
 }
 
 /* Falsity Class */
-QString Falsity::print() {
+QString Falsity::print(bool fullBracket) {
 	return SYMBOL_FALSITY;
 }
 
@@ -145,7 +145,7 @@ Variable::Variable(QString *name) {
 	setName(name);
 }
 
-QString Variable::print() {
+QString Variable::print(bool fullBracket) {
 	return getName();
 }
 
@@ -251,10 +251,22 @@ bool NotStatement::isFirstOrderLogic() {
 	return getStatement()->isFirstOrderLogic();
 }
 
-QString NotStatement::print() {
-	return QString(SYMBOL_NOT) + QString("(") +
-			getStatement()->print() + QString(")");
+QString NotStatement::print(bool fullBracket) {
+	//symbol of the nested statement
+	if (!fullBracket) {
+		if ( this->getSymbol() > getStatement()->getSymbol() ) {
+			return QString(SYMBOL_NOT) + getStatement()->print(fullBracket);
+		} else {
+			return QString(SYMBOL_NOT) + QString("(") +
+				getStatement()->print(fullBracket) + QString(")");
+		}
+	} else {
+		return QString(SYMBOL_NOT) + QString("(") +
+			getStatement()->print(fullBracket) + QString(")");
+	}
+
 }
+
 
 Symbol NotStatement::getSymbol() {
 	return Symbol::NOT_SYMBOL;
@@ -290,10 +302,30 @@ bool BinaryOpStatement::isFirstOrderLogic() {
 			|| getRightStatement()->isFirstOrderLogic();
 }
 
-QString BinaryOpStatement::print() {
-	return QString("(") + getLeftStatement()->print() + QString(")") +
-			QString(" ") + symbol() + QString(" ") +
-			QString("(") + getRightStatement()->print() + QString(")");
+QString BinaryOpStatement::print(bool fullBracket) {
+	QString left;
+	QString right;
+
+	if (!fullBracket) {
+		if ( this->getSymbol() > getLeftStatement()->getSymbol() ) {
+			left = getLeftStatement()->print(fullBracket) + QString(" ");
+		} else {
+			left = QString("(") + getLeftStatement()->print(fullBracket) + QString(")") +
+					QString(" ");
+		}
+
+		if ( this->getSymbol() > getRightStatement()->getSymbol() ) {
+			right = QString(" ") + getRightStatement()->print(fullBracket);
+		} else {
+			right = QString(" ") +
+					QString("(") + getRightStatement()->print(fullBracket) + QString(")");
+		}
+	} else {
+
+	}
+
+	return left + symbol() + right;
+
 }
 
 void BinaryOpStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
@@ -456,9 +488,20 @@ void ForAllStatement::setIdentifier(Variable *identifier) {
 	this->identifier = identifier;
 }
 
-QString ForAllStatement::print() {
-	return QString(SYMBOL_FORALL) + QString("(")
-			+ getStatement()->print() + QString(")");
+QString ForAllStatement::print(bool fullBracket) {
+
+	if (!fullBracket) {
+		if ( this->getSymbol() >= getStatement()->getSymbol() ) {
+			return QString(SYMBOL_FORALL) + getStatement()->print(fullBracket);
+		} else {
+			return QString(SYMBOL_FORALL) + QString("(") +
+				getStatement()->print(fullBracket) + QString(")");
+		}
+	} else {
+		return QString(SYMBOL_FORALL) + QString("(") +
+			getStatement()->print(fullBracket) + QString(")");
+	}
+
 }
 
 LogicStatement * ForAllStatement::getStatement() {
@@ -483,9 +526,19 @@ void ThereExistsStatement::setIdentifier(Variable *identifier) {
 	this->identifier = identifier;
 }
 
-QString ThereExistsStatement::print() {
-	return QString(SYMBOL_THEREEXISTS) + QString("(")
-			+ getStatement()->print() + QString(")");
+QString ThereExistsStatement::print(bool fullBracket) {
+
+	if (!fullBracket) {
+		if ( this->getSymbol() >= getStatement()->getSymbol() ) {
+			return QString(SYMBOL_THEREEXISTS) + getStatement()->print(fullBracket);
+		} else {
+			return QString(SYMBOL_THEREEXISTS) + QString("(") +
+				getStatement()->print(fullBracket) + QString(")");
+		}
+	} else {
+		return QString(SYMBOL_THEREEXISTS) + QString("(") +
+			getStatement()->print(fullBracket) + QString(")");
+	}
 }
 
 LogicStatement * ThereExistsStatement::getStatement() {
@@ -530,11 +583,11 @@ bool Parameters::isFirstOrderLogic() {
 	return true;
 }
 
-QString Parameters::print() {
-	QString param = getParameter()->print();
+QString Parameters::print(bool fullBracket) {
+	QString param = getParameter()->print(fullBracket);
 
 	if (rest != NULL)
-		return param + QString(", ") + getRemainingParameters()->print();
+		return param + QString(", ") + getRemainingParameters()->print(fullBracket);
 	else
 		return param;
 }
@@ -643,8 +696,9 @@ void PredicateSymbolStatement::setParameters(Parameters *params) {
 	parameters = params;
 }
 
-QString PredicateSymbolStatement::print() {
-	return getPredicateSymbolName() + QString("(") + getParameters()->print() + QString(")");
+QString PredicateSymbolStatement::print(bool fullBracket) {
+	return getPredicateSymbolName() + QString("(") +
+			getParameters()->print(fullBracket) + QString(")");
 }
 
 Symbol PredicateSymbolStatement::getSymbol() {
@@ -673,8 +727,8 @@ void EqualityStatement::setRightVariable(Variable *newRight) {
 	rightVariable = newRight;
 }
 
-QString EqualityStatement::print() {
-	return getLeftVariable()->print() + QString(" ") + QString(SYMBOL_EQUALS) + QString(" ") + getRightVariable()->print();
+QString EqualityStatement::print(bool fullBracket) {
+	return getLeftVariable()->print(fullBracket) + QString(" ") + QString(SYMBOL_EQUALS) + QString(" ") + getRightVariable()->print(fullBracket);
 }
 
 Symbol EqualityStatement::getSymbol() {
