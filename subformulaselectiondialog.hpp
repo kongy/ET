@@ -16,13 +16,14 @@ class SubformulaSelectionDialog : public QDialog
 
 	Ui::SubformulaSelectionDialog *ui;
 	AST::LogicStatement* fullFormula;
+	bool isForward;
 
 public:
-	explicit SubformulaSelectionDialog(AST::LogicStatement* formula, QWidget *parent = 0);
+	explicit SubformulaSelectionDialog(AST::LogicStatement* formula, bool isForward, QWidget *parent = 0);
 	~SubformulaSelectionDialog();
 
 signals:
-	void subformulaSelected(AST::LogicStatement*);
+	void subformulaSelected(AST::LogicStatement*, bool isForward);
 
 private slots:
 	void onClick(QAbstractButton* btn);

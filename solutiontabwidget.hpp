@@ -34,7 +34,7 @@ private:
 
 private slots:
 	void lineSelected();
-	void subformulaSelected(AST::LogicStatement* formula);
+	void subformulaSelected(AST::LogicStatement* formula, bool isForward);
 };
 
 #endif // SOLUTIONTABWIDGET_HPP

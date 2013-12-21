@@ -43,10 +43,12 @@ void SolutionTabWidget::lineSelected() {
 
 	int lineno = c.blockNumber();
 	AST::LogicStatement* selectedStatement = nullptr;
-	if(lineno < model->forwardStack.size()) {
+	bool isForward = lineno < model->forwardStack.size();
+	bool isBackward = lineno > model->forwardStack.size() && lineno < model->forwardStack.size() + model->forwardStack.size() + 1;
+	if(isForward) {
 		selectedStatement = model->forwardStack.at(lineno);
 	}
-	else if (lineno > model->forwardStack.size() && lineno < model->forwardStack.size() + model->forwardStack.size() + 1 ) {
+	else if (isBackward) {
 		lineno -= model->forwardStack.size();
 		selectedStatement = model->backwardStack.at(lineno - 1);
 	}
@@ -54,14 +56,21 @@ void SolutionTabWidget::lineSelected() {
 		// Blank line, do nothing and return
 		return;
 	}
-	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, this);
-	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
+	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, isForward, this);
+	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*,bool)), this, SLOT(subformulaSelected(AST::LogicStatement*,bool)));
 	dialog->show();
 }
 
-void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula) {
+void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula, bool isForward) {
 	// TODO
 	qDebug() << "Subformula" << formula->print() << "Selected";
+	if(isForward) {
+		model->forwardStack.append(formula);
+	}
+	else {
+		model->backwardStack.append(formula);
+	}
+	redraw();
 }
 
 void SolutionTabWidget::undo() {
