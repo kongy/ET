@@ -730,7 +730,7 @@ extern int yyparse();
  *         otherwise return NULL
  */
 LogicStatement *AST::parse(QString expression) {
-	yy_scan_string(expression.toLocal8Bit().data());
+	yy_scan_string(expression.toUtf8().data());
 	int result = yyparse();
 	return result == 0 ? entireStatement : nullptr;
 }
