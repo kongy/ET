@@ -65,7 +65,7 @@ public:
 
 class Truth : public LogicStatement {
 public:
-	QString print(bool fullBracket);
+	QString print(bool);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
@@ -79,7 +79,7 @@ public:
 
 class Falsity : public LogicStatement {
 public:
-	QString print(bool fullBracket);
+	QString print(bool);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 	bool evaluate();
@@ -97,7 +97,7 @@ class Variable : public LogicStatement {
 
 public:
 	Variable(QString *name);
-	QString print(bool fullBracket);
+	QString print(bool);
 	QString getName();
 	void setName(QString *name);
 	bool isFirstOrderLogic();

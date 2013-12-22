@@ -59,7 +59,7 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 }
 
 /* Truth Class */
-QString Truth::print(bool fullBracket) {
+QString Truth::print(bool) {
 	return SYMBOL_TRUTH;
 }
 
@@ -100,7 +100,7 @@ inline bool Truth::operator==(LogicStatement &other) {
 }
 
 /* Falsity Class */
-QString Falsity::print(bool fullBracket) {
+QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
 }
 
@@ -145,7 +145,7 @@ Variable::Variable(QString *name) {
 	setName(name);
 }
 
-QString Variable::print(bool fullBracket) {
+QString Variable::print(bool) {
 	return getName();
 }
 
