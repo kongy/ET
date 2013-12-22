@@ -20,8 +20,8 @@ SolutionTabWidget::~SolutionTabWidget() {
 }
 
 void SolutionTabWidget::redraw() const {
-	ui->textEdit->clear();
 	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+	ui->textEdit->clear();
 
 	QVectorIterator<AST::LogicStatement*> forwardStackIt(model->forwardStack);
 	while(forwardStackIt.hasNext()) {
