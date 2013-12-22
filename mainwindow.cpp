@@ -93,7 +93,6 @@ void MainWindow::redo() {
 /** Change bracket status of all tabs */
 void MainWindow::bracketStatusChanged() {
 	bool fullBracket = ui->actionFull_Brackets->isChecked();
-	qDebug() << fullBracket;
 	for(int i = 0; i < ui->tabWidget->count(); i++) {
 		QWidget* widget = ui->tabWidget->widget(i);
 		if(typeid(*widget) == typeid(SolutionTabWidget)) {

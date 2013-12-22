@@ -64,7 +64,6 @@ void SolutionTabWidget::lineSelected() {
 
 void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula, bool isForward) {
 	// TODO
-	qDebug() << "Subformula" << formula->print(fullBracket) << "Selected";
 	if(isForward) {
 		model->forwardStack.append(formula);
 	}
