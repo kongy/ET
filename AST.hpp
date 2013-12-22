@@ -9,7 +9,6 @@ class LogicStatement;
 #include <QString>
 #include "symbol.hpp"
 #include <QVector>
-using namespace std;
 #include "idtable.hpp"
 
 namespace AST {

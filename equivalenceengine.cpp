@@ -2,7 +2,6 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
-using namespace std;
 
 QString normalise(QString str) {
 

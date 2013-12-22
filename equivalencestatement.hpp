@@ -5,7 +5,6 @@
 #include "AST.hpp"
 #include "logicset.hpp"
 #include "idtable.hpp"
-using namespace std;
 using namespace AST;
 
 class EquivalenceStatement

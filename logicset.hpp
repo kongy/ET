@@ -4,7 +4,6 @@
 #include <QVector>
 #include <AST.hpp>
 using namespace AST;
-using namespace std;
 
 /* Alternative for C++ set */
 class LogicSet

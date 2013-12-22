@@ -5,13 +5,13 @@ class IDTable;
 
 #include "AST.hpp"
 #include <utility>
+#include <QPair>
 using namespace AST;
-using namespace std;
 
 class IDTable
 {
 private:
-	QVector<pair<Variable *, LogicStatement *> *> *id_table;
+	QVector<QPair<Variable *, LogicStatement *> *> *id_table;
 public:
 	IDTable();
 
@@ -20,7 +20,7 @@ public:
 	bool add(Variable *key, LogicStatement *value);
 
 	/* Returns the vector of entire mapping from identifier to LogicStatement */
-	QVector<pair<Variable *, LogicStatement *> *> *getIdTable();
+	QVector<QPair<Variable *, LogicStatement *> *> *getIdTable();
 
 	/* Provided a key, returns the corresponding Logicstatement or null if
 	 * none found */
