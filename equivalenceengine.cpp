@@ -1,32 +1,150 @@
-#include <equivalenceengine.hpp>
+#include "equivalenceengine.hpp"
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
 
-QString normalise(QString str) {
+void EquivalenceEngine::parseRulesXml() {
+    QFile file(":/equivalences.xml");
 
-	QString buffer;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(0, "Error", file.errorString());
+        return;
+    }
 
-	for (QString part:str.split(" ")) {
-		if (part == "and")
-			buffer += SYMBOL_AND;
-		else if (part == "or")
-			buffer += SYMBOL_OR;
-		else if (part == "iff")
-			buffer += SYMBOL_IFF;
-		else if (part == "not")
-			buffer += SYMBOL_NOT;
-		else if (part == "imply")
-			buffer += SYMBOL_IMPLIES;
-		else if (part == "F")
-			buffer += SYMBOL_FALSITY;
-		else if (part == "T")
-			buffer += SYMBOL_TRUTH;
-		else
-			buffer += part;
-	}
+    QXmlStreamReader xml(&file);
 
-	return buffer;
+    /* Avoid checking start Document in while loop */
+    if (xml.readNext() != QXmlStreamReader::StartDocument) {
+        QMessageBox::critical(0, "Error", "Start Document not present at start");
+        return;
+    }
+
+    /* Initialise to get ready for parsing */
+    rules = new QVector<LogicSet *>();
+
+    do {
+        if (xml.readNext() == QXmlStreamReader::StartElement && xml.name() == "EquivalentStatements")
+            rules->append(processStatements(&xml));
+
+    } while(!xml.atEnd() && !xml.hasError());
+
+    xml.clear();
+    file.close();
+}
+
+LogicSet *EquivalenceEngine::processStatements(QXmlStreamReader *xml) {
+    LogicSet *ruleSet = new LogicSet();
+    while (xml->readNext() != QXmlStreamReader::EndElement && xml->name() != "EquivalentStatements") {
+        if (xml->name() == "LogicStatement")
+            ruleSet->add(processLogicStatement(xml));
+    }
+    return ruleSet;
+}
+
+LogicStatement *EquivalenceEngine::processLogicStatement(QXmlStreamReader *xml) {
+    /* Move the pointer to the start tag */
+    xml->readNext();
+
+    QString tagName = xml->name().toString();
+
+    if (tagName == "And")
+        return processAndStatement(xml);
+    else if (tagName == "Or")
+        return processOrStatement(xml);
+    else if (tagName == "Not")
+        return processNotStatement(xml);
+    else if (tagName == "IFF")
+        return processIFFStatement(xml);
+    else if (tagName == "Implies")
+        return processImpliesStatement(xml);
+    else if (tagName == "ID")
+        return processVariableStatement(xml);
+    else if (tagName == "Truth")
+        return processTruthStatement(xml);
+    else if (tagName == "Falsity")
+        return processFalsityStatement(xml);
+    else
+        return nullptr;
+}
+
+LogicStatement *EquivalenceEngine::processTruthStatement(QXmlStreamReader *xml) {
+    /* Move Pointer to </Truth> */
+    xml->readNext();
+    return new Truth();
+}
+
+LogicStatement *EquivalenceEngine::processFalsityStatement(QXmlStreamReader *xml) {
+    /* Move Pointer to </Falsity> */
+    xml->readNext();
+    return new Falsity();
+}
+
+LogicStatement *EquivalenceEngine::processVariableStatement(QXmlStreamReader *xml) {
+    /* Move Pointer to xxx in <ID>xxx</ID> */
+    xml->readNext();
+
+    QString *identifier = new QString(xml->text().toString());
+
+    /* Move Pointer to </ID> */
+    xml->readNext();
+
+    return new Variable(identifier);
+}
+
+LogicStatement *EquivalenceEngine::processNotStatement(QXmlStreamReader *xml) {
+    /* Evaluate the inner expression inside NOT */
+    LogicStatement *nestedStatement = processLogicStatement(xml);
+
+    /* The pointer should now point to just before </NOT>,
+     * we will therefore move it over to </NOT> */
+    xml->readNext();
+
+    return new NotStatement(nestedStatement);
+}
+
+LogicStatement *EquivalenceEngine::processOrStatement(QXmlStreamReader *xml) {
+
+    /* Process one tree at a time, stopping at delimiter */
+    LogicStatement *leftStatement = processLogicStatement(xml);
+    LogicStatement *rightStatement = processLogicStatement(xml);
+
+    /* Pointer moved to </Or> */
+    xml->readNext();
+
+    return new OrStatement(leftStatement, rightStatement);
+}
+
+LogicStatement *EquivalenceEngine::processAndStatement(QXmlStreamReader *xml) {
+    /* Process one tree at a time, stopping at delimiter */
+    LogicStatement *leftStatement = processLogicStatement(xml);
+    LogicStatement *rightStatement = processLogicStatement(xml);
+
+    /* Pointer moved to </And> */
+    xml->readNext();
+
+    return new AndStatement(leftStatement, rightStatement);
+}
+
+LogicStatement *EquivalenceEngine::processIFFStatement(QXmlStreamReader *xml) {
+    /* Process one tree at a time, stopping at delimiter */
+    LogicStatement *leftStatement = processLogicStatement(xml);
+    LogicStatement *rightStatement = processLogicStatement(xml);
+
+    /* Pointer moved to </IFF> */
+    xml->readNext();
+
+    return new IffStatement(leftStatement, rightStatement);
+}
+
+LogicStatement *EquivalenceEngine::processImpliesStatement(QXmlStreamReader *xml) {
+    /* Process one tree at a time, stopping at delimiter */
+    LogicStatement *leftStatement = processLogicStatement(xml);
+    LogicStatement *rightStatement = processLogicStatement(xml);
+
+    /* Pointer moved to </Implies> */
+    xml->readNext();
+
+    return new ImpliesStatement(leftStatement, rightStatement);
 }
 
 void EquivalenceEngine::parseRulesTxt() {
@@ -34,7 +152,9 @@ void EquivalenceEngine::parseRulesTxt() {
 	QFile file(":/equivalences.txt");
 
 	if(!file.open(QIODevice::ReadOnly)) {
-		QMessageBox::information(0, "error", file.errorString());
+		QMessageBox::critical(0, "Error", file.errorString());
+		//QMessageBox::information(0, "error", file.errorString());
+		return;
 	}
 
 	QTextStream in(&file);
