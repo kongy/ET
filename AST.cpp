@@ -197,7 +197,9 @@ bool Variable::match(LogicStatement *matching_statement, IDTable *table) {
 }
 
 LogicStatement* Variable::replace(IDTable *table) {
-	return table->valueOf(this);
+	LogicStatement *replacedStatement = table->valueOf(this);
+	delete this;
+	return replacedStatement;
 }
 
 LogicStatement* Variable::clone() {

@@ -24,7 +24,7 @@ LogicStatement* IDTable::valueOf(Variable *key) {
         if (key_value_pair->first->equals(key))
             return key_value_pair->second->clone();
 
-    return nullptr;
+    return key->clone();
 }
 
 void IDTable::clear() {
