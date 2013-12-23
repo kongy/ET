@@ -20,13 +20,18 @@ private:
 	LogicStatement *processAndStatement(QXmlStreamReader *);
 	LogicStatement *processIFFStatement(QXmlStreamReader *);
 	LogicStatement *processImpliesStatement(QXmlStreamReader *);
+	bool ruleApplicable(LogicStatement *, LogicSet *);
 public:
 	EquivalenceEngine();
 	~EquivalenceEngine();
 
-	/* Returns a vector of matching rules under construction of
-	 * EquivalenceStatement */
-	QVector<EquivalenceStatement *> *match(LogicStatement *);
+	/* Returns a vector of matching rule sets */
+	QVector<LogicSet *> *match(LogicStatement *);
+
+	LogicSet *diff(LogicStatement *, LogicSet *);
+	QVector<LogicStatement *> *getMatchedRules(LogicStatement *, LogicSet *);
+	EquivalenceStatement *match(LogicSet *);
+	LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule, LogicStatement *transformationRule);
 };
 
 #endif // EQUIVALENCEENGINE_H

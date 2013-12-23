@@ -189,21 +189,51 @@ EquivalenceEngine::~EquivalenceEngine() {
 	delete rules;
 }
 
-QVector<EquivalenceStatement *> *EquivalenceEngine::match(LogicStatement *input) {
+QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input) {
 
-	QVector<EquivalenceStatement *> *related_equivalence = new QVector<EquivalenceStatement *>();
-	IDTable *id_table = new IDTable();
+	QVector<LogicSet *> *relatedEquivalence = new QVector<LogicSet *>();
 
-	for (LogicSet *rule_set : *rules) {
-		for (LogicStatement *rule : *rule_set->getSet()) {
-			if (rule->match(input, id_table)) {
-				related_equivalence->push_back(new EquivalenceStatement(rule, id_table, rule_set->diff(rule)));
-				id_table = new IDTable();
-			}
-			else
-				id_table->clear();
+	for (LogicSet *ruleSet : *rules)
+		if (ruleApplicable(input, ruleSet))
+			relatedEquivalence->append(ruleSet);
+
+	return relatedEquivalence;
+}
+
+LogicSet *EquivalenceEngine::diff(LogicStatement *base, LogicSet *set) {
+	return set->diff(base);
+}
+
+QVector<LogicStatement *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, LogicSet *ruleSet) {
+	QVector<LogicStatement *> *matchedRules = new QVector<LogicStatement *>();
+
+	IDTable idtable;
+
+	for (LogicStatement *rule : *ruleSet->getSet())
+		if (rule->match(input, &idtable)) {
+			matchedRules->append(rule);
+			idtable.clear();
 		}
+
+	return matchedRules;
+}
+
+LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule, LogicStatement *transformationRule) {
+	IDTable idtable;
+
+	if (baseRule->match(input, &idtable))
+		return transformationRule->clone()->replace(&idtable);
+
+	return nullptr;
+}
+
+bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet) {
+	IDTable idtable;
+
+	for (LogicStatement *rule : *ruleSet->getSet()) {
+		if (rule->match(input, &idtable))
+			return true;
 	}
 
-	return related_equivalence;
+	return false;
 }
