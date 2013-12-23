@@ -52,8 +52,11 @@ void MainWindow::startHelpDialog() {
 
 /** Opens about dialog */
 void MainWindow::startAboutDialog() {
-	QMessageBox::about(this, "Equivalence Tutor",
-					   "<h2>Equivalence Tutor</h2><br>Based on Qt " QT_VERSION_STR);
+	QString aboutMsgStr;
+	aboutMsgStr.append("<h1>" + QApplication::applicationName() + "</h1>");
+	aboutMsgStr.append("<br>Version: " + QApplication::applicationVersion() + "</br>");
+	aboutMsgStr.append("<br>Based on Qt " + QString(QT_VERSION_STR) + "</br>");
+	QMessageBox::about(this, "About", aboutMsgStr);
 }
 
 /**

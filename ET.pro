@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2013-10-13T21:14:25
+# ET - Equivalence Tutor
 #
 #-------------------------------------------------
 
@@ -10,6 +10,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ET
 TEMPLATE = app
+
+VERSION = Alpha
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 greaterThan(QT_MAJOR_VERSION, 5) {
         CONFIG += -std=c++11

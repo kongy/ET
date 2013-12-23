@@ -8,6 +8,9 @@
 int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);
 
+	a.setApplicationName("Equivalence Tutor");
+	a.setApplicationVersion(APP_VERSION);
+
 	QTranslator qtTranslator;
 	qtTranslator.load("qt_" + QLocale::system().name(),
 					  QLibraryInfo::location(QLibraryInfo::TranslationsPath));
