@@ -42,6 +42,7 @@ void MainWindow::startNewSolutionDialog() {
 	NewSolutionDialog *dialog = new NewSolutionDialog(this);
 	connect(dialog, SIGNAL(accepted(AST::LogicStatement*,AST::LogicStatement*, QString)), this,
 			SLOT(createSolutionTab(AST::LogicStatement*,AST::LogicStatement*, QString)));
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }
 

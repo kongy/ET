@@ -16,6 +16,7 @@ SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicState
 }
 
 SolutionTabWidget::~SolutionTabWidget() {
+	delete model;
 	delete ui;
 }
 
@@ -59,6 +60,7 @@ void SolutionTabWidget::lineSelected() {
 	}
 	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, isForward, this);
 	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*,bool)), this, SLOT(subformulaSelected(AST::LogicStatement*,bool)));
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }
 
