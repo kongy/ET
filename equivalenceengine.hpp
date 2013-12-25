@@ -1,15 +1,15 @@
 #ifndef EQUIVALENCEENGINE_H
 #define EQUIVALENCEENGINE_H
 
-#include <logicset.hpp>
+#include "logicset.hpp"
 #include "equivalencestatement.hpp"
 #include <QXmlStreamReader>
 
 class EquivalenceEngine {
 private:
 	QVector<LogicSet *> *rules;
-	void parseRulesTxt();
-	void parseRulesXml();
+	inline void parseRulesTxt();
+	inline void parseRulesXml();
 	LogicSet *processStatements(QXmlStreamReader *);
 	LogicStatement *processLogicStatement(QXmlStreamReader *);
 	LogicStatement *processTruthStatement(QXmlStreamReader *);
