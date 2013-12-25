@@ -59,7 +59,9 @@ public:
 	/* Overriding == so that it can be used in standard container library */
 	virtual inline bool operator==(LogicStatement &other) = 0;
 
-	//extern bool removeBrackets;
+protected:
+	static inline bool higherPrecedence(LogicStatement *outer, LogicStatement* inner);
+	static inline bool equalPrecedence(LogicStatement *outer, LogicStatement* inner);
 };
 
 class Truth : public LogicStatement {
