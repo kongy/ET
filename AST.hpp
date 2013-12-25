@@ -72,10 +72,10 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *);
+	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &other);
+	inline bool operator==(LogicStatement &);
 };
 
 class Falsity : public LogicStatement {
@@ -86,21 +86,21 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *);
+	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &other);
+	inline bool operator==(LogicStatement &);
 };
 
 class Variable : public LogicStatement {
 	QString name;
 	bool value;
-
+protected:
+	void setName(QString *);
 public:
 	Variable(QString *name);
 	QString print(bool);
 	QString getName();
-	void setName(QString *name);
 	bool isFirstOrderLogic();
 	Symbol getSymbol();
 
@@ -109,35 +109,35 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *table);
-	LogicStatement* replace(IDTable *table);
+	bool match(LogicStatement *, IDTable *);
+	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &other);
+	inline bool operator==(LogicStatement &);
 };
 
 class UnaryOpStatement : public LogicStatement {
 	LogicStatement *nestedStatement;
-
-public:
-	virtual QString print(bool fullBracket) = 0;
-	virtual bool isFirstOrderLogic() = 0;
+protected:
 	void setStatement(LogicStatement *);
+public:
+	virtual QString print(bool) = 0;
+	virtual bool isFirstOrderLogic() = 0;
 	LogicStatement *getStatement();
 	virtual Symbol getSymbol() = 0;
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *table);
-	LogicStatement* replace(IDTable *table);
+	bool match(LogicStatement *, IDTable *);
+	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
-	inline bool operator==(LogicStatement &other);
+	inline bool operator==(LogicStatement &);
 };
 
 class NotStatement : public UnaryOpStatement {
 public:
 	NotStatement(LogicStatement *);
 	bool isFirstOrderLogic();
-	QString print(bool fullBracket);
+	QString print(bool);
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
@@ -146,23 +146,23 @@ public:
 class BinaryOpStatement : public LogicStatement {
 	LogicStatement *leftStatement;
 	LogicStatement *rightStatement;
-
+protected:
+	void setLeftStatement(LogicStatement *);
+	void setRightStatement(LogicStatement *);
 public:
 	virtual QString symbol() = 0;
 	bool isFirstOrderLogic();
-	QString print(bool fullBracket);
-	void setLeftStatement(LogicStatement *);
-	void setRightStatement(LogicStatement *);
+	QString print(bool);
 	LogicStatement * getLeftStatement();
 	LogicStatement * getRightStatement();
 	Symbol getSymbol() = 0;
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *table);
-	LogicStatement* replace(IDTable *table);
+	bool match(LogicStatement *, IDTable *);
+	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
-	inline bool operator==(LogicStatement &other);
+	inline bool operator==(LogicStatement &);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -203,91 +203,89 @@ public:
 
 class FirstOrderStatement : public LogicStatement {
 public:
-	virtual QString print(bool fullBrackets) = 0;
+	virtual QString print(bool) = 0;
 	bool isFirstOrderLogic();
 	Symbol getSymbol() = 0;
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *table);
+	bool match(LogicStatement *, IDTable *);
 	LogicStatement* clone();
-	LogicStatement* replace(IDTable *table);
-	inline bool operator==(LogicStatement &other);
+	LogicStatement* replace(IDTable *);
+	inline bool operator==(LogicStatement &);
 };
 
 class ForAllStatement : public FirstOrderStatement {
 	LogicStatement *statement;
 	Variable *identifier;
-
+protected:
+	void setStatement(LogicStatement *);
+	void setIdentifier(Variable *);
 public:
 	ForAllStatement(Variable *,LogicStatement *);
-	void setIdentifier(Variable *);
-	QString print(bool fullBracket);
+	QString print(bool);
 	LogicStatement * getStatement();
-	void setStatement(LogicStatement *);
 	Symbol getSymbol();
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
 	LogicStatement *statement;
 	Variable *identifier;
-
-public:
-	ThereExistsStatement(Variable *,LogicStatement *);
-	QString print(bool fullBracket);
-	LogicStatement * getStatement();
+protected:
 	void setStatement(LogicStatement *);
 	void setIdentifier(Variable *);
+public:
+	ThereExistsStatement(Variable *,LogicStatement *);
+	QString print(bool);
+	LogicStatement * getStatement();
 	Symbol getSymbol();
 };
 
 class Parameters : public LogicStatement {
 	Variable *parameter;
 	Parameters *rest;
-
+protected:
+	void setParameter(Variable *);
+	void setRemainingParameters(Parameters *);
 public:
 	Parameters(Variable *, Parameters *);
 	Variable * getParameter();
-	void setParameter(Variable *);
 	Parameters * getRemainingParameters();
-	void setRemainingParameters(Parameters *);
 	bool isFirstOrderLogic();
-	QString print(bool fullBracket);
+	QString print(bool);
 	Symbol getSymbol();
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matching_statement, IDTable *table);
+	bool match(LogicStatement *, IDTable *);
 	LogicStatement* clone();
-	LogicStatement* replace(IDTable *table);
-	inline bool operator==(LogicStatement &other);
+	LogicStatement* replace(IDTable *);
+	inline bool operator==(LogicStatement &);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
 	Variable *predicateSymbol;
 	Parameters *parameters;
-
+	void setParameters(Parameters *);
+	void setPredicateSymbol(Variable *);
 public:
 	PredicateSymbolStatement(Variable *, Parameters *);
 	QString getPredicateSymbolName();
 	Variable * getPredicateSymbol();
-	void setPredicateSymbol(Variable *);
 	Parameters * getParameters();
-	void setParameters(Parameters *);
-	QString print(bool fullBracket);
+	QString print(bool);
 	Symbol getSymbol();
 };
 
 class EqualityStatement : public FirstOrderStatement {
 	Variable *leftVariable;
 	Variable *rightVariable;
-
+	void setLeftVariable(Variable *);
+	void setRightVariable(Variable *);
 public:
 	EqualityStatement(Variable *, Variable *);
 	Variable * getLeftVariable();
 	Variable * getRightVariable();
-	void setLeftVariable(Variable *);
-	void setRightVariable(Variable *);
 	QString print(bool fullBracket);
 	Symbol getSymbol();
 };
