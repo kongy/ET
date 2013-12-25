@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-inline void EquivalenceEngine::parseRulesXml() {
+void EquivalenceEngine::parseRulesXml() {
     QFile file(":/equivalences.xml");
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -137,7 +137,7 @@ LogicSet *EquivalenceEngine::processStatements(QXmlStreamReader *xml) {
     return ruleSet;
 }
 
-inline void EquivalenceEngine::parseRulesTxt() {
+void EquivalenceEngine::parseRulesTxt() {
 
 	QFile file(":/equivalences.txt");
 

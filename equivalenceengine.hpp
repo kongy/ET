@@ -8,8 +8,8 @@
 class EquivalenceEngine {
 private:
 	QVector<LogicSet *> *rules;
-	inline void parseRulesTxt();
-	inline void parseRulesXml();
+	void parseRulesTxt();
+	void parseRulesXml();
 	LogicSet *processStatements(QXmlStreamReader *);
 	LogicStatement *processLogicStatement(QXmlStreamReader *);
 	LogicStatement *processTruthStatement(QXmlStreamReader *);
