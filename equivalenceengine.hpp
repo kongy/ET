@@ -30,7 +30,6 @@ public:
 
 	LogicSet *diff(LogicStatement *, LogicSet *);
 	QVector<LogicStatement *> *getMatchedRules(LogicStatement *, LogicSet *);
-	EquivalenceStatement *match(LogicSet *);
 	LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule, LogicStatement *transformationRule);
 };
 
