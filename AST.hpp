@@ -60,8 +60,7 @@ public:
 	virtual inline bool operator==(LogicStatement &other) = 0;
 
 protected:
-	static inline bool higherPrecedence(LogicStatement *outer, LogicStatement* inner);
-	static inline bool equalPrecedence(LogicStatement *outer, LogicStatement* inner);
+	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
 
 class Truth : public LogicStatement {

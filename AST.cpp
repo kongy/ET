@@ -58,12 +58,8 @@ bool LogicStatement::isEquivalent(LogicStatement *statement) {
 	return true;
 }
 
-bool LogicStatement::higherPrecedence(LogicStatement *outer, LogicStatement *inner) {
-	return outer->getSymbol() > inner->getSymbol();
-}
-
-bool LogicStatement::equalPrecedence(LogicStatement *outer, LogicStatement *inner) {
-	return outer->getSymbol() == inner->getSymbol();
+int LogicStatement::comparePrecedence(LogicStatement *outer, LogicStatement *inner) {
+	return outer->getSymbol() - inner->getSymbol();
 }
 
 /* Truth Class */
@@ -263,7 +259,7 @@ bool NotStatement::isFirstOrderLogic() {
 
 QString NotStatement::print(bool fullBracket) {
 
-	if (!fullBracket && higherPrecedence(this, getStatement()))
+	if (!fullBracket && (comparePrecedence(this, getStatement()) >= 0))
 		return QString(SYMBOL_NOT) + getStatement()->print(fullBracket);
 	else
 		return QString("%1(%2)").arg(SYMBOL_NOT, getStatement()->print(fullBracket));
@@ -308,14 +304,13 @@ QString BinaryOpStatement::print(bool fullBracket) {
 	QString left;
 	QString right;
 
-	if (!fullBracket && (higherPrecedence(this, getLeftStatement()) ||
-						 equalPrecedence(this, getLeftStatement()))) {
+	if (!fullBracket && (comparePrecedence(this, getLeftStatement()) >= 0)) {
 		left = getLeftStatement()->print(fullBracket) + QString(" ");
 	} else {
 		left = QString("(%1) ").arg(getLeftStatement()->print(fullBracket));
 	}
 
-	if (!fullBracket && higherPrecedence(this, getRightStatement())){
+	if (!fullBracket && (comparePrecedence(this, getRightStatement()) > 0)) {
 		right = QString(" ") + getRightStatement()->print(fullBracket);
 	} else {
 		right = QString(" (%1)").arg(getRightStatement()->print(fullBracket));
@@ -486,7 +481,7 @@ void ForAllStatement::setIdentifier(Variable *identifier) {
 
 QString ForAllStatement::print(bool fullBracket) {
 
-	if (!fullBracket && higherPrecedence(this, getStatement()))
+	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
 		return QString(SYMBOL_FORALL) + getStatement()->print(fullBracket);
 	else
 		return QString("%1(%2)").arg(SYMBOL_FORALL, getStatement()->print(fullBracket));
@@ -517,7 +512,7 @@ void ThereExistsStatement::setIdentifier(Variable *identifier) {
 
 QString ThereExistsStatement::print(bool fullBracket) {
 
-	if (!fullBracket && higherPrecedence(this, getStatement()))
+	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
 		return QString(SYMBOL_THEREEXISTS) + getStatement()->print(fullBracket);
 	else
 		return QString("%1(%2)").arg(SYMBOL_THEREEXISTS, getStatement()->print(fullBracket));
