@@ -55,7 +55,7 @@ public:
 	virtual LogicStatement* clone() = 0;
 
 	/* Overriding == so that it can be used in standard container library */
-	virtual inline bool operator==(LogicStatement &other) = 0;
+	virtual bool operator==(LogicStatement &other) = 0;
 
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
@@ -72,7 +72,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class Falsity : public LogicStatement {
@@ -86,7 +86,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class Variable : public LogicStatement {
@@ -109,7 +109,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -127,7 +127,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -159,7 +159,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -209,7 +209,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *);
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -257,7 +257,7 @@ public:
 	bool match(LogicStatement *, IDTable *);
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *);
-	inline bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {

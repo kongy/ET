@@ -99,7 +99,7 @@ LogicStatement* Truth::clone() {
 	return new Truth();
 }
 
-inline bool Truth::operator==(LogicStatement &other) {
+bool Truth::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
@@ -140,7 +140,7 @@ LogicStatement* Falsity::clone() {
 	return new Falsity();
 }
 
-inline bool Falsity::operator==(LogicStatement &other) {
+bool Falsity::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
@@ -210,7 +210,7 @@ LogicStatement* Variable::clone() {
 	return new Variable(new QString(getName()));
 }
 
-inline bool Variable::operator==(LogicStatement &other) {
+bool Variable::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			getName() == dynamic_cast<Variable&>(other).getName();
 }
@@ -243,7 +243,7 @@ LogicStatement* UnaryOpStatement::replace(IDTable *table) {
 	return this;
 }
 
-inline bool UnaryOpStatement::operator==(LogicStatement &other) {
+bool UnaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			*getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
 }
@@ -342,7 +342,7 @@ LogicStatement* BinaryOpStatement::replace(IDTable *table) {
 	return this;
 }
 
-inline bool BinaryOpStatement::operator==(LogicStatement &other) {
+bool BinaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			*getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
 			*getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
@@ -465,7 +465,7 @@ LogicStatement* FirstOrderStatement::replace(IDTable *) {
 	return this;
 }
 
-inline bool FirstOrderStatement::operator==(LogicStatement &other) {
+bool FirstOrderStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
@@ -623,7 +623,7 @@ LogicStatement* Parameters::replace(IDTable *table) {
 	return this;
 }
 
-inline bool Parameters::operator==(LogicStatement &other) {
+bool Parameters::operator==(LogicStatement &other) {
 	/* Must have same symbol and parameter match to proceed */
 	if (!(getSymbol() == other.getSymbol() &&
 		  *getParameter() == *dynamic_cast<Parameters&>(other).getParameter()))
