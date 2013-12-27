@@ -45,14 +45,14 @@ void SolutionTabWidget::lineSelected() {
 
 	int lineno = c.blockNumber();
 	AST::LogicStatement* selectedStatement = nullptr;
-	bool isForward = lineno < model->forwardStack.size();
-	bool isBackward = lineno > model->forwardStack.size() && lineno < model->forwardStack.size() + model->forwardStack.size() + 1;
-	if(isForward) {
-		selectedStatement = model->forwardStack.at(lineno);
+	bool isForward;
+	if(lineno == model->forwardStack.size() - 1) {
+		selectedStatement = model->forwardStack.top();
+		isForward = true;
 	}
-	else if (isBackward) {
-		lineno -= model->forwardStack.size();
-		selectedStatement = model->backwardStack.at(lineno - 1);
+	else if (lineno == model->forwardStack.size() + 1) {
+		selectedStatement = model->backwardStack.top();
+		isForward = false;
 	}
 	else {
 		// Blank line, do nothing and return
