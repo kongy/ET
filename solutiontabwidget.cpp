@@ -24,20 +24,33 @@ void SolutionTabWidget::redraw() const {
 	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
 	ui->textEdit->clear();
 
+	bool proofFinished = model->forwardStack.top()->equals(model->backwardStack.top());
+
 	QVectorIterator<AST::LogicStatement*> forwardStackIt(model->forwardStack);
-	while(forwardStackIt.hasNext()) {
-		ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
-	}
-
-	ui->textEdit->insertPlainText("\n");
-
 	QVectorIterator<AST::LogicStatement*> backwardStackIt(model->backwardStack);
 	backwardStackIt.toBack();
-	while(backwardStackIt.hasPrevious()) {
-		ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
-	}
 
-	connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+	if(!proofFinished) {
+		while(forwardStackIt.hasNext()) {
+			while(forwardStackIt.hasNext()) {
+				ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
+			}
+			ui->textEdit->insertPlainText("\n");
+			while(backwardStackIt.hasPrevious()) {
+				ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
+			}
+			connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+		}
+	}
+	else {
+		while(forwardStackIt.hasNext()) {
+			ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
+		}
+		backwardStackIt.previous();
+		while(backwardStackIt.hasPrevious()) {
+			ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
+		}
+	}
 }
 
 void SolutionTabWidget::lineSelected() {
