@@ -19,6 +19,13 @@ class SolutionTabWidget : public QWidget
 	solutionModel* model;
 	bool fullBracket;
 
+	/*
+	 *  Can only select one statement for processing at a time,
+	 *  save states globally so that no need to pass them all the time.
+	 */
+	bool isForward;
+	AST::LogicStatement *selectedStatement;
+
 public:
 	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end,
 							   bool fullBracket = false, QWidget *parent = 0);
@@ -37,7 +44,7 @@ private:
 
 private slots:
 	void lineSelected();
-	void subformulaSelected(AST::LogicStatement* formula, bool isForward);
+	void subformulaSelected(AST::LogicStatement* formula);
 };
 
 #endif // SOLUTIONTABWIDGET_HPP

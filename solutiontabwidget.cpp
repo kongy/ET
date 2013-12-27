@@ -44,8 +44,6 @@ void SolutionTabWidget::lineSelected() {
 	QTextCursor c = ui->textEdit->textCursor();
 
 	int lineno = c.blockNumber();
-	AST::LogicStatement* selectedStatement = nullptr;
-	bool isForward;
 	if(lineno == model->forwardStack.size() - 1) {
 		selectedStatement = model->forwardStack.top();
 		isForward = true;
@@ -58,13 +56,13 @@ void SolutionTabWidget::lineSelected() {
 		// Blank line, do nothing and return
 		return;
 	}
-	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, isForward, this);
-	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*,bool)), this, SLOT(subformulaSelected(AST::LogicStatement*,bool)));
+	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, this);
+	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }
 
-void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula, bool isForward) {
+void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula) {
 	// TODO
 	if(isForward) {
 		model->forwardStack.append(formula);

@@ -4,11 +4,10 @@
 #include <QDialogButtonBox>
 #include <QDebug>
 
-SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formula, bool isForward, QWidget *parent) :
+SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formula, QWidget *parent) :
     QDialog(parent),
 	ui(new Ui::SubformulaSelectionDialog),
-	fullFormula(formula),
-	isForward(isForward)
+	fullFormula(formula)
 {
 	ui->setupUi(this);
 	ui->lineEdit->setText(fullFormula->print(false));
@@ -26,7 +25,7 @@ void SubformulaSelectionDialog::onClick(QAbstractButton *btn) {
 	case QDialogButtonBox::Ok:
 	{
 		AST::LogicStatement* subformula = AST::parse(ui->lineEdit->text());
-		emit subformulaSelected(subformula, isForward);
+		emit subformulaSelected(subformula);
 		return;
 	}
 	case QDialogButtonBox::Cancel:
