@@ -1,17 +1,15 @@
 #ifndef AST_HPP
 #define AST_HPP
 
-namespace AST {
-class Variable;
-class LogicStatement;
-}
+#include "idtable.hpp"
+#include "symbol.hpp"
 
 #include <QString>
-#include "symbol.hpp"
 #include <QVector>
-#include "idtable.hpp"
 
 namespace AST {
+
+class Variable;
 
 class LogicStatement {
 public:

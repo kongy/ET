@@ -1,5 +1,7 @@
 #include "idtable.hpp"
 
+using namespace AST;
+
 IDTable::IDTable()
 {
 	id_table = new QVector<QPair<Variable *, LogicStatement *> *>();
