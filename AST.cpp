@@ -501,11 +501,8 @@ void ForAllStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ForAllStatement::print(bool fullBracket) {
-
-	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
-		return QString(SYMBOL_FORALL) + getStatement()->print(fullBracket);
-	else
-		return QString("%1(%2)").arg(SYMBOL_FORALL, getStatement()->print(fullBracket));
+		return QString("%1%2(%3)").arg(SYMBOL_FORALL, getQuantifier()->print(fullBracket),
+									   getStatement()->print(fullBracket));
 }
 
 LogicStatement * ForAllStatement::getStatement() {
@@ -541,11 +538,8 @@ void ThereExistsStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ThereExistsStatement::print(bool fullBracket) {
-
-	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
-		return QString(SYMBOL_THEREEXISTS) + getStatement()->print(fullBracket);
-	else
-		return QString("%1(%2)").arg(SYMBOL_THEREEXISTS, getStatement()->print(fullBracket));
+	return QString("%1%2(%3)").arg(SYMBOL_THEREEXISTS, getQuantifier()->print(fullBracket),
+								   getStatement()->print(fullBracket));
 }
 
 LogicStatement * ThereExistsStatement::getStatement() {
