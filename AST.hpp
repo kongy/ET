@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QPair>
 
 namespace AST {
 
@@ -59,6 +60,9 @@ public:
 
 	/* Main parent destructor */
 	virtual ~LogicStatement();
+
+	/* Mapping from broken parts of print to its corresponding LogicStatement */
+	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket) = 0;
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -75,6 +79,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 };
 
 class Falsity : public LogicStatement {
@@ -89,6 +94,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 };
 
 class Variable : public LogicStatement {
@@ -112,6 +118,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -132,6 +139,7 @@ public:
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~UnaryOpStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -165,6 +173,7 @@ public:
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~BinaryOpStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -216,6 +225,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	bool operator==(LogicStatement &);
 	virtual ~FirstOrderStatement();
+	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -231,6 +241,7 @@ public:
 	Variable *getQuantifier();
 	Symbol getSymbol();
 	~ForAllStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -246,6 +257,7 @@ public:
 	Variable *getQuantifier();
 	Symbol getSymbol();
 	~ThereExistsStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class Parameters : public LogicStatement {
@@ -269,6 +281,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	bool operator==(LogicStatement &);
 	~Parameters();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -284,6 +297,7 @@ public:
 	QString print(bool);
 	Symbol getSymbol();
 	~PredicateSymbolStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -298,6 +312,7 @@ public:
 	QString print(bool fullBracket);
 	Symbol getSymbol();
 	~EqualityStatement();
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 };
 
 LogicStatement *parse(QString expression);

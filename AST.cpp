@@ -107,6 +107,12 @@ bool Truth::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
+QVector<QPair<QString, LogicStatement *> > Truth::getStringMapping(bool) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_TRUTH), this));
+	return mapping;
+}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -146,6 +152,12 @@ LogicStatement* Falsity::clone() {
 
 bool Falsity::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
+}
+
+QVector<QPair<QString, LogicStatement *> > Falsity::getStringMapping(bool) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_FALSITY), this));
+	return mapping;
 }
 
 /* Variable Class */
@@ -219,6 +231,12 @@ bool Variable::operator==(LogicStatement &other) {
 			getName() == dynamic_cast<Variable&>(other).getName();
 }
 
+QVector<QPair<QString, LogicStatement *> > Variable::getStringMapping(bool) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+	mapping.append(QPair<QString, LogicStatement *>(getName(), this));
+	return mapping;
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -263,6 +281,25 @@ bool UnaryOpStatement::operator==(LogicStatement &other) {
 
 UnaryOpStatement::~UnaryOpStatement() {
 	delete getStatement();
+}
+
+QVector<QPair<QString, LogicStatement *> > UnaryOpStatement::getStringMapping(bool fullBracket) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	//Symbols are needed anyway
+	mapping.append(QPair<QString, LogicStatement *>(symbol(), this));
+
+	//Bracket Not Needed
+	if (!fullBracket && (comparePrecedence(this, getStatement()) >= 0))
+		mapping += getStatement()->getStringMapping(fullBracket);
+	//Brackets Required
+	else {
+		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
+		mapping += getStatement()->getStringMapping(fullBracket);
+		mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
+	}
+
+	return mapping;
 }
 
 /* NotStatement Class */
@@ -363,6 +400,34 @@ bool BinaryOpStatement::operator==(LogicStatement &other) {
 BinaryOpStatement::~BinaryOpStatement() {
 	delete getLeftStatement();
 	delete getRightStatement();
+}
+
+QVector<QPair<QString, LogicStatement *> > BinaryOpStatement::getStringMapping(bool fullBracket) {
+
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	// Bracket not needed on left
+	if (!fullBracket && (comparePrecedence(this, getLeftStatement()) >= 0))
+		mapping = getLeftStatement()->getStringMapping(fullBracket);
+	// Brackets needed on left
+	else {
+		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
+		mapping += getLeftStatement()->getStringMapping(fullBracket);
+		mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
+	}
+
+	mapping.append(QPair<QString, LogicStatement *>(symbol(), this));
+
+	// Brackets not needed on right
+	if (!fullBracket && (comparePrecedence(this, getRightStatement()) > 0))
+		mapping += getRightStatement()->getStringMapping(fullBracket);
+	else {
+		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
+		mapping += getRightStatement()->getStringMapping(fullBracket);
+		mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
+	}
+
+	return mapping;
 }
 
 /* AndStatement Class */
@@ -501,8 +566,8 @@ void ForAllStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ForAllStatement::print(bool fullBracket) {
-		return QString("%1%2(%3)").arg(SYMBOL_FORALL, getQuantifier()->print(fullBracket),
-									   getStatement()->print(fullBracket));
+                return QString("%1%2(%3)").arg(SYMBOL_FORALL, getQuantifier()->print(fullBracket),
+                                                                           getStatement()->print(fullBracket));
 }
 
 LogicStatement * ForAllStatement::getStatement() {
@@ -526,6 +591,27 @@ ForAllStatement::~ForAllStatement() {
 	delete getStatement();
 }
 
+QVector<QPair<QString, LogicStatement *> > ForAllStatement::getStringMapping(bool fullBracket) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	// Quantifier forall binds the entirestatement
+	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_FORALL), this));
+	// Nullptr because Quantifier alone is meaningless for equivalence
+	mapping.append(QPair<QString, LogicStatement *>(getQuantifier()->getName(), nullptr));
+
+	// Bracket not needed
+	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
+		mapping += getStatement()->getStringMapping(fullBracket);
+	// Brackets needed
+	else {
+		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
+		mapping += getStatement()->getStringMapping(fullBracket);
+		mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
+	}
+
+	return mapping;
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -538,8 +624,8 @@ void ThereExistsStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ThereExistsStatement::print(bool fullBracket) {
-	return QString("%1%2(%3)").arg(SYMBOL_THEREEXISTS, getQuantifier()->print(fullBracket),
-								   getStatement()->print(fullBracket));
+        return QString("%1%2(%3)").arg(SYMBOL_THEREEXISTS, getQuantifier()->print(fullBracket),
+                                                                   getStatement()->print(fullBracket));
 }
 
 LogicStatement * ThereExistsStatement::getStatement() {
@@ -561,6 +647,27 @@ Symbol ThereExistsStatement::getSymbol() {
 ThereExistsStatement::~ThereExistsStatement() {
 	delete getQuantifier();
 	delete getStatement();
+}
+
+QVector<QPair<QString, LogicStatement *> > ThereExistsStatement::getStringMapping(bool fullBracket) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	// Maps symbol thereexists to the entire statement
+	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_THEREEXISTS), this));
+	// Nullptr because quantifier alone is meaningless
+	mapping.append(QPair<QString, LogicStatement *>(getQuantifier()->getName(), nullptr));
+
+	// Bracket Not Needed
+	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
+		mapping += getStatement()->getStringMapping(fullBracket);
+	// Brackets needed
+	else {
+		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
+		mapping += getStatement()->getStringMapping(fullBracket);
+		mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
+	}
+
+	return mapping;
 }
 
 /* Parameters Class */
@@ -687,6 +794,22 @@ Parameters::~Parameters() {
 		delete remainingParameters;
 }
 
+QVector<QPair<QString, LogicStatement *> > Parameters::getStringMapping(bool fullBracket) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	// Null Pointer here because one argument is meaningless
+	// alone
+	mapping.append(QPair<QString, LogicStatement *>(getParameter()->getName(), nullptr));
+	Parameters *remainingParameters = getRemainingParameters();
+
+	if (remainingParameters != nullptr) {
+		mapping.append(QPair<QString, LogicStatement *>(",", nullptr));
+		mapping += remainingParameters->getStringMapping(fullBracket);
+	}
+
+	return mapping;
+}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -726,6 +849,15 @@ PredicateSymbolStatement::~PredicateSymbolStatement() {
 	delete getParameters();
 }
 
+QVector<QPair<QString, LogicStatement *> > PredicateSymbolStatement::getStringMapping(bool fullBracket) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	mapping.append(QPair<QString, LogicStatement *>(getPredicateSymbolName(), this));
+	mapping += getParameters()->getStringMapping(fullBracket);
+
+	return mapping;
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -761,6 +893,17 @@ Symbol EqualityStatement::getSymbol() {
 EqualityStatement::~EqualityStatement() {
 	delete getLeftVariable();
 	delete getRightVariable();
+}
+
+QVector<QPair<QString, LogicStatement *> > EqualityStatement::getStringMapping(bool) {
+	QVector<QPair<QString, LogicStatement *> > mapping;
+
+	// Null Mapping because one Variable argument is meaningless for equivalence
+	mapping.append(QPair<QString, LogicStatement *>(getLeftVariable()->getName(), nullptr));
+	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_EQUALS), this));
+	mapping.append(QPair<QString, LogicStatement *>(getRightVariable()->getName(), nullptr));
+
+	return mapping;
 }
 
 extern int yyparse();
