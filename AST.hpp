@@ -119,10 +119,11 @@ class UnaryOpStatement : public LogicStatement {
 protected:
 	void setStatement(LogicStatement *);
 public:
-	virtual QString print(bool) = 0;
+	QString print(bool);
 	virtual bool isFirstOrderLogic() = 0;
 	LogicStatement *getStatement();
 	virtual Symbol getSymbol() = 0;
+	virtual QString symbol() = 0;
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
@@ -137,8 +138,8 @@ class NotStatement : public UnaryOpStatement {
 public:
 	NotStatement(LogicStatement *);
 	bool isFirstOrderLogic();
-	QString print(bool);
 	Symbol getSymbol();
+	QString symbol();
 	bool evaluate();
 	LogicStatement* clone();
 };

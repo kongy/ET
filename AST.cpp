@@ -247,6 +247,15 @@ LogicStatement* UnaryOpStatement::replace(IDTable *table) {
 	return this;
 }
 
+QString UnaryOpStatement::print(bool fullBracket) {
+	QString SYMBOL = symbol();
+
+	if (!fullBracket && (comparePrecedence(this, getStatement()) >= 0))
+		return SYMBOL + getStatement()->print(fullBracket);
+	else
+		return QString("%1(%2)").arg(SYMBOL, getStatement()->print(fullBracket));
+}
+
 bool UnaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			*getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
@@ -265,16 +274,12 @@ bool NotStatement::isFirstOrderLogic() {
 	return getStatement()->isFirstOrderLogic();
 }
 
-QString NotStatement::print(bool fullBracket) {
-
-	if (!fullBracket && (comparePrecedence(this, getStatement()) >= 0))
-		return QString(SYMBOL_NOT) + getStatement()->print(fullBracket);
-	else
-		return QString("%1(%2)").arg(SYMBOL_NOT, getStatement()->print(fullBracket));
-}
-
 Symbol NotStatement::getSymbol() {
 	return Symbol::NOT_SYMBOL;
+}
+
+QString NotStatement::symbol() {
+	return SYMBOL_NOT;
 }
 
 bool NotStatement::evaluate() {
