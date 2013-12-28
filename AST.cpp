@@ -62,6 +62,10 @@ int LogicStatement::comparePrecedence(LogicStatement *outer, LogicStatement *inn
 	return outer->getSymbol() - inner->getSymbol();
 }
 
+LogicStatement::~LogicStatement() {
+	// Do Nothing
+}
+
 /* Truth Class */
 QString Truth::print(bool) {
 	return SYMBOL_TRUTH;
@@ -248,6 +252,10 @@ bool UnaryOpStatement::operator==(LogicStatement &other) {
 			*getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
 }
 
+UnaryOpStatement::~UnaryOpStatement() {
+	delete getStatement();
+}
+
 /* NotStatement Class */
 NotStatement::NotStatement(LogicStatement *statement) {
 	setStatement(statement);
@@ -264,7 +272,6 @@ QString NotStatement::print(bool fullBracket) {
 	else
 		return QString("%1(%2)").arg(SYMBOL_NOT, getStatement()->print(fullBracket));
 }
-
 
 Symbol NotStatement::getSymbol() {
 	return Symbol::NOT_SYMBOL;
@@ -346,6 +353,11 @@ bool BinaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			*getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
 			*getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
+}
+
+BinaryOpStatement::~BinaryOpStatement() {
+	delete getLeftStatement();
+	delete getRightStatement();
 }
 
 /* AndStatement Class */
@@ -469,6 +481,10 @@ bool FirstOrderStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
+FirstOrderStatement::~FirstOrderStatement() {
+	//DO NOTHING
+}
+
 /* ForAllStatement Class */
 ForAllStatement::ForAllStatement(Variable *identifier, LogicStatement *forAllStatement) {
 	setStatement(forAllStatement);
@@ -491,12 +507,21 @@ LogicStatement * ForAllStatement::getStatement() {
 	return statement;
 }
 
+Variable *ForAllStatement::getQuantifier() {
+	return identifier;
+}
+
 void ForAllStatement::setStatement(LogicStatement *newstatement) {
 	statement = newstatement;
 }
 
 Symbol ForAllStatement::getSymbol() {
 	return Symbol::FORALL_SYMBOL;
+}
+
+ForAllStatement::~ForAllStatement() {
+	delete getQuantifier();
+	delete getStatement();
 }
 
 /* ThereExistsStatement Class */
@@ -522,12 +547,21 @@ LogicStatement * ThereExistsStatement::getStatement() {
 	return statement;
 }
 
+Variable *ThereExistsStatement::getQuantifier() {
+	return identifier;
+}
+
 void ThereExistsStatement::setStatement(LogicStatement *newStatement) {
 	statement = newStatement;
 }
 
 Symbol ThereExistsStatement::getSymbol() {
 	return Symbol::THEREEXISTS_SYMBOL;
+}
+
+ThereExistsStatement::~ThereExistsStatement() {
+	delete getQuantifier();
+	delete getStatement();
 }
 
 /* Parameters Class */
@@ -647,6 +681,13 @@ bool Parameters::operator==(LogicStatement &other) {
 	return *currentRemainingParams == *otherRemainingParams;
 }
 
+Parameters::~Parameters() {
+	delete getParameter();
+	Parameters *remainingParameters = getRemainingParameters();
+	if (remainingParameters != nullptr)
+		delete remainingParameters;
+}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -681,6 +722,11 @@ Symbol PredicateSymbolStatement::getSymbol() {
 	return Symbol::PREDICATE_SYMBOL;
 }
 
+PredicateSymbolStatement::~PredicateSymbolStatement() {
+	delete getPredicateSymbol();
+	delete getParameters();
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -711,6 +757,11 @@ QString EqualityStatement::print(bool fullBracket) {
 
 Symbol EqualityStatement::getSymbol() {
 	return Symbol::EQUALS_SYMBOL;
+}
+
+EqualityStatement::~EqualityStatement() {
+	delete getLeftVariable();
+	delete getRightVariable();
 }
 
 extern int yyparse();

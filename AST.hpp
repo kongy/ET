@@ -57,6 +57,8 @@ public:
 	/* Overriding == so that it can be used in standard container library */
 	virtual bool operator==(LogicStatement &other) = 0;
 
+	/* Main parent destructor */
+	virtual ~LogicStatement();
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -128,6 +130,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
+	virtual ~UnaryOpStatement();
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -160,6 +163,7 @@ public:
 	LogicStatement* replace(IDTable *);
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
+	virtual ~BinaryOpStatement();
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -210,6 +214,7 @@ public:
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *);
 	bool operator==(LogicStatement &);
+	virtual ~FirstOrderStatement();
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -222,7 +227,9 @@ public:
 	ForAllStatement(Variable *,LogicStatement *);
 	QString print(bool);
 	LogicStatement * getStatement();
+	Variable *getQuantifier();
 	Symbol getSymbol();
+	~ForAllStatement();
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -235,7 +242,9 @@ public:
 	ThereExistsStatement(Variable *,LogicStatement *);
 	QString print(bool);
 	LogicStatement * getStatement();
+	Variable *getQuantifier();
 	Symbol getSymbol();
+	~ThereExistsStatement();
 };
 
 class Parameters : public LogicStatement {
@@ -258,6 +267,7 @@ public:
 	LogicStatement* clone();
 	LogicStatement* replace(IDTable *);
 	bool operator==(LogicStatement &);
+	~Parameters();
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -272,6 +282,7 @@ public:
 	Parameters * getParameters();
 	QString print(bool);
 	Symbol getSymbol();
+	~PredicateSymbolStatement();
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -285,6 +296,7 @@ public:
 	Variable * getRightVariable();
 	QString print(bool fullBracket);
 	Symbol getSymbol();
+	~EqualityStatement();
 };
 
 LogicStatement *parse(QString expression);
