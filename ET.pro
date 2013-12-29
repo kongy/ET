@@ -15,7 +15,7 @@ VERSION = Alpha
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 greaterThan(QT_MAJOR_VERSION, 5) {
-        CONFIG += -std=c++11
+        CONFIG += c++11
 } else {
         # Workaround for Qt4
         QMAKE_CXXFLAGS += -std=c++11
