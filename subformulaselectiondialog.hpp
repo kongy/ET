@@ -25,7 +25,7 @@ signals:
 	void subformulaSelected(AST::LogicStatement*);
 
 private slots:
-	void onClick(QAbstractButton* btn);
+	void onClick();
 };
 
 #endif // SUBFORMULASELECTIONDIALOG_HPP

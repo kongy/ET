@@ -1,18 +1,38 @@
 #include "subformulaselectiondialog.hpp"
 #include "ui_subformulaselectiondialog.h"
 
-#include <QDialogButtonBox>
-#include <QDebug>
+#include <QLabel>
+#include <QPair>
+#include <QPushButton>
+
+class SubformulaButton : public QPushButton {
+public:
+	AST::LogicStatement *node;
+
+	SubformulaButton(const QString &text, AST::LogicStatement *node, QWidget *parent = 0) :
+		QPushButton(text, parent),
+		node(node) { }
+};
 
 SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formula, QWidget *parent) :
-    QDialog(parent),
+	QDialog(parent),
 	ui(new Ui::SubformulaSelectionDialog),
 	fullFormula(formula)
 {
 	ui->setupUi(this);
-	ui->lineEdit->setText(fullFormula->print(false));
 
-	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(onClick(QAbstractButton*)));
+	for(QPair<QString, AST::LogicStatement*> i : formula->getStringMapping(false)) {
+		QWidget *sfw;
+		if(i.second != nullptr) {
+			sfw = new SubformulaButton(i.first, i.second, this);
+			sfw->setToolTip(i.second->print(false));
+			connect(sfw, SIGNAL(clicked()), this, SLOT(onClick()));
+		}
+		else {
+			sfw = new QLabel(i.first, this);
+		}
+		ui->subformulaeLayout->addWidget(sfw);
+	}
 }
 
 SubformulaSelectionDialog::~SubformulaSelectionDialog()
@@ -20,18 +40,8 @@ SubformulaSelectionDialog::~SubformulaSelectionDialog()
 	delete ui;
 }
 
-void SubformulaSelectionDialog::onClick(QAbstractButton *btn) {
-	switch(ui->buttonBox->standardButton(btn)) {
-	case QDialogButtonBox::Ok:
-	{
-		AST::LogicStatement* subformula = AST::parse(ui->lineEdit->text());
-		emit subformulaSelected(subformula);
-		return;
-	}
-	case QDialogButtonBox::Cancel:
-		// Do nothing
-		break;
-	default:
-		qWarning()<<"Unimplemented button clicked\n";
-	}
+void SubformulaSelectionDialog::onClick() {
+	SubformulaButton *sBtn = static_cast<SubformulaButton *>(sender());
+	emit subformulaSelected(sBtn->node);
+	close();
 }
