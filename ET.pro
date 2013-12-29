@@ -14,7 +14,7 @@ TEMPLATE = app
 VERSION = Alpha
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
-greaterThan(QT_MAJOR_VERSION, 5) {
+greaterThan(QT_MAJOR_VERSION, 4) {
         CONFIG += c++11
 } else {
         # Workaround for Qt4
