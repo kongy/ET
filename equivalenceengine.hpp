@@ -11,15 +11,15 @@ private:
 	void parseRulesTxt();
 	void parseRulesXml();
 	LogicSet *processStatements(QXmlStreamReader *);
-	LogicStatement *processLogicStatement(QXmlStreamReader *);
-	LogicStatement *processTruthStatement(QXmlStreamReader *);
-	LogicStatement *processFalsityStatement(QXmlStreamReader *);
-	LogicStatement *processVariableStatement(QXmlStreamReader *);
-	LogicStatement *processNotStatement(QXmlStreamReader *);
-	LogicStatement *processOrStatement(QXmlStreamReader *);
-	LogicStatement *processAndStatement(QXmlStreamReader *);
-	LogicStatement *processIFFStatement(QXmlStreamReader *);
-	LogicStatement *processImpliesStatement(QXmlStreamReader *);
+	Rule *processLogicStatement(QXmlStreamReader *);
+	Rule *processTruthStatement(QXmlStreamReader *);
+	Rule *processFalsityStatement(QXmlStreamReader *);
+	Rule *processVariableStatement(QXmlStreamReader *);
+	Rule *processNotStatement(QXmlStreamReader *);
+	Rule *processOrStatement(QXmlStreamReader *);
+	Rule *processAndStatement(QXmlStreamReader *);
+	Rule *processIFFStatement(QXmlStreamReader *);
+	Rule *processImpliesStatement(QXmlStreamReader *);
 	bool ruleApplicable(LogicStatement *, LogicSet *);
 public:
 	EquivalenceEngine();
@@ -28,9 +28,9 @@ public:
 	/* Returns a vector of matching rule sets */
 	QVector<LogicSet *> *match(LogicStatement *);
 
-	LogicSet *diff(LogicStatement *, LogicSet *);
-	QVector<LogicStatement *> *getMatchedRules(LogicStatement *, LogicSet *);
-	LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule, LogicStatement *transformationRule);
+	LogicSet *diff(Rule *, LogicSet *);
+	QVector<Rule *> *getMatchedRules(LogicStatement *, LogicSet *);
+	LogicStatement *replaceStatement(LogicStatement *input, Rule *baseRule, Rule *transformationRule);
 };
 
 #endif // EQUIVALENCEENGINE_H

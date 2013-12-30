@@ -1,14 +1,14 @@
 #include "logicset.hpp"
 
-bool LogicSet::inSet(LogicStatement *item) {
-	for (LogicStatement *set_elem : *set)
+bool LogicSet::inSet(Rule *item) {
+	for (Rule *set_elem : *set)
 		if (item->equals(set_elem))
 			return true;
 
 	return false;
 }
 
-bool LogicSet::add(LogicStatement *item) {
+bool LogicSet::add(Rule *item) {
 	if (inSet(item))
 		return false;
 	else {
@@ -18,22 +18,22 @@ bool LogicSet::add(LogicStatement *item) {
 }
 
 LogicSet::LogicSet() {
-	set = new QVector<LogicStatement *>();
+	set = new QVector<Rule *>();
 }
 
 LogicSet::~LogicSet() {
 	delete set;
 }
 
-QVector<LogicStatement *> *LogicSet::getSet() {
+QVector<Rule *> *LogicSet::getSet() {
 	return set;
 }
 
-LogicSet *LogicSet::diff(LogicStatement *item) {
+LogicSet *LogicSet::diff(Rule *item) {
 
 	LogicSet *remaining_set = new LogicSet();
 
-	for (LogicStatement *statement : *set)
+	for (Rule *statement : *set)
 		if (!statement->equals(item))
 			remaining_set->add(statement);
 

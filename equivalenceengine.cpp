@@ -31,23 +31,23 @@ void EquivalenceEngine::parseRulesXml() {
     file.close();
 }
 
-LogicStatement *EquivalenceEngine::processTruthStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processTruthStatement(QXmlStreamReader *xml) {
     xml->skipCurrentElement();
     return new Truth();
 }
 
-LogicStatement *EquivalenceEngine::processFalsityStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processFalsityStatement(QXmlStreamReader *xml) {
     xml->skipCurrentElement();
     return new Falsity();
 }
 
-LogicStatement *EquivalenceEngine::processVariableStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processVariableStatement(QXmlStreamReader *xml) {
     return new Variable(new QString(xml->readElementText()));
 }
 
-LogicStatement *EquivalenceEngine::processNotStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processNotStatement(QXmlStreamReader *xml) {
     /* Evaluate the inner expression inside NOT */
-    LogicStatement *nestedStatement = processLogicStatement(xml);
+    Rule *nestedStatement = processLogicStatement(xml);
 
     /* The pointer should now point to just before </NOT>,
      * we will therefore move it over to </NOT> */
@@ -56,11 +56,11 @@ LogicStatement *EquivalenceEngine::processNotStatement(QXmlStreamReader *xml) {
     return new NotStatement(nestedStatement);
 }
 
-LogicStatement *EquivalenceEngine::processOrStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processOrStatement(QXmlStreamReader *xml) {
 
     /* Process one tree at a time, stopping at delimiter */
-    LogicStatement *leftStatement = processLogicStatement(xml);
-    LogicStatement *rightStatement = processLogicStatement(xml);
+    Rule *leftStatement = processLogicStatement(xml);
+    Rule *rightStatement = processLogicStatement(xml);
 
     /* Pointer moved to </Or> */
     xml->skipCurrentElement();
@@ -68,10 +68,10 @@ LogicStatement *EquivalenceEngine::processOrStatement(QXmlStreamReader *xml) {
     return new OrStatement(leftStatement, rightStatement);
 }
 
-LogicStatement *EquivalenceEngine::processAndStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processAndStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
-    LogicStatement *leftStatement = processLogicStatement(xml);
-    LogicStatement *rightStatement = processLogicStatement(xml);
+    Rule *leftStatement = processLogicStatement(xml);
+    Rule *rightStatement = processLogicStatement(xml);
 
     /* Pointer moved to </And> */
     xml->skipCurrentElement();
@@ -79,10 +79,10 @@ LogicStatement *EquivalenceEngine::processAndStatement(QXmlStreamReader *xml) {
     return new AndStatement(leftStatement, rightStatement);
 }
 
-LogicStatement *EquivalenceEngine::processIFFStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processIFFStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
-    LogicStatement *leftStatement = processLogicStatement(xml);
-    LogicStatement *rightStatement = processLogicStatement(xml);
+    Rule *leftStatement = processLogicStatement(xml);
+    Rule *rightStatement = processLogicStatement(xml);
 
     /* Pointer moved to </IFF> */
     xml->skipCurrentElement();
@@ -90,10 +90,10 @@ LogicStatement *EquivalenceEngine::processIFFStatement(QXmlStreamReader *xml) {
     return new IffStatement(leftStatement, rightStatement);
 }
 
-LogicStatement *EquivalenceEngine::processImpliesStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processImpliesStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
-    LogicStatement *leftStatement = processLogicStatement(xml);
-    LogicStatement *rightStatement = processLogicStatement(xml);
+    Rule *leftStatement = processLogicStatement(xml);
+    Rule *rightStatement = processLogicStatement(xml);
 
     /* Pointer moved to </Implies> */
     xml->skipCurrentElement();
@@ -101,7 +101,7 @@ LogicStatement *EquivalenceEngine::processImpliesStatement(QXmlStreamReader *xml
     return new ImpliesStatement(leftStatement, rightStatement);
 }
 
-LogicStatement *EquivalenceEngine::processLogicStatement(QXmlStreamReader *xml) {
+Rule *EquivalenceEngine::processLogicStatement(QXmlStreamReader *xml) {
     /* Move the pointer to the start tag */
     while (!xml->readNextStartElement());
 
@@ -190,16 +190,16 @@ QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input) {
 	return relatedEquivalence;
 }
 
-LogicSet *EquivalenceEngine::diff(LogicStatement *base, LogicSet *set) {
+LogicSet *EquivalenceEngine::diff(Rule *base, LogicSet *set) {
 	return set->diff(base);
 }
 
-QVector<LogicStatement *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, LogicSet *ruleSet) {
-	QVector<LogicStatement *> *matchedRules = new QVector<LogicStatement *>();
+QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, LogicSet *ruleSet) {
+	QVector<Rule *> *matchedRules = new QVector<Rule *>();
 
 	IDTable idtable;
 
-	for (LogicStatement *rule : *ruleSet->getSet())
+	for (Rule *rule : *ruleSet->getSet())
 		if (rule->match(input, &idtable)) {
 			matchedRules->append(rule);
 			idtable.clear();
@@ -208,7 +208,7 @@ QVector<LogicStatement *> *EquivalenceEngine::getMatchedRules(LogicStatement *in
 	return matchedRules;
 }
 
-LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule, LogicStatement *transformationRule) {
+LogicStatement *replaceStatement(LogicStatement *input, Rule *baseRule, Rule *transformationRule) {
 	IDTable idtable;
 
 	if (baseRule->match(input, &idtable))
@@ -220,7 +220,7 @@ LogicStatement *replaceStatement(LogicStatement *input, LogicStatement *baseRule
 bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet) {
 	IDTable idtable;
 
-	for (LogicStatement *rule : *ruleSet->getSet()) {
+	for (Rule *rule : *ruleSet->getSet()) {
 		if (rule->match(input, &idtable))
 			return true;
 	}

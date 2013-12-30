@@ -5,24 +5,25 @@
 #include <AST.hpp>
 using namespace AST;
 
+typedef LogicStatement Rule;
 /* Alternative for C++ set */
 class LogicSet
 {
 private:
-	QVector<LogicStatement *> *set;
-	bool inSet(LogicStatement *);
+	QVector<Rule *> *set;
+	bool inSet(Rule *);
 public:
 	LogicSet();
 	~LogicSet();
 
 	/* Set Implementation of add() */
-	bool add(LogicStatement *);
+	bool add(Rule *);
 
 	/* Returns a vector representing the set */
-	QVector<LogicStatement *> *getSet();
+	QVector<Rule *> *getSet();
 
 	/* Same Operation for Set difference to delete certain element of the set */
-	LogicSet *diff(LogicStatement *item);
+	LogicSet *diff(Rule *item);
 };
 
 #endif // LOGICSET_HPP
