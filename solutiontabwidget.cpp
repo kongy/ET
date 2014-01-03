@@ -76,8 +76,11 @@ void SolutionTabWidget::lineSelected() {
 	dialog->show();
 }
 
-void SolutionTabWidget::subformulaSelected(AST::LogicStatement *formula) {
+void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
 	// TODO
+}
+
+void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {
 	if(isForward) {
 		model->forwardStack.append(formula);
 	}

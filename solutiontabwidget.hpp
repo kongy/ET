@@ -38,13 +38,13 @@ public:
 signals:
 	void lineSelected(AST::LogicStatement* expr);
 
-
 private:
 	void redraw() const;
 
 private slots:
 	void lineSelected();
-	void subformulaSelected(AST::LogicStatement* formula);
+	void subformulaSelected(AST::LogicStatement* subformula);
+	void newFormulaGenerated(AST::LogicStatement *formula);
 };
 
 #endif // SOLUTIONTABWIDGET_HPP
