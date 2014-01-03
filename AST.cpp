@@ -114,6 +114,8 @@ bool Truth::variableBounded(Variable *) {
 	return true;
 }
 
+void Truth::collectFreeVariable(Variable *, QVector<Variable *> *) {}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -163,6 +165,8 @@ bool Falsity::variableBounded(Variable *) {
 	/* No constraint on constant, so variable is bounded. */
 	return true;
 }
+
+void Falsity::collectFreeVariable(Variable *, QVector<Variable *> *) {}
 
 /* Variable Class */
 Variable::Variable(QString *name) {
@@ -247,6 +251,12 @@ bool Variable::variableBounded(Variable *boundedVariable) {
 	return !this->equals(boundedVariable);
 }
 
+void Variable::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* We reach this block of code because it is not caught by quantifiers */
+	if (this->equals(freeVariable))
+		collection->append(this);
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -315,6 +325,11 @@ QVector<QPair<QString, LogicStatement *> > UnaryOpStatement::getStringMapping(bo
 bool UnaryOpStatement::variableBounded(Variable *boundedVariable) {
 	/* Propositional logic operator does nothing, need to check nested statement */
 	return getStatement()->variableBounded(boundedVariable);
+}
+
+void UnaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* Symbols has no effect on free variables */
+	getStatement()->collectFreeVariable(freeVariable, collection);
 }
 
 /* NotStatement Class */
@@ -450,6 +465,12 @@ bool BinaryOpStatement::variableBounded(Variable *boundedVariable) {
 	 * evaluated. */
 	return getLeftStatement()->variableBounded(boundedVariable) &&
 			getRightStatement()->variableBounded(boundedVariable);
+}
+
+void BinaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* Symbols has no effect on free variables, need to collect both side of BinaryStatement */
+	getLeftStatement()->collectFreeVariable(freeVariable, collection);
+	getRightStatement()->collectFreeVariable(freeVariable, collection);
 }
 
 /* AndStatement Class */
@@ -639,6 +660,12 @@ bool ForAllStatement::variableBounded(Variable *boundedVariable) {
 	return getStatement()->variableBounded(boundedVariable);
 }
 
+void ForAllStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* If not bounded by quantifier, then item might be free in nested statement, else stop */
+	if (!getQuantifier()->equals(freeVariable))
+		getStatement()->collectFreeVariable(freeVariable, collection);
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -704,6 +731,12 @@ bool ThereExistsStatement::variableBounded(Variable *boundedVariable) {
 
 	/* Variable didn't appear in quantifier, check the nested statement */
 	return getStatement()->variableBounded(boundedVariable);
+}
+
+void ThereExistsStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* If not bounded by quantifier, then item might be free in nested statement, else stop */
+	if (!getQuantifier()->equals(freeVariable))
+		getStatement()->collectFreeVariable(freeVariable, collection);
 }
 
 /* Parameters Class */
@@ -859,6 +892,21 @@ bool Parameters::variableBounded(Variable *boundedVariable) {
 	return true;
 }
 
+void Parameters::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+
+	Variable *parameter = getParameter();
+
+	/* Variable not bounded by quantifiers, if they are the same, add to collection */
+	if (parameter->equals(freeVariable))
+		collection->append(parameter);
+
+	Parameters *remainingParameters = getRemainingParameters();
+
+	/* Collect from the remaining Parameters */
+	if (remainingParameters != nullptr)
+		remainingParameters->collectFreeVariable(freeVariable, collection);
+}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -908,7 +956,13 @@ QVector<QPair<QString, LogicStatement *> > PredicateSymbolStatement::getStringMa
 }
 
 bool PredicateSymbolStatement::variableBounded(Variable *boundedVariable) {
+	/* In the context of  */
 	return getParameters()->variableBounded(boundedVariable);
+}
+
+void PredicateSymbolStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	/* No need to check function symbol name */
+	getParameters()->collectFreeVariable(freeVariable, collection);
 }
 
 /* EqualityStatement Class */
@@ -963,6 +1017,10 @@ bool EqualityStatement::variableBounded(Variable *boundedVariable) {
 	/* Need to check both left and right of "=" for bounded variable */
 	return getLeftVariable()->variableBounded(boundedVariable) &&
 			getRightVariable()->variableBounded(boundedVariable);
+}
+
+void EqualityStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
+	getLeftVariable()->collectFreeVariable(freeVariable, collection);
 }
 
 extern int yyparse();

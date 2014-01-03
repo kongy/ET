@@ -68,6 +68,9 @@ public:
 	 * ThereExists boundedVariable, or boundedVariable does not occur at all in the
 	 * logicstatement */
 	virtual bool variableBounded(Variable *boundedVariable) = 0;
+
+	/* Adds variables that occur free to freeVariables, i.e. equals to freeVariable but not appear in quantifiers */
+	virtual void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) = 0;
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -86,6 +89,7 @@ public:
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
+	void collectFreeVariable(Variable *, QVector<Variable *> *);
 };
 
 class Falsity : public LogicStatement {
@@ -102,6 +106,7 @@ public:
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
+	void collectFreeVariable(Variable *, QVector<Variable *> *);
 };
 
 class Variable : public LogicStatement {
@@ -126,7 +131,8 @@ public:
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -148,7 +154,8 @@ public:
 	bool operator==(LogicStatement &);
 	virtual ~UnaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -183,7 +190,8 @@ public:
 	bool operator==(LogicStatement &);
 	virtual ~BinaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -237,6 +245,7 @@ public:
 	virtual ~FirstOrderStatement();
 	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) = 0;
 	virtual bool variableBounded(Variable *) = 0;
+	virtual void collectFreeVariable(Variable *, QVector<Variable *> *) = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -253,7 +262,8 @@ public:
 	Symbol getSymbol();
 	~ForAllStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -270,7 +280,8 @@ public:
 	Symbol getSymbol();
 	~ThereExistsStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class Parameters : public LogicStatement {
@@ -295,7 +306,8 @@ public:
 	bool operator==(LogicStatement &);
 	~Parameters();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -312,7 +324,8 @@ public:
 	Symbol getSymbol();
 	~PredicateSymbolStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -328,7 +341,8 @@ public:
 	Symbol getSymbol();
 	~EqualityStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *);
+	bool variableBounded(Variable *boundedVariable);
+	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 };
 
 LogicStatement *parse(QString expression);
