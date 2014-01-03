@@ -72,6 +72,7 @@ void SolutionTabWidget::lineSelected() {
 	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, this);
 	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
 	dialog->show();
 }
 
