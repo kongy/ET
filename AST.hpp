@@ -112,6 +112,10 @@ public:
 class Variable : public LogicStatement {
 	QString name;
 	bool value;
+	/* Used by rule to indicate variable that binds to logicstatement */
+	Variable *freeVariable;
+	/* Used by rule to indicate variable that binds to logicstatement */
+	Variable *boundedVariable;
 protected:
 	void setName(QString *);
 public:
@@ -133,6 +137,10 @@ public:
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void setFreeVariable(QString name);
+	void setBoundedVariable(QString name);
+	Variable *getFreeVariable();
+	Variable *getBoundedVariable();
 };
 
 class UnaryOpStatement : public LogicStatement {

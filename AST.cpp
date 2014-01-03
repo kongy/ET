@@ -257,6 +257,22 @@ void Variable::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *
 		collection->append(this);
 }
 
+void Variable::setBoundedVariable(QString name) {
+	boundedVariable = new Variable(&name);
+}
+
+void Variable::setFreeVariable(QString name) {
+	freeVariable = new Variable(&name);
+}
+
+Variable *Variable::getBoundedVariable() {
+	return boundedVariable;
+}
+
+Variable *Variable::getFreeVariable() {
+	return freeVariable;
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
