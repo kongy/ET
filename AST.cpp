@@ -62,9 +62,7 @@ int LogicStatement::comparePrecedence(LogicStatement *outer, LogicStatement *inn
 	return outer->getSymbol() - inner->getSymbol();
 }
 
-LogicStatement::~LogicStatement() {
-	// Do Nothing
-}
+LogicStatement::~LogicStatement() {}
 
 /* Truth Class */
 QString Truth::print(bool) {
@@ -83,9 +81,7 @@ bool Truth::evaluate() {
 	return true;
 }
 
-void Truth::collectVariables(QVector<QVector<Variable *> *> *) {
-	//DO NOTHING
-}
+void Truth::collectVariables(QVector<QVector<Variable *> *> *) {}
 
 bool Truth::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol();
@@ -113,6 +109,11 @@ QVector<QPair<QString, LogicStatement *> > Truth::getStringMapping(bool) {
 	return mapping;
 }
 
+bool Truth::variableBounded(Variable *) {
+	/* No constraint on constant, so variable is bounded. */
+	return true;
+}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -130,9 +131,7 @@ bool Falsity::evaluate() {
 	return false;
 }
 
-void Falsity::collectVariables(QVector<QVector<Variable *> *> *) {
-	//DO NOTHING
-}
+void Falsity::collectVariables(QVector<QVector<Variable *> *> *) {}
 
 bool Falsity::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol();
@@ -158,6 +157,11 @@ QVector<QPair<QString, LogicStatement *> > Falsity::getStringMapping(bool) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_FALSITY), this));
 	return mapping;
+}
+
+bool Falsity::variableBounded(Variable *) {
+	/* No constraint on constant, so variable is bounded. */
+	return true;
 }
 
 /* Variable Class */
@@ -237,6 +241,12 @@ QVector<QPair<QString, LogicStatement *> > Variable::getStringMapping(bool) {
 	return mapping;
 }
 
+bool Variable::variableBounded(Variable *boundedVariable) {
+	/* A variable is bounded if either it is caght in ThereExists or ForAll statement. Otherwise it doesn't match
+	 * any Variables that exists. */
+	return !this->equals(boundedVariable);
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -286,13 +296,13 @@ UnaryOpStatement::~UnaryOpStatement() {
 QVector<QPair<QString, LogicStatement *> > UnaryOpStatement::getStringMapping(bool fullBracket) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	//Symbols are needed anyway
+	/* Symbols are needed anyway */
 	mapping.append(QPair<QString, LogicStatement *>(symbol(), this));
 
-	//Bracket Not Needed
+	/* Bracket Not Needed */
 	if (!fullBracket && (comparePrecedence(this, getStatement()) >= 0))
 		mapping += getStatement()->getStringMapping(fullBracket);
-	//Brackets Required
+	/* Brackets Required */
 	else {
 		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
 		mapping += getStatement()->getStringMapping(fullBracket);
@@ -300,6 +310,11 @@ QVector<QPair<QString, LogicStatement *> > UnaryOpStatement::getStringMapping(bo
 	}
 
 	return mapping;
+}
+
+bool UnaryOpStatement::variableBounded(Variable *boundedVariable) {
+	/* Propositional logic operator does nothing, need to check nested statement */
+	return getStatement()->variableBounded(boundedVariable);
 }
 
 /* NotStatement Class */
@@ -406,10 +421,10 @@ QVector<QPair<QString, LogicStatement *> > BinaryOpStatement::getStringMapping(b
 
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	// Bracket not needed on left
+	/* Bracket not needed on left */
 	if (!fullBracket && (comparePrecedence(this, getLeftStatement()) >= 0))
 		mapping = getLeftStatement()->getStringMapping(fullBracket);
-	// Brackets needed on left
+	/* Brackets needed on left */
 	else {
 		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
 		mapping += getLeftStatement()->getStringMapping(fullBracket);
@@ -418,7 +433,7 @@ QVector<QPair<QString, LogicStatement *> > BinaryOpStatement::getStringMapping(b
 
 	mapping.append(QPair<QString, LogicStatement *>(symbol(), this));
 
-	// Brackets not needed on right
+	/* Brackets not needed on right */
 	if (!fullBracket && (comparePrecedence(this, getRightStatement()) > 0))
 		mapping += getRightStatement()->getStringMapping(fullBracket);
 	else {
@@ -428,6 +443,13 @@ QVector<QPair<QString, LogicStatement *> > BinaryOpStatement::getStringMapping(b
 	}
 
 	return mapping;
+}
+
+bool BinaryOpStatement::variableBounded(Variable *boundedVariable) {
+	/* Propositional logic operator has no impact on whether a variable is bounded or not. Both sides have to be
+	 * evaluated. */
+	return getLeftStatement()->variableBounded(boundedVariable) &&
+			getRightStatement()->variableBounded(boundedVariable);
 }
 
 /* AndStatement Class */
@@ -527,9 +549,7 @@ bool FirstOrderStatement::evaluate() {
 	return false;
 }
 
-void FirstOrderStatement::collectVariables(QVector<QVector<Variable *> *> *) {
-	//UNUSED
-}
+void FirstOrderStatement::collectVariables(QVector<QVector<Variable *> *> *) {}
 
 bool FirstOrderStatement::equals(LogicStatement *) {
 	return true;
@@ -551,9 +571,7 @@ bool FirstOrderStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol();
 }
 
-FirstOrderStatement::~FirstOrderStatement() {
-	//DO NOTHING
-}
+FirstOrderStatement::~FirstOrderStatement() {}
 
 /* ForAllStatement Class */
 ForAllStatement::ForAllStatement(Variable *identifier, LogicStatement *forAllStatement) {
@@ -566,24 +584,24 @@ void ForAllStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ForAllStatement::print(bool fullBracket) {
-                return QString("%1%2(%3)").arg(SYMBOL_FORALL, getQuantifier()->print(fullBracket),
-                                                                           getStatement()->print(fullBracket));
+    return QString("%1%2(%3)").arg(SYMBOL_FORALL, getQuantifier()->print(fullBracket),
+                                   getStatement()->print(fullBracket));
 }
 
 LogicStatement * ForAllStatement::getStatement() {
-	return statement;
+    return statement;
 }
 
 Variable *ForAllStatement::getQuantifier() {
-	return identifier;
+    return identifier;
 }
 
 void ForAllStatement::setStatement(LogicStatement *newstatement) {
-	statement = newstatement;
+    statement = newstatement;
 }
 
 Symbol ForAllStatement::getSymbol() {
-	return Symbol::FORALL_SYMBOL;
+    return Symbol::FORALL_SYMBOL;
 }
 
 ForAllStatement::~ForAllStatement() {
@@ -594,15 +612,15 @@ ForAllStatement::~ForAllStatement() {
 QVector<QPair<QString, LogicStatement *> > ForAllStatement::getStringMapping(bool fullBracket) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	// Quantifier forall binds the entirestatement
+	/* Quantifier forall binds the entirestatement */
 	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_FORALL), this));
-	// Nullptr because Quantifier alone is meaningless for equivalence
+	/* Nullptr because Quantifier alone is meaningless for equivalence */
 	mapping.append(QPair<QString, LogicStatement *>(getQuantifier()->getName(), nullptr));
 
-	// Bracket not needed
+	/* Bracket not needed */
 	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
 		mapping += getStatement()->getStringMapping(fullBracket);
-	// Brackets needed
+	/* Brackets needed */
 	else {
 		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
 		mapping += getStatement()->getStringMapping(fullBracket);
@@ -610,6 +628,15 @@ QVector<QPair<QString, LogicStatement *> > ForAllStatement::getStringMapping(boo
 	}
 
 	return mapping;
+}
+
+bool ForAllStatement::variableBounded(Variable *boundedVariable) {
+	/* If the variable appears in the quantifier, we stop and confirm that the variable is bounded. */
+	if (getQuantifier()->equals(boundedVariable))
+		return true;
+
+	/* Variable didn't appear in quantifier, check the nested statement */
+	return getStatement()->variableBounded(boundedVariable);
 }
 
 /* ThereExistsStatement Class */
@@ -624,24 +651,24 @@ void ThereExistsStatement::setIdentifier(Variable *identifier) {
 }
 
 QString ThereExistsStatement::print(bool fullBracket) {
-        return QString("%1%2(%3)").arg(SYMBOL_THEREEXISTS, getQuantifier()->print(fullBracket),
-                                                                   getStatement()->print(fullBracket));
+    return QString("%1%2(%3)").arg(SYMBOL_THEREEXISTS, getQuantifier()->print(fullBracket),
+                                   getStatement()->print(fullBracket));
 }
 
 LogicStatement * ThereExistsStatement::getStatement() {
-	return statement;
+    return statement;
 }
 
 Variable *ThereExistsStatement::getQuantifier() {
-	return identifier;
+    return identifier;
 }
 
 void ThereExistsStatement::setStatement(LogicStatement *newStatement) {
-	statement = newStatement;
+    statement = newStatement;
 }
 
 Symbol ThereExistsStatement::getSymbol() {
-	return Symbol::THEREEXISTS_SYMBOL;
+    return Symbol::THEREEXISTS_SYMBOL;
 }
 
 ThereExistsStatement::~ThereExistsStatement() {
@@ -652,15 +679,15 @@ ThereExistsStatement::~ThereExistsStatement() {
 QVector<QPair<QString, LogicStatement *> > ThereExistsStatement::getStringMapping(bool fullBracket) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	// Maps symbol thereexists to the entire statement
+	/* Maps symbol thereexists to the entire statement */
 	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_THEREEXISTS), this));
-	// Nullptr because quantifier alone is meaningless
+	/* Nullptr because quantifier alone is meaningless */
 	mapping.append(QPair<QString, LogicStatement *>(getQuantifier()->getName(), nullptr));
 
-	// Bracket Not Needed
+	/* Bracket Not Needed */
 	if (!fullBracket && (comparePrecedence(this, getStatement()) > 0))
 		mapping += getStatement()->getStringMapping(fullBracket);
-	// Brackets needed
+	/* Brackets needed */
 	else {
 		mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
 		mapping += getStatement()->getStringMapping(fullBracket);
@@ -668,6 +695,15 @@ QVector<QPair<QString, LogicStatement *> > ThereExistsStatement::getStringMappin
 	}
 
 	return mapping;
+}
+
+bool ThereExistsStatement::variableBounded(Variable *boundedVariable) {
+	/* If the variable appears in the quantifier, we stop and confirm that the variable is bounded. */
+	if (getQuantifier()->equals(boundedVariable))
+		return true;
+
+	/* Variable didn't appear in quantifier, check the nested statement */
+	return getStatement()->variableBounded(boundedVariable);
 }
 
 /* Parameters Class */
@@ -713,9 +749,7 @@ Symbol Parameters::getSymbol() {
 	return Symbol::PARAMETERS_SYMBOL;
 }
 
-void Parameters::collectVariables(QVector<QVector<Variable *> *> *) {
-	//NOT USED
-}
+void Parameters::collectVariables(QVector<QVector<Variable *> *> *) {}
 
 bool Parameters::equals(LogicStatement *statement) {
 
@@ -797,8 +831,7 @@ Parameters::~Parameters() {
 QVector<QPair<QString, LogicStatement *> > Parameters::getStringMapping(bool fullBracket) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	// Null Pointer here because one argument is meaningless
-	// alone
+	/* Null Pointer here because one argument is meaningless alone */
 	mapping.append(QPair<QString, LogicStatement *>(getParameter()->getName(), nullptr));
 	Parameters *remainingParameters = getRemainingParameters();
 
@@ -808,6 +841,22 @@ QVector<QPair<QString, LogicStatement *> > Parameters::getStringMapping(bool ful
 	}
 
 	return mapping;
+}
+
+bool Parameters::variableBounded(Variable *boundedVariable) {
+	/* We reached this block of code because variable is not caught in ThereExists or ForAll, so if boundedVariable
+	 * appears, we stop and conclude the variable is not bounded */
+	if (getParameter()->equals(boundedVariable))
+		return false;
+
+	Parameters *remainingParams = getRemainingParameters();
+
+	/* The current variable is not bounded, if more variables check. */
+	if (remainingParams != nullptr)
+		return remainingParams->variableBounded(boundedVariable);
+
+	/* No more variables */
+	return true;
 }
 
 /* PredicateSymbolStatement Class */
@@ -858,6 +907,10 @@ QVector<QPair<QString, LogicStatement *> > PredicateSymbolStatement::getStringMa
 	return mapping;
 }
 
+bool PredicateSymbolStatement::variableBounded(Variable *boundedVariable) {
+	return getParameters()->variableBounded(boundedVariable);
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -898,12 +951,18 @@ EqualityStatement::~EqualityStatement() {
 QVector<QPair<QString, LogicStatement *> > EqualityStatement::getStringMapping(bool) {
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
-	// Null Mapping because one Variable argument is meaningless for equivalence
+	/* Null Mapping because one Variable argument is meaningless for equivalence */
 	mapping.append(QPair<QString, LogicStatement *>(getLeftVariable()->getName(), nullptr));
 	mapping.append(QPair<QString, LogicStatement *>(QString(SYMBOL_EQUALS), this));
 	mapping.append(QPair<QString, LogicStatement *>(getRightVariable()->getName(), nullptr));
 
 	return mapping;
+}
+
+bool EqualityStatement::variableBounded(Variable *boundedVariable) {
+	/* Need to check both left and right of "=" for bounded variable */
+	return getLeftVariable()->variableBounded(boundedVariable) &&
+			getRightVariable()->variableBounded(boundedVariable);
 }
 
 extern int yyparse();
