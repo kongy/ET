@@ -131,6 +131,8 @@ public:
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *, IDTable *);
+	/* Called from cloned version of rule, delete this removes the cloned version which is no longer accessible
+	 * because it gets replaced */
 	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
