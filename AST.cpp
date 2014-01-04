@@ -203,7 +203,7 @@ bool Variable::evaluate() {
 
 bool Variable::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			(dynamic_cast<Variable *>(statement))->getName() == getName();
+			dynamic_cast<Variable *>(statement)->getName() == getName();
 }
 
 void Variable::collectVariables(QVector<QVector<Variable *> *> *var_list) {
@@ -236,7 +236,7 @@ LogicStatement* Variable::clone() {
 
 bool Variable::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
-			getName() == dynamic_cast<Variable&>(other).getName();
+			getName() == dynamic_cast<Variable &>(other).getName();
 }
 
 QVector<QPair<QString, LogicStatement *> > Variable::getStringMapping(bool) {
@@ -288,12 +288,12 @@ void UnaryOpStatement::collectVariables(QVector<QVector<Variable *> *> *var_list
 
 bool UnaryOpStatement::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			getStatement()->equals((dynamic_cast<UnaryOpStatement *>(statement))->getStatement());
+			getStatement()->equals(dynamic_cast<UnaryOpStatement *>(statement)->getStatement());
 }
 
 bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
 	return matching_statement->getSymbol() == getSymbol() &&
-			getStatement()->match((dynamic_cast<UnaryOpStatement *>(matching_statement))->getStatement(), table);
+			getStatement()->match(dynamic_cast<UnaryOpStatement *>(matching_statement)->getStatement(), table);
 }
 
 LogicStatement* UnaryOpStatement::replace(IDTable *table) {
@@ -312,7 +312,7 @@ QString UnaryOpStatement::print(bool fullBracket) {
 
 bool UnaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
-			*getStatement() == *dynamic_cast<UnaryOpStatement&>(other).getStatement();
+			*getStatement() == *dynamic_cast<UnaryOpStatement &>(other).getStatement();
 }
 
 UnaryOpStatement::~UnaryOpStatement() {
@@ -421,8 +421,8 @@ void BinaryOpStatement::collectVariables(QVector<QVector<Variable *> *> *var_lis
 
 bool BinaryOpStatement::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol() &&
-			getLeftStatement()->equals((dynamic_cast<BinaryOpStatement *>(statement))->getLeftStatement()) &&
-			getRightStatement()->equals((dynamic_cast<BinaryOpStatement *>(statement))->getRightStatement());
+			getLeftStatement()->equals(dynamic_cast<BinaryOpStatement *>(statement)->getLeftStatement()) &&
+			getRightStatement()->equals(dynamic_cast<BinaryOpStatement *>(statement)->getRightStatement());
 }
 
 bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
@@ -439,8 +439,8 @@ LogicStatement* BinaryOpStatement::replace(IDTable *table) {
 
 bool BinaryOpStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
-			*getLeftStatement() == *dynamic_cast<BinaryOpStatement&>(other).getLeftStatement() &&
-			*getRightStatement() == *dynamic_cast<BinaryOpStatement&>(other).getRightStatement();
+			*getLeftStatement() == *dynamic_cast<BinaryOpStatement &>(other).getLeftStatement() &&
+			*getRightStatement() == *dynamic_cast<BinaryOpStatement &>(other).getRightStatement();
 }
 
 BinaryOpStatement::~BinaryOpStatement() {
@@ -586,26 +586,12 @@ bool FirstOrderStatement::evaluate() {
 	return false;
 }
 
-void FirstOrderStatement::collectVariables(QVector<QVector<Variable *> *> *) {}
-
-bool FirstOrderStatement::equals(LogicStatement *) {
-	return true;
-}
-
 bool FirstOrderStatement::match(LogicStatement *, IDTable *) {
 	return false;
 }
 
-LogicStatement* FirstOrderStatement::clone() {
-	return this;
-}
-
 LogicStatement* FirstOrderStatement::replace(IDTable *) {
 	return this;
-}
-
-bool FirstOrderStatement::operator==(LogicStatement &other) {
-	return getSymbol() == other.getSymbol();
 }
 
 FirstOrderStatement::~FirstOrderStatement() {}
@@ -682,6 +668,27 @@ void ForAllStatement::collectFreeVariable(Variable *freeVariable, QVector<Variab
 		getStatement()->collectFreeVariable(freeVariable, collection);
 }
 
+void ForAllStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
+	getQuantifier()->collectVariables(var_list);
+	getStatement()->collectVariables(var_list);
+}
+
+bool ForAllStatement::equals(LogicStatement *other) {
+	return getSymbol() == other->getSymbol() &&
+			getQuantifier()->equals(dynamic_cast<ForAllStatement *>(other)->getQuantifier()) &&
+			getStatement()->equals(dynamic_cast<ForAllStatement *>(other)->getStatement());
+}
+
+LogicStatement *ForAllStatement::clone() {
+	return new ForAllStatement(dynamic_cast<Variable *>(getQuantifier()->clone()), getStatement()->clone());
+}
+
+bool ForAllStatement::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol() &&
+			*getQuantifier() == *dynamic_cast<ForAllStatement &>(other).getQuantifier() &&
+			*getStatement() == *dynamic_cast<ForAllStatement &>(other).getStatement();
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -753,6 +760,27 @@ void ThereExistsStatement::collectFreeVariable(Variable *freeVariable, QVector<V
 	/* If not bounded by quantifier, then item might be free in nested statement, else stop */
 	if (!getQuantifier()->equals(freeVariable))
 		getStatement()->collectFreeVariable(freeVariable, collection);
+}
+
+void ThereExistsStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
+	getQuantifier()->collectVariables(var_list);
+	getStatement()->collectVariables(var_list);
+}
+
+bool ThereExistsStatement::equals(LogicStatement *other) {
+	return getSymbol() == other->getSymbol() &&
+			getQuantifier()->equals(dynamic_cast<ThereExistsStatement *>(other)->getQuantifier()) &&
+			getStatement()->equals(dynamic_cast<ThereExistsStatement *>(other)->getStatement());
+}
+
+LogicStatement *ThereExistsStatement::clone() {
+	return new ThereExistsStatement(dynamic_cast<Variable *>(getQuantifier()->clone()), getStatement()->clone());
+}
+
+bool ThereExistsStatement::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol() &&
+			*getQuantifier() == *dynamic_cast<ThereExistsStatement &>(other).getQuantifier() &&
+			*getStatement() == *dynamic_cast<ThereExistsStatement &>(other).getStatement();
 }
 
 /* Parameters Class */
@@ -849,11 +877,11 @@ LogicStatement* Parameters::replace(IDTable *table) {
 bool Parameters::operator==(LogicStatement &other) {
 	/* Must have same symbol and parameter match to proceed */
 	if (!(getSymbol() == other.getSymbol() &&
-		  *getParameter() == *dynamic_cast<Parameters&>(other).getParameter()))
+		  *getParameter() == *dynamic_cast<Parameters &>(other).getParameter()))
 		return false;
 
 	/* Symbol and type matched */
-	Parameters *otherCasted = &dynamic_cast<Parameters&>(other);
+	Parameters *otherCasted = &dynamic_cast<Parameters &>(other);
 	Parameters *currentRemainingParams = getRemainingParameters();
 	Parameters *otherRemainingParams = otherCasted->getRemainingParameters();
 
@@ -981,6 +1009,28 @@ void PredicateSymbolStatement::collectFreeVariable(Variable *freeVariable, QVect
 	getParameters()->collectFreeVariable(freeVariable, collection);
 }
 
+void PredicateSymbolStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
+	getPredicateSymbol()->collectVariables(var_list);
+	getParameters()->collectVariables(var_list);
+}
+
+bool PredicateSymbolStatement::equals(LogicStatement *other) {
+	return getSymbol() == other->getSymbol() &&
+			getPredicateSymbol()->equals(dynamic_cast<PredicateSymbolStatement *>(other)->getPredicateSymbol()) &&
+			getParameters()->equals(dynamic_cast<PredicateSymbolStatement *>(other)->getParameters());
+}
+
+LogicStatement *PredicateSymbolStatement::clone() {
+	return new PredicateSymbolStatement(dynamic_cast<Variable *>(getPredicateSymbol()->clone()),
+										dynamic_cast<Parameters *>(getParameters()->clone()));
+}
+
+bool PredicateSymbolStatement::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol() &&
+			*getPredicateSymbol() == *dynamic_cast<PredicateSymbolStatement &>(other).getPredicateSymbol() &&
+			*getParameters() == *dynamic_cast<PredicateSymbolStatement &>(other).getParameters();
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -1037,6 +1087,28 @@ bool EqualityStatement::variableBounded(Variable *boundedVariable) {
 
 void EqualityStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
 	getLeftVariable()->collectFreeVariable(freeVariable, collection);
+}
+
+void EqualityStatement::collectVariables(QVector<QVector<Variable *> *> *var_list) {
+	getLeftVariable()->collectVariables(var_list);
+	getRightVariable()->collectVariables(var_list);
+}
+
+bool EqualityStatement::equals(LogicStatement *other) {
+	return getSymbol() == other->getSymbol() &&
+			getLeftVariable()->equals(dynamic_cast<EqualityStatement *>(other)->getLeftVariable()) &&
+			getRightVariable()->equals(dynamic_cast<EqualityStatement *>(other)->getRightVariable());
+}
+
+LogicStatement *EqualityStatement::clone() {
+	return new EqualityStatement(dynamic_cast<Variable *>(getLeftVariable()->clone()),
+								 dynamic_cast<Variable *>(getRightVariable()->clone()));
+}
+
+bool EqualityStatement::operator==(LogicStatement &other) {
+	return getSymbol() == other.getSymbol() &&
+			*getLeftVariable() == *dynamic_cast<EqualityStatement &>(other).getLeftVariable() &&
+			*getRightVariable() == *dynamic_cast<EqualityStatement &>(other).getRightVariable();
 }
 
 extern int yyparse();

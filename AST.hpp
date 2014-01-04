@@ -244,12 +244,12 @@ public:
 	bool isFirstOrderLogic();
 	Symbol getSymbol() = 0;
 	bool evaluate();
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
+	virtual void collectVariables(QVector<QVector<Variable *> *> *) = 0;
+	virtual bool equals(LogicStatement *) = 0;
 	bool match(LogicStatement *, IDTable *);
-	LogicStatement* clone();
+	virtual LogicStatement* clone() = 0;
 	LogicStatement* replace(IDTable *);
-	bool operator==(LogicStatement &);
+	virtual bool operator==(LogicStatement &) = 0;
 	virtual ~FirstOrderStatement();
 	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) = 0;
 	virtual bool variableBounded(Variable *) = 0;
@@ -272,6 +272,10 @@ public:
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void collectVariables(QVector<QVector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	LogicStatement* clone();
+	bool operator==(LogicStatement &);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -290,6 +294,10 @@ public:
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void collectVariables(QVector<QVector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	LogicStatement* clone();
+	bool operator==(LogicStatement &);
 };
 
 class Parameters : public LogicStatement {
@@ -334,6 +342,10 @@ public:
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void collectVariables(QVector<QVector<Variable *> *> *);
+	bool equals(LogicStatement *);
+	LogicStatement* clone();
+	bool operator==(LogicStatement &);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -351,6 +363,10 @@ public:
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void collectVariables(QVector<QVector<Variable *> *> *collection);
+	bool equals(LogicStatement *);
+	LogicStatement* clone();
+	bool operator==(LogicStatement &);
 };
 
 LogicStatement *parse(QString expression);
