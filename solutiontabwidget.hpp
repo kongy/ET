@@ -17,6 +17,7 @@ class SolutionTabWidget : public QWidget
 
 	Ui::SolutionTabWidget *ui;
 	solutionModel* model;
+
 	bool fullBracket;
 
 	/*

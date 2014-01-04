@@ -1,5 +1,6 @@
 #include "solutiontabwidget.hpp"
 #include "subformulaselectiondialog.hpp"
+#include "formulareplacementdialog.hpp"
 #include "ui_solutiontabwidget.h"
 
 #include <QDebug>
@@ -77,7 +78,10 @@ void SolutionTabWidget::lineSelected() {
 }
 
 void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
-	// TODO
+	FormulaReplacementDialog *d = new FormulaReplacementDialog(subformula, this);
+	d->setAttribute(Qt::WA_DeleteOnClose);
+	d->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+	d->show();
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {
