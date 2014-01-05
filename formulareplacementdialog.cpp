@@ -29,5 +29,5 @@ FormulaReplacementDialog::~FormulaReplacementDialog()
 
 void FormulaReplacementDialog::onClick() {
 	RulePushButton *source = static_cast<RulePushButton*>(sender());
-	qDebug() << source->getExtra()->print(ET::fullBracket);
+	emit ruleSelected(source->getExtra());
 }

@@ -6,6 +6,7 @@
 
 #include "AST.hpp"
 #include "solutionmodel.hpp"
+#include "logicset.hpp"
 
 namespace Ui {
 class SolutionTabWidget;
@@ -39,6 +40,7 @@ signals:
 private slots:
 	void lineSelected();
 	void subformulaSelected(AST::LogicStatement* subformula);
+	void ruleSelected(LogicSet *ruleset);
 	void newFormulaGenerated(AST::LogicStatement *formula);
 };
 

@@ -3,6 +3,7 @@
 
 #include "AST.hpp"
 #include "equivalenceengine.hpp"
+#include "logicset.hpp"
 
 #include <QDialog>
 
@@ -19,6 +20,9 @@ class FormulaReplacementDialog : public QDialog
 public:
 	explicit FormulaReplacementDialog(AST::LogicStatement* subformula, QWidget *parent = 0);
 	~FormulaReplacementDialog();
+
+signals:
+	LogicSet *ruleSelected(LogicSet*);
 
 private slots:
 	void onClick();

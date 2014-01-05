@@ -79,9 +79,17 @@ void SolutionTabWidget::lineSelected() {
 
 void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
 	FormulaReplacementDialog *d = new FormulaReplacementDialog(subformula, this);
+	connect(d, SIGNAL(ruleSelected(LogicSet*)), this, SLOT(ruleSelected(LogicSet*)));
 	d->setAttribute(Qt::WA_DeleteOnClose);
 	d->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
 	d->show();
+}
+
+void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
+	QVector<Rule*> *m = ET::eqEng->getMatchedRules(selectedStatement, ruleset);
+	for(Rule *i : *m) {
+		qDebug() << i->print(ET::fullBracket);
+	}
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {
