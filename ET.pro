@@ -50,7 +50,8 @@ HEADERS  += mainwindow.hpp \
     solutionmodel.hpp \
     subformulaselectiondialog.hpp \
     formulareplacementdialog.hpp \
-    main.hpp
+    main.hpp \
+    embeddedpushbutton.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \

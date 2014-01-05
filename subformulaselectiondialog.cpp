@@ -1,19 +1,12 @@
+#include "embeddedpushbutton.hpp"
 #include "main.hpp"
 #include "subformulaselectiondialog.hpp"
 #include "ui_subformulaselectiondialog.h"
 
 #include <QLabel>
 #include <QPair>
-#include <QPushButton>
 
-class SubformulaButton : public QPushButton {
-public:
-	AST::LogicStatement *node;
-
-	SubformulaButton(const QString &text, AST::LogicStatement *node, QWidget *parent = 0) :
-		QPushButton(text, parent),
-		node(node) { }
-};
+typedef EmbeddedPushButton<AST::LogicStatement*> SubformulaButton;
 
 SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formula, QWidget *parent) :
 	QDialog(parent),
@@ -43,6 +36,6 @@ SubformulaSelectionDialog::~SubformulaSelectionDialog()
 
 void SubformulaSelectionDialog::onClick() {
 	SubformulaButton *sBtn = static_cast<SubformulaButton *>(sender());
-	emit subformulaSelected(sBtn->node);
+	emit subformulaSelected(sBtn->getExtra());
 	close();
 }

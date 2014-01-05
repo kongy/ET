@@ -20,6 +20,9 @@ class FormulaReplacementDialog : public QDialog
 public:
 	explicit FormulaReplacementDialog(AST::LogicStatement* subformula, QWidget *parent = 0);
 	~FormulaReplacementDialog();
+
+private slots:
+	void onClick();
 };
 
 #endif // FORMULAREPLACEMENTDIALOG_HPP
