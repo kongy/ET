@@ -1,7 +1,7 @@
 #include "logicset.hpp"
 #include "symbol.hpp"
 
-bool LogicSet::inSet(Rule *item) {
+bool LogicSet::exists(Rule *item) {
 	for (Rule *set_elem : *set)
 		if (item->equals(set_elem))
 			return true;
@@ -10,12 +10,12 @@ bool LogicSet::inSet(Rule *item) {
 }
 
 bool LogicSet::add(Rule *item) {
-	if (inSet(item))
-		return false;
-	else {
+	if (!exists(item)) {
 		set->push_back(item);
 		return true;
 	}
+
+	return false;
 }
 
 LogicSet::LogicSet() {

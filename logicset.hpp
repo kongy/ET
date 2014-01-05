@@ -11,10 +11,10 @@ class LogicSet
 {
 private:
 	QVector<Rule *> *set;
-	bool inSet(Rule *);
 public:
 	LogicSet();
 	~LogicSet();
+	bool exists(Rule *);
 
 	/* Set Implementation of add() */
 	bool add(Rule *);
