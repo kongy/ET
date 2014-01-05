@@ -1,9 +1,12 @@
+#include "main.hpp"
 #include "mainwindow.hpp"
 
 #include <QApplication>
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTranslator>
+
+bool ET::fullBracket;
 
 int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);

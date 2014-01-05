@@ -18,8 +18,6 @@ class SolutionTabWidget : public QWidget
 	Ui::SolutionTabWidget *ui;
 	solutionModel* model;
 
-	bool fullBracket;
-
 	/*
 	 *  Can only select one statement for processing at a time,
 	 *  save states globally so that no need to pass them all the time.
@@ -28,19 +26,15 @@ class SolutionTabWidget : public QWidget
 	AST::LogicStatement *selectedStatement;
 
 public:
-	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end,
-							   bool fullBracket = false, QWidget *parent = 0);
+	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end, QWidget *parent = 0);
 	~SolutionTabWidget();
 
-	void changeBracketStatus(bool fullBracket);
+	void redraw() const;
 	void undo();
 	void redo();
 
 signals:
 	void lineSelected(AST::LogicStatement* expr);
-
-private:
-	void redraw() const;
 
 private slots:
 	void lineSelected();

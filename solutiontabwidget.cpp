@@ -1,3 +1,4 @@
+#include "main.hpp"
 #include "solutiontabwidget.hpp"
 #include "subformulaselectiondialog.hpp"
 #include "formulareplacementdialog.hpp"
@@ -6,11 +7,10 @@
 #include <QDebug>
 
 SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicStatement *end,
-									 bool fullBracket, QWidget *parent) :
+									 QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::SolutionTabWidget),
-	model(new solutionModel(begin, end)),
-	fullBracket(fullBracket) {
+	model(new solutionModel(begin, end)) {
 	ui->setupUi(this);
 
 	redraw();
@@ -34,22 +34,22 @@ void SolutionTabWidget::redraw() const {
 	if(!proofFinished) {
 		while(forwardStackIt.hasNext()) {
 			while(forwardStackIt.hasNext()) {
-				ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
+				ui->textEdit->insertPlainText(forwardStackIt.next()->print(ET::fullBracket).append("\n"));
 			}
 			ui->textEdit->insertPlainText("\n");
 			while(backwardStackIt.hasPrevious()) {
-				ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
+				ui->textEdit->insertPlainText(backwardStackIt.previous()->print(ET::fullBracket).append("\n"));
 			}
 			connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
 		}
 	}
 	else {
 		while(forwardStackIt.hasNext()) {
-			ui->textEdit->insertPlainText(forwardStackIt.next()->print(fullBracket).append("\n"));
+			ui->textEdit->insertPlainText(forwardStackIt.next()->print(ET::fullBracket).append("\n"));
 		}
 		backwardStackIt.previous();
 		while(backwardStackIt.hasPrevious()) {
-			ui->textEdit->insertPlainText(backwardStackIt.previous()->print(fullBracket).append("\n"));
+			ui->textEdit->insertPlainText(backwardStackIt.previous()->print(ET::fullBracket).append("\n"));
 		}
 	}
 }
@@ -91,11 +91,6 @@ void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {
 	else {
 		model->backwardStack.append(formula);
 	}
-	redraw();
-}
-
-void SolutionTabWidget::changeBracketStatus(bool fullBracket) {
-	this->fullBracket = fullBracket;
 	redraw();
 }
 

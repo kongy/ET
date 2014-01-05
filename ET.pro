@@ -49,7 +49,8 @@ HEADERS  += mainwindow.hpp \
     logicset.hpp \
     solutionmodel.hpp \
     subformulaselectiondialog.hpp \
-    formulareplacementdialog.hpp
+    formulareplacementdialog.hpp \
+    main.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \

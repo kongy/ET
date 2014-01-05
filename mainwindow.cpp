@@ -1,3 +1,4 @@
+#include "main.hpp"
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "newsolutiondialog.hpp"
@@ -72,8 +73,7 @@ void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStateme
 	// TODO: Check AST equivalence
 	if(start == nullptr) qWarning()<<"Begin is NULL";
 	if(end == nullptr) qWarning()<<"End is NULL";
-	bool fullBracket = ui->actionFull_Brackets->isChecked();
-	QWidget *tab = new SolutionTabWidget(start, end, fullBracket, ui->tabWidget);
+	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
 	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);
 }
@@ -96,11 +96,11 @@ void MainWindow::redo() {
 
 /** Change bracket status of all tabs */
 void MainWindow::bracketStatusChanged() {
-	bool fullBracket = ui->actionFull_Brackets->isChecked();
+	ET::fullBracket = ui->actionFull_Brackets->isChecked();
 	for(int i = 0; i < ui->tabWidget->count(); i++) {
 		QWidget* widget = ui->tabWidget->widget(i);
 		if(typeid(*widget) == typeid(SolutionTabWidget)) {
-			static_cast<SolutionTabWidget*> (widget)->changeBracketStatus(fullBracket);
+			static_cast<SolutionTabWidget*> (widget)->redraw();
 		}
 	}
 	return;

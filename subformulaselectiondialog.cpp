@@ -1,3 +1,4 @@
+#include "main.hpp"
 #include "subformulaselectiondialog.hpp"
 #include "ui_subformulaselectiondialog.h"
 
@@ -25,7 +26,7 @@ SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formul
 		QWidget *sfw;
 		if(i.second != nullptr) {
 			sfw = new SubformulaButton(i.first, i.second, this);
-			sfw->setToolTip(i.second->print(false));
+			sfw->setToolTip(i.second->print(ET::fullBracket));
 			connect(sfw, SIGNAL(clicked()), this, SLOT(onClick()));
 		}
 		else {
