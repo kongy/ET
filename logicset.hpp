@@ -1,11 +1,11 @@
 #ifndef LOGICSET_HPP
 #define LOGICSET_HPP
 
-#include <QVector>
-#include <AST.hpp>
-using namespace AST;
+#include "AST.hpp"
 
-typedef LogicStatement Rule;
+#include <QVector>
+
+typedef AST::LogicStatement Rule;
 /* Alternative for C++ set */
 class LogicSet
 {
