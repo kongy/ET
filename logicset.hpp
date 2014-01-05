@@ -24,6 +24,8 @@ public:
 
 	/* Same Operation for Set difference to delete certain element of the set */
 	LogicSet *diff(Rule *item);
+
+	QString print(bool fullBracket);
 };
 
 #endif // LOGICSET_HPP

@@ -11,6 +11,7 @@
 #define SYMBOL_FORALL (QChar(u'∀'))
 #define SYMBOL_THEREEXISTS (QChar(u'∃'))
 #define SYMBOL_EQUALS (QChar(u'='))
+#define SYMBOL_EQUIVALENT (QChar(u'≡'))
 
 enum Symbol {
 	VARIABLE_SYMBOL,

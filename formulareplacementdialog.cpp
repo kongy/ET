@@ -14,9 +14,7 @@ FormulaReplacementDialog::FormulaReplacementDialog(AST::LogicStatement *subformu
 
 	QVector<LogicSet*> *sl = eqEngine->match(subformula);
 	for(LogicSet *l : *sl) {
-		for(Rule *r : *(l->getSet())) {
-			ui->verticalLayout->addWidget(new QPushButton(r->print(ET::fullBracket), this));
-		}
+		ui->verticalLayout->addWidget(new QPushButton(l->print(ET::fullBracket), this));
 	}
 }
 

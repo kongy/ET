@@ -1,4 +1,5 @@
 #include "logicset.hpp"
+#include "symbol.hpp"
 
 bool LogicSet::inSet(Rule *item) {
 	for (Rule *set_elem : *set)
@@ -38,4 +39,15 @@ LogicSet *LogicSet::diff(Rule *item) {
 			remaining_set->add(statement);
 
 	return remaining_set;
+}
+
+QString LogicSet::print(bool fullBracket) {
+	QString s;
+	for(QVector<Rule*>::const_iterator it = set->cbegin(); it != set->cend(); it++) {
+		s += (*it)->print(fullBracket);
+		if(it < set->end() - 1) {
+			s += SYMBOL_EQUIVALENT;
+		}
+	}
+	return s;
 }
