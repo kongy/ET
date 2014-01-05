@@ -76,7 +76,18 @@ Rule *RuleParser::processFalsityStatement(QXmlStreamReader *xml) {
 }
 
 Rule *RuleParser::processVariableStatement(QXmlStreamReader *xml) {
-    return new Variable(new QString(xml->readElementText()));
+    QString boundVariableName = xml->attributes().value("NOT_OCCUR_FREE").toString();
+    QString freeVariableName = xml->attributes().value("OCCUR_FREE").toString();
+
+    Variable *statement = new Variable(new QString(xml->readElementText()));
+
+    if (freeVariableName != "")
+        statement->setFreeVariable(freeVariableName);
+
+    if (boundVariableName != "")
+        statement->setBoundedVariable(boundVariableName);
+
+    return statement;
 }
 
 Rule *RuleParser::processNotStatement(QXmlStreamReader *xml) {
@@ -135,6 +146,42 @@ Rule *RuleParser::processImpliesStatement(QXmlStreamReader *xml) {
     return new ImpliesStatement(leftStatement, rightStatement);
 }
 
+Rule *RuleParser::processForAllStatement(QXmlStreamReader *xml) {
+    /* Quantifier is processed as logicstatement, because it auto moves pointer to next start element and process
+     * stops at its delimiter */
+    Variable *quantifier = dynamic_cast<Variable *>(processLogicStatement(xml));
+    Rule *nestedStatement = processLogicStatement(xml);
+
+    /* Moves Pointer to </ForAll> */
+    xml->skipCurrentElement();
+
+    return new ForAllStatement(quantifier, nestedStatement);
+}
+
+Rule *RuleParser::processThereExistsStatement(QXmlStreamReader *xml) {
+    /* Quantifier is processed as logicstatement, because it auto moves pointer to next start element and process
+     * stops at its delimiter */
+    Variable *quantifier = dynamic_cast<Variable *>(processLogicStatement(xml));
+    Rule *nestedStatement = processLogicStatement(xml);
+
+    /* Moves Pointer to </ThereExists> */
+    xml->skipCurrentElement();
+
+    return new ThereExistsStatement(quantifier, nestedStatement);
+}
+
+Rule *RuleParser::processEqualityStatement(QXmlStreamReader *xml) {
+    /* Both variable of = is processed as logicstatement, because it auto moves pointer to next start element and
+     * process stops at its delimiter */
+    Variable *leftVariable = dynamic_cast<Variable *>(processLogicStatement(xml));
+    Variable *rightVariable = dynamic_cast<Variable *>(processLogicStatement(xml));
+
+    /* Moves Pointer to </Equals> */
+    xml->skipCurrentElement();
+
+    return new EqualityStatement(leftVariable, rightVariable);
+}
+
 Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
     /* Move the pointer to the start tag */
     while (!xml->readNextStartElement());
@@ -157,6 +204,12 @@ Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
         return processTruthStatement(xml);
     else if (tagName == "Falsity")
         return processFalsityStatement(xml);
+    else if (tagName == "ForAll")
+        return processForAllStatement(xml);
+    else if (tagName == "ThereExists")
+        return processThereExistsStatement(xml);
+    else if (tagName == "Equals")
+        return processEqualityStatement(xml);
     else
         return nullptr;
 }
