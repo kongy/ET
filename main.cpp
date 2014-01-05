@@ -7,6 +7,7 @@
 #include <QTranslator>
 
 bool ET::fullBracket;
+EquivalenceEngine *ET::eqEng;
 
 int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);

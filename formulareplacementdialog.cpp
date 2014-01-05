@@ -10,12 +10,11 @@ typedef EmbeddedPushButton<LogicSet*> RulePushButton;
 
 FormulaReplacementDialog::FormulaReplacementDialog(AST::LogicStatement *subformula, QWidget *parent) :
     QDialog(parent),
-	ui(new Ui::FormulaReplacementDialog),
-	eqEngine(new EquivalenceEngine)
+	ui(new Ui::FormulaReplacementDialog)
 {
 	ui->setupUi(this);
 
-	QVector<LogicSet*> *sl = eqEngine->match(subformula);
+	QVector<LogicSet*> *sl = ET::eqEng->match(subformula);
 	for(LogicSet *l : *sl) {
 		RulePushButton *w = new RulePushButton(l->print(ET::fullBracket), l, this);
 		ui->verticalLayout->addWidget(w);

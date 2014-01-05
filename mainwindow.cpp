@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 
+	ET::eqEng = new EquivalenceEngine;
+
 	// File menu items
 	connect(ui->actionNewSolution, SIGNAL(triggered()), this, SLOT(startNewSolutionDialog()));
 	connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeTab()));

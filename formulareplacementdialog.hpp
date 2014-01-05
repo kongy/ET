@@ -15,7 +15,6 @@ class FormulaReplacementDialog : public QDialog
 	Q_OBJECT
 
 	Ui::FormulaReplacementDialog *ui;
-	EquivalenceEngine *eqEngine;
 
 public:
 	explicit FormulaReplacementDialog(AST::LogicStatement* subformula, QWidget *parent = 0);
