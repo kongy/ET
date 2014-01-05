@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     logicset.cpp \
     solutionmodel.cpp \
     subformulaselectiondialog.cpp \
-    formulareplacementdialog.cpp
+    formulareplacementdialog.cpp \
+    ruleparser.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
@@ -51,7 +52,8 @@ HEADERS  += mainwindow.hpp \
     subformulaselectiondialog.hpp \
     formulareplacementdialog.hpp \
     main.hpp \
-    embeddedpushbutton.hpp
+    embeddedpushbutton.hpp \
+    ruleparser.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
