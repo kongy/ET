@@ -1099,7 +1099,7 @@
 		
 		
 		<EquivalentStatements>
-			<LogicStatement>
+                        <LogicStatement FORWARD="true">
 			<Implies>
 				<Equals>
 					<ID>x</ID>

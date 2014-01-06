@@ -3,12 +3,16 @@
 
 EquivalenceEngine::EquivalenceEngine() {
 	RuleParser ruleParser;
-	this->rules = ruleParser.parseRuleXml();
+	rules = ruleParser.parseRuleXml();
 }
 
 EquivalenceEngine::~EquivalenceEngine() {
-	for (LogicSet *logic_set : *rules)
-		delete logic_set;
+	if (rules != nullptr && !rules->isEmpty())
+		for (LogicSet *logic_set : *rules) {
+			logic_set->deepDeleteContent();
+			delete logic_set;
+		}
+
 	delete rules;
 }
 
@@ -27,35 +31,48 @@ LogicSet *EquivalenceEngine::diff(Rule *base, LogicSet *set) {
 	return set->diff(base);
 }
 
+EquivalenceUtility *EquivalenceEngine::getReplacementNecessity(LogicStatement *input, Rule *baseRule, Rule *transformationRule) {
+	return nullptr;
+}
+
 QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, LogicSet *ruleSet) {
 	QVector<Rule *> *matchedRules = new QVector<Rule *>();
 
-	IDTable idtable;
+	EquivalenceUtility matchingUtility;
 
-	for (Rule *rule : *ruleSet->getSet())
-		if (rule->match(input, &idtable)) {
+	for (Rule *rule : *ruleSet->getSet()) {
+		if (rule->match(input, &matchingUtility)) {
 			matchedRules->append(rule);
-			idtable.clear();
+			matchingUtility.clear();
 		}
+
+		if (rule->isForwardRule())
+			break;
+	}
 
 	return matchedRules;
 }
 
 LogicStatement *replaceStatement(LogicStatement *input, Rule *baseRule, Rule *transformationRule) {
-	IDTable idtable;
+	EquivalenceUtility matchingUtility;
 
-	if (baseRule->match(input, &idtable))
-		return transformationRule->clone()->replace(&idtable);
+	if (baseRule->match(input, &matchingUtility))
+		return transformationRule->clone()->replace();
 
 	return nullptr;
 }
 
 bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet) {
-	IDTable idtable;
+	EquivalenceUtility matchingUtility;
 
 	for (Rule *rule : *ruleSet->getSet()) {
-		if (rule->match(input, &idtable))
+		if (rule->match(input, &matchingUtility))
 			return true;
+
+		if (rule->isForwardRule())
+			break;
+
+		matchingUtility.clear();
 	}
 
 	return false;

@@ -1,6 +1,10 @@
 #include "logicset.hpp"
 #include "symbol.hpp"
 
+bool LogicSet::isEmpty() {
+	return getSet()->isEmpty();
+}
+
 bool LogicSet::exists(Rule *item) {
 	for (Rule *set_elem : *set)
 		if (item->equals(set_elem))
@@ -50,4 +54,10 @@ QString LogicSet::print(bool fullBracket) {
 		}
 	}
 	return s;
+}
+
+void LogicSet::deepDeleteContent() {
+	if (!isEmpty())
+		for (Rule *rule : *set)
+			delete rule;
 }

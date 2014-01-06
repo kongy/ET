@@ -64,6 +64,14 @@ int LogicStatement::comparePrecedence(LogicStatement *outer, LogicStatement *inn
 
 LogicStatement::~LogicStatement() {}
 
+void LogicStatement::setRuleForward(bool forwardRule) {
+	this->forwardRule = forwardRule;
+}
+
+bool LogicStatement::isForwardRule() {
+	return forwardRule;
+}
+
 /* Truth Class */
 QString Truth::print(bool) {
 	return SYMBOL_TRUTH;
@@ -87,11 +95,11 @@ bool Truth::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol();
 }
 
-bool Truth::match(LogicStatement *matching_statement, IDTable *) {
-	return matching_statement->getSymbol() == getSymbol();
+bool Truth::match(LogicStatement *matchingStatement, EquivalenceUtility *) {
+	return getSymbol() == matchingStatement->getSymbol();
 }
 
-LogicStatement* Truth::replace(IDTable *) {
+LogicStatement* Truth::replace() {
 	return this;
 }
 
@@ -116,6 +124,8 @@ bool Truth::variableBounded(Variable *) {
 
 void Truth::collectFreeVariable(Variable *, QVector<Variable *> *) {}
 
+void Truth::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -139,11 +149,11 @@ bool Falsity::equals(LogicStatement *statement) {
 	return statement->getSymbol() == getSymbol();
 }
 
-bool Falsity::match(LogicStatement *matching_statement, IDTable *) {
-	return matching_statement->getSymbol() == getSymbol();
+bool Falsity::match(LogicStatement *matchingStatement, EquivalenceUtility *) {
+	return getSymbol() == matchingStatement->getSymbol();
 }
 
-LogicStatement* Falsity::replace(IDTable *) {
+LogicStatement* Falsity::replace() {
 	return this;
 }
 
@@ -168,9 +178,21 @@ bool Falsity::variableBounded(Variable *) {
 
 void Falsity::collectFreeVariable(Variable *, QVector<Variable *> *) {}
 
+void Falsity::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
 /* Variable Class */
 Variable::Variable(QString *name) {
 	setName(name);
+	freeVariable = nullptr;
+	boundedVariable = nullptr;
+}
+
+Variable::~Variable() {
+	if (freeVariable != nullptr)
+		delete freeVariable;
+
+	if (boundedVariable != nullptr)
+		delete boundedVariable;
 }
 
 QString Variable::print(bool) {
@@ -220,14 +242,62 @@ void Variable::collectVariables(QVector<QVector<Variable *> *> *var_list) {
 	var_list->push_back(new_list);
 }
 
-bool Variable::match(LogicStatement *matching_statement, IDTable *table) {
-	return table->add(this, matching_statement);
+bool Variable::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	IDTable *idTable = matchingUtility->getIDTable();
+
+	/* NOT_OCCUR_FREE */
+	if (boundedVariable != nullptr) {
+		/* Obtain Mapping from nested bound identifier to its mapped variable */
+		Variable *mappedVariable = dynamic_cast<Variable *>(idTable->valueOf(boundedVariable));
+
+		/* Mapping known, need to confirm the variable is actually bounded */
+		if (mappedVariable != nullptr) {
+			/* Variable not bounded, matching failure */
+			if (!matchingStatement->variableBounded(mappedVariable))
+				return false;
+
+			/* Variable bounded confirmed */
+
+		/* Mapping not known, need to find possible candidate for the mapping */
+		} else {
+			/* Initialise candidate set with its representitive identifier */
+			matchingUtility->initCandidateBoundVariableSet(boundedVariable);
+
+			/* Log all possible bound candidates */
+			matchingStatement->candidateBoundVariables(matchingStatement, matchingUtility->getCandidateBoundVariableSet());
+
+			/* No Candidate found for bound variable, i.e. no bound variable at all */
+			if (matchingUtility->getCandidateBoundVariableSet()->isEmpty())
+				return false;
+
+			/* Candidate Bound Variable successfully collected */
+		}
+	/* OCCUR_FREE */
+	} else if (freeVariable != nullptr) {
+		/* Get the mapping from identifier of freeVariable to its corresponding Variable, the mapping is assumed to be known */
+		Variable *mappedVariable = dynamic_cast<Variable *>(idTable->valueOf(freeVariable));
+
+		/* Initialise candidate set with its representitive identifier */
+		matchingUtility->initFreeVariableList();
+
+		/* Log all variables that are free in matchingStatement and equals to mappedVariable */
+		matchingStatement->collectFreeVariable(mappedVariable, matchingUtility->getFreeVariableList());
+
+		/* No Free Variables matched */
+		if (matchingUtility->getFreeVariableList()->isEmpty())
+			return false;
+
+		/* Free Variable Successfully collected */
+	}
+
+	return idTable->add(this, matchingStatement);
 }
 
-LogicStatement* Variable::replace(IDTable *table) {
-	LogicStatement *replacedStatement = table->valueOf(this);
-	delete this;
-	return replacedStatement;
+LogicStatement* Variable::replace() {
+	//	LogicStatement *replacedStatement = table->valueOf(this);
+	//	delete this;
+	//	return replacedStatement;
+	return this;
 }
 
 LogicStatement* Variable::clone() {
@@ -273,6 +343,8 @@ Variable *Variable::getFreeVariable() {
 	return freeVariable;
 }
 
+void Variable::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -291,13 +363,13 @@ bool UnaryOpStatement::equals(LogicStatement *statement) {
 			getStatement()->equals(dynamic_cast<UnaryOpStatement *>(statement)->getStatement());
 }
 
-bool UnaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
-	return matching_statement->getSymbol() == getSymbol() &&
-			getStatement()->match(dynamic_cast<UnaryOpStatement *>(matching_statement)->getStatement(), table);
+bool UnaryOpStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	return getSymbol() == matchingStatement->getSymbol() &&
+			getStatement()->match(dynamic_cast<UnaryOpStatement *>(matchingStatement)->getStatement(), matchingUtility);
 }
 
-LogicStatement* UnaryOpStatement::replace(IDTable *table) {
-	setStatement(getStatement()->replace(table));
+LogicStatement* UnaryOpStatement::replace() {
+	//	setStatement(getStatement()->replace(table));
 	return this;
 }
 
@@ -346,6 +418,10 @@ bool UnaryOpStatement::variableBounded(Variable *boundedVariable) {
 void UnaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) {
 	/* Symbols has no effect on free variables */
 	getStatement()->collectFreeVariable(freeVariable, collection);
+}
+
+void UnaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
+	getStatement()->candidateBoundVariables(rootStatement, boundSet);
 }
 
 /* NotStatement Class */
@@ -425,15 +501,15 @@ bool BinaryOpStatement::equals(LogicStatement *statement) {
 			getRightStatement()->equals(dynamic_cast<BinaryOpStatement *>(statement)->getRightStatement());
 }
 
-bool BinaryOpStatement::match(LogicStatement *matching_statement, IDTable *table) {
-	return matching_statement->getSymbol() == getSymbol() &&
-			getLeftStatement()->match((dynamic_cast<BinaryOpStatement *>(matching_statement))->getLeftStatement(), table) &&
-			getRightStatement()->match((dynamic_cast<BinaryOpStatement *>(matching_statement))->getRightStatement(), table);
+bool BinaryOpStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	return getSymbol() == matchingStatement->getSymbol() &&
+			getLeftStatement()->match((dynamic_cast<BinaryOpStatement *>(matchingStatement))->getLeftStatement(), matchingUtility) &&
+			getRightStatement()->match((dynamic_cast<BinaryOpStatement *>(matchingStatement))->getRightStatement(), matchingUtility);
 }
 
-LogicStatement* BinaryOpStatement::replace(IDTable *table) {
-	setLeftStatement(getLeftStatement()->replace(table));
-	setRightStatement(getRightStatement()->replace(table));
+LogicStatement* BinaryOpStatement::replace() {
+	//	setLeftStatement(getLeftStatement()->replace(table));
+	//	setRightStatement(getRightStatement()->replace(table));
 	return this;
 }
 
@@ -487,6 +563,11 @@ void BinaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Vari
 	/* Symbols has no effect on free variables, need to collect both side of BinaryStatement */
 	getLeftStatement()->collectFreeVariable(freeVariable, collection);
 	getRightStatement()->collectFreeVariable(freeVariable, collection);
+}
+
+void BinaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
+	getLeftStatement()->candidateBoundVariables(rootStatement, boundSet);
+	getRightStatement()->candidateBoundVariables(rootStatement, boundSet);
 }
 
 /* AndStatement Class */
@@ -586,11 +667,7 @@ bool FirstOrderStatement::evaluate() {
 	return false;
 }
 
-bool FirstOrderStatement::match(LogicStatement *, IDTable *) {
-	return false;
-}
-
-LogicStatement* FirstOrderStatement::replace(IDTable *) {
+LogicStatement* FirstOrderStatement::replace() {
 	return this;
 }
 
@@ -689,6 +766,42 @@ bool ForAllStatement::operator==(LogicStatement &other) {
 			*getStatement() == *dynamic_cast<ForAllStatement &>(other).getStatement();
 }
 
+void ForAllStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
+	Variable *quantifier = getQuantifier();
+
+	if (rootStatement->variableBounded(quantifier))
+		boundSet->add(quantifier);
+
+	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+}
+
+bool ForAllStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != matchingStatement->getSymbol())
+		return false;
+
+	ForAllStatement *castedMatchingStatement = dynamic_cast<ForAllStatement *>(matchingStatement);
+	Variable *loggedBoundVariable = matchingUtility->getBoundVariable();
+
+	/* In case where the bound variable has been logged for candidate search an Example would be
+	 * FORALL(x)(A V B)=A V FORALL(x)(B) where x occurs free in A, in the latter rule, the A will be matched and
+	 * candidates for x would be logged, and the second half must confirm one of the logged candidates for x is
+	 * the current one it is matching onto */
+	if (loggedBoundVariable != nullptr && loggedBoundVariable->equals(getQuantifier())) {
+		/* Current quantifier in actual statement is not matched to any candidate */
+		if (!matchingUtility->inCandidateBoundVariableSet(castedMatchingStatement->getQuantifier()))
+			return false;
+
+		/* When control reaches this block, the binding has been confirmed and candidate set is no longer needed,
+		 * in fact keeping the information would confuse the matching system */
+		matchingUtility->deleteAuxiliaryItems();
+		matchingUtility->resetAuxiliaryItems();
+	}
+
+	/* We proceed adding the quantifier to IDTable as usual and keep matching */
+	return getQuantifier()->match(castedMatchingStatement->getQuantifier(), matchingUtility) &&
+			getStatement()->match(castedMatchingStatement->getStatement(), matchingUtility);
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -783,6 +896,41 @@ bool ThereExistsStatement::operator==(LogicStatement &other) {
 			*getStatement() == *dynamic_cast<ThereExistsStatement &>(other).getStatement();
 }
 
+void ThereExistsStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
+	Variable *quantifier = getQuantifier();
+
+	if (rootStatement->variableBounded(quantifier))
+		boundSet->add(quantifier);
+
+	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+}
+
+bool ThereExistsStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != matchingStatement->getSymbol())
+		return false;
+
+	ThereExistsStatement *castedMatchingStatement = dynamic_cast<ThereExistsStatement *>(matchingStatement);
+	Variable *loggedBoundVariable = matchingUtility->getBoundVariable();
+
+	/* In case where the bound variable has been logged for candidate search an Example would be
+	 * THEREEXIST(x)(A ^ B)=A ^ THEREEXIST(x)(B) where x occurs free in A, in the latter rule, the A will be matched and
+	 * candidates for x would be logged, and the second half must confirm one of the logged candidates for x is
+	 * the current one it is matching onto */
+	if (loggedBoundVariable != nullptr && loggedBoundVariable->equals(getQuantifier())) {
+		/* Current quantifier in actual statement is not matched to any candidate */
+		if (!matchingUtility->inCandidateBoundVariableSet(castedMatchingStatement->getQuantifier()))
+			return false;
+
+		/* When control reaches this block, the binding has been confirmed and candidate set is no longer needed,
+		 * in fact keeping the information would confuse the matching system */
+		matchingUtility->resetAuxiliaryItems();
+	}
+
+	/* We proceed adding the quantifier to IDTable as usual and keep matching */
+	return getQuantifier()->match(castedMatchingStatement->getQuantifier(), matchingUtility) &&
+			getStatement()->match(castedMatchingStatement->getStatement(), matchingUtility);
+}
+
 /* Parameters Class */
 Parameters::Parameters(Variable *variable, Parameters *remainingParameters) {
 	setParameter(variable);
@@ -850,8 +998,24 @@ bool Parameters::equals(LogicStatement *statement) {
 	return false;
 }
 
-bool Parameters::match(LogicStatement *, IDTable *) {
-	return false;
+bool Parameters::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != matchingStatement->getSymbol())
+		return false;
+
+	Parameters *castedMatchingStatement = dynamic_cast<Parameters *>(matchingStatement);
+
+	if (!getParameter()->match(castedMatchingStatement->getParameter(), matchingUtility))
+		return false;
+
+	Parameters *castedRemainingParams = castedMatchingStatement->getRemainingParameters();
+	Parameters *remainingParams = getRemainingParameters();
+
+	if (remainingParams == nullptr && castedRemainingParams == nullptr)
+		return true;
+	else if (remainingParams == nullptr || castedRemainingParams == nullptr)
+		return false;
+	else
+		return remainingParams->match(castedRemainingParams, matchingUtility);
 }
 
 LogicStatement* Parameters::clone() {
@@ -864,12 +1028,12 @@ LogicStatement* Parameters::clone() {
 	return new Parameters(dynamic_cast<Variable *>(getParameter()->clone()), newRemainingParameters);
 }
 
-LogicStatement* Parameters::replace(IDTable *table) {
-	setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
+LogicStatement* Parameters::replace() {
+	//	setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
 
-	Parameters *remainingParameter = getRemainingParameters();
-	if (remainingParameter != nullptr)
-		setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
+	//	Parameters *remainingParameter = getRemainingParameters();
+	//	if (remainingParameter != nullptr)
+	//		setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
 
 	return this;
 }
@@ -951,6 +1115,8 @@ void Parameters::collectFreeVariable(Variable *freeVariable, QVector<Variable *>
 		remainingParameters->collectFreeVariable(freeVariable, collection);
 }
 
+void Parameters::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -1031,6 +1197,14 @@ bool PredicateSymbolStatement::operator==(LogicStatement &other) {
 			*getParameters() == *dynamic_cast<PredicateSymbolStatement &>(other).getParameters();
 }
 
+void PredicateSymbolStatement::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
+bool PredicateSymbolStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	return getSymbol() == matchingStatement->getSymbol() &&
+			getPredicateSymbol()->match(dynamic_cast<PredicateSymbolStatement *>(matchingStatement)->getPredicateSymbol(), matchingUtility) &&
+			getParameters()->match(dynamic_cast<PredicateSymbolStatement *>(matchingStatement)->getParameters(), matchingUtility);
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -1109,6 +1283,14 @@ bool EqualityStatement::operator==(LogicStatement &other) {
 	return getSymbol() == other.getSymbol() &&
 			*getLeftVariable() == *dynamic_cast<EqualityStatement &>(other).getLeftVariable() &&
 			*getRightVariable() == *dynamic_cast<EqualityStatement &>(other).getRightVariable();
+}
+
+void EqualityStatement::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
+bool EqualityStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	return getSymbol() == matchingStatement->getSymbol() &&
+			getLeftVariable()->match(dynamic_cast<EqualityStatement *>(matchingStatement)->getLeftVariable(), matchingUtility) &&
+			getRightVariable()->match(dynamic_cast<EqualityStatement *>(matchingStatement)->getRightVariable(), matchingUtility);
 }
 
 extern int yyparse();

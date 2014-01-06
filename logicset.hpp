@@ -1,9 +1,12 @@
 #ifndef LOGICSET_HPP
 #define LOGICSET_HPP
 
+#include <QVector>
 #include "AST.hpp"
 
-#include <QVector>
+namespace AST {
+class LogicStatement;
+}
 
 typedef AST::LogicStatement Rule;
 /* Alternative for C++ set */
@@ -14,6 +17,11 @@ private:
 public:
 	LogicSet();
 	~LogicSet();
+
+	/* Calls Delete on each item in the LogicSet */
+	void deepDeleteContent();
+	bool isEmpty();
+
 	bool exists(Rule *);
 
 	/* Set Implementation of add() */

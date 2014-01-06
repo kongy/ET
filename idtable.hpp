@@ -1,10 +1,8 @@
 #ifndef IDTABLE_HPP
 #define IDTABLE_HPP
 
-class IDTable;
-
-#include "AST.hpp"
 #include <QPair>
+#include "AST.hpp"
 
 namespace AST {
 class Variable;
@@ -23,7 +21,7 @@ public:
 	bool add(AST::Variable *key, AST::LogicStatement *value);
 
 	/* Returns the vector of entire mapping from identifier to LogicStatement */
-	QVector<QPair<AST::Variable *, AST::LogicStatement *> *> *getIdTable();
+	QVector<QPair<AST::Variable *, AST::LogicStatement *> *> *getMapping();
 
 	/* Provided a key, returns the corresponding Logicstatement or null if
 	 * none found */

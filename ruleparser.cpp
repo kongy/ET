@@ -216,10 +216,16 @@ Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
 
 LogicSet *RuleParser::processStatements(QXmlStreamReader *xml) {
     LogicSet *ruleSet = new LogicSet();
+    Rule *rule;
+    bool forwardRule;
 
     for (xml->readNextStartElement(); xml->name() != "EquivalentStatements"; xml->readNextStartElement())
-        if (xml->name() == "LogicStatement" && xml->tokenType() == QXmlStreamReader::StartElement)
-            ruleSet->add(processLogicStatement(xml));
+        if (xml->name() == "LogicStatement" && xml->tokenType() == QXmlStreamReader::StartElement) {
+            forwardRule = xml->attributes().value("FORWARD").toString() != "";
+            rule = processLogicStatement(xml);
+            rule->setRuleForward(forwardRule);
+            ruleSet->add(rule);
+        }
 
     return ruleSet;
 }

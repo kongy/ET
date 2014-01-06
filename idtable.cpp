@@ -17,21 +17,22 @@ bool IDTable::add(Variable *key, LogicStatement *value) {
 	return true;
 }
 
-QVector<QPair<Variable *, LogicStatement *> *> *IDTable::getIdTable() {
+QVector<QPair<Variable *, LogicStatement *> *> *IDTable::getMapping() {
 	return id_table;
 }
 
 LogicStatement* IDTable::valueOf(Variable *key) {
-    for (QPair<Variable *, LogicStatement *> *key_value_pair : *getIdTable())
+    for (QPair<Variable *, LogicStatement *> *key_value_pair : *getMapping())
         if (key_value_pair->first->equals(key))
             return key_value_pair->second->clone();
 
-    return key->clone();
+    return nullptr;
 }
 
 void IDTable::clear() {
-	for (QPair<Variable *, LogicStatement *> *pairs : *id_table)
-		delete pairs;
+	if (!id_table->isEmpty())
+		for (QPair<Variable *, LogicStatement *> *pairs : *id_table)
+			delete pairs;
 
 	id_table->clear();
 }

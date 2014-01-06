@@ -1,18 +1,21 @@
 #ifndef AST_HPP
 #define AST_HPP
 
-#include "idtable.hpp"
 #include "symbol.hpp"
-
 #include <QString>
 #include <QVector>
 #include <QPair>
+#include "equivalenceutility.hpp"
+
+class LogicSet;
+class EquivalenceUtility;
 
 namespace AST {
 
 class Variable;
 
 class LogicStatement {
+	bool forwardRule;
 public:
 	/* Returns a QString representation of AST */
 	virtual QString print(bool fullBracket) = 0;
@@ -46,11 +49,11 @@ public:
 
 	/* Called by rule AST to match the actual user AST
 	 * called matching_statement */
-	virtual bool match(LogicStatement *matching_statement, IDTable *table) = 0;
+	virtual bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) = 0;
 
 	/* Called from the replace rule, creates identical copies
 	 * on heap with variables cloned using id_table */
-	virtual LogicStatement* replace(IDTable *table) = 0;
+	virtual LogicStatement* replace() = 0;
 
 	/* A function that deep clones a logicstatement */
 	virtual LogicStatement* clone() = 0;
@@ -71,6 +74,15 @@ public:
 
 	/* Adds variables that occur free to freeVariables, i.e. equals to freeVariable but not appear in quantifiers */
 	virtual void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection) = 0;
+
+	/* Forms a set of variables that are completely bounded, not free in any part of rootStatement */
+	virtual void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) = 0;
+
+	/* Used in the context of rule, infact for the Leibniz rule only */
+	void setRuleForward(bool forwardRule);
+
+	/* Used by rule, to determine whether a rule is only used forward for matching */
+	bool isForwardRule();
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -83,13 +95,14 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
-	LogicStatement* replace(IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
+	LogicStatement* replace();
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
 };
 
 class Falsity : public LogicStatement {
@@ -100,13 +113,14 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
-	LogicStatement* replace(IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
+	LogicStatement* replace();
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
 };
 
 class Variable : public LogicStatement {
@@ -120,6 +134,7 @@ protected:
 	void setName(QString *);
 public:
 	Variable(QString *name);
+	~Variable();
 	QString print(bool);
 	QString getName();
 	bool isFirstOrderLogic();
@@ -130,10 +145,10 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 	/* Called from cloned version of rule, delete this removes the cloned version which is no longer accessible
 	 * because it gets replaced */
-	LogicStatement* replace(IDTable *);
+	LogicStatement* replace();
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
@@ -143,6 +158,7 @@ public:
 	void setBoundedVariable(QString name);
 	Variable *getFreeVariable();
 	Variable *getBoundedVariable();
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -158,14 +174,15 @@ public:
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
-	LogicStatement* replace(IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement* replace();
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~UnaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -194,14 +211,15 @@ public:
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
-	LogicStatement* replace(IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement* replace();
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~BinaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -248,9 +266,9 @@ public:
 	bool evaluate();
 	virtual void collectVariables(QVector<QVector<Variable *> *> *) = 0;
 	virtual bool equals(LogicStatement *) = 0;
-	bool match(LogicStatement *, IDTable *);
+	virtual bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) = 0;
 	virtual LogicStatement* clone() = 0;
-	LogicStatement* replace(IDTable *);
+	LogicStatement* replace();
 	virtual bool operator==(LogicStatement &) = 0;
 	virtual ~FirstOrderStatement();
 	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) = 0;
@@ -278,6 +296,8 @@ public:
 	bool equals(LogicStatement *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -300,6 +320,8 @@ public:
 	bool equals(LogicStatement *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 };
 
 class Parameters : public LogicStatement {
@@ -318,14 +340,15 @@ public:
 	bool evaluate();
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *, IDTable *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 	LogicStatement* clone();
-	LogicStatement* replace(IDTable *);
+	LogicStatement* replace();
 	bool operator==(LogicStatement &);
 	~Parameters();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -348,6 +371,8 @@ public:
 	bool equals(LogicStatement *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -369,6 +394,8 @@ public:
 	bool equals(LogicStatement *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
+	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 };
 
 LogicStatement *parse(QString expression);

@@ -15,7 +15,7 @@ LogicStatement *EquivalenceStatement::getBaseStatement() {
 	return base_statement;
 }
 
-IDTable *EquivalenceStatement::getIdTable() {
+IDTable *EquivalenceStatement::getMapping() {
 	return id_table;
 }
 

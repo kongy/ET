@@ -1,7 +1,7 @@
 #ifndef EQUIVALENCEENGINE_H
 #define EQUIVALENCEENGINE_H
 
-#include "logicset.hpp"
+#include "equivalenceutility.hpp"
 using namespace AST;
 
 class EquivalenceEngine {
@@ -16,7 +16,10 @@ public:
 	QVector<LogicSet *> *match(LogicStatement *);
 
 	LogicSet *diff(Rule *, LogicSet *);
+
+	/* Returns a vector of rule that has been matched onto */
 	QVector<Rule *> *getMatchedRules(LogicStatement *, LogicSet *);
+	EquivalenceUtility *getReplacementNecessity(LogicStatement *input, Rule *baseRule, Rule *transformationRule);
 	LogicStatement *replaceStatement(LogicStatement *input, Rule *baseRule, Rule *transformationRule);
 };
 

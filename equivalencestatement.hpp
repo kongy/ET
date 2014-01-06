@@ -1,7 +1,6 @@
 #ifndef EQUIVALENCESTATEMENT_HPP
 #define EQUIVALENCESTATEMENT_HPP
 
-#include <utility>
 #include "AST.hpp"
 #include "logicset.hpp"
 #include "idtable.hpp"
@@ -24,7 +23,7 @@ public:
 
 	/* Returns the matching symbol(Identifier in this case) with the
 	 * relevant AST tree to swap */
-	IDTable *getIdTable();
+	IDTable *getMapping();
 
 	/* A Set of equivalences that matched the base rule, call getSet()
 	 * to return the vector, for each individual rule, call
