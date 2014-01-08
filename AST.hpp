@@ -8,14 +8,19 @@
 #include "equivalenceutility.hpp"
 
 class LogicSet;
+
 class EquivalenceUtility;
+class IDTable;
+
+namespace AST {
+class Variable;
+}
 
 namespace AST {
 
-class Variable;
-
 class LogicStatement {
-	bool forwardRule;
+	/* Determines whether the rule can only be parsed forward, also indicate the rule is Leibniz rule */
+	bool isLeibniz = false;
 public:
 	/* Returns a QString representation of AST */
 	virtual QString print(bool fullBracket) = 0;
@@ -51,9 +56,9 @@ public:
 	 * called matching_statement */
 	virtual bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) = 0;
 
-	/* Called from the replace rule, creates identical copies
-	 * on heap with variables cloned using id_table */
-	virtual LogicStatement* replace() = 0;
+	/* Called from the replace rule, creates identical copies on heap with variables cloned using id_table,
+	 * at this point all nessasary variables lives in idTable and no futher information needed */
+	virtual LogicStatement* replace(IDTable *idTable) = 0;
 
 	/* A function that deep clones a logicstatement */
 	virtual LogicStatement* clone() = 0;
@@ -79,10 +84,25 @@ public:
 	virtual void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) = 0;
 
 	/* Used in the context of rule, infact for the Leibniz rule only */
-	void setRuleForward(bool forwardRule);
+	void setRuleType(bool isLeibnizRule);
 
 	/* Used by rule, to determine whether a rule is only used forward for matching */
-	bool isForwardRule();
+	bool isLeibnizRule();
+
+	/* Returns a set representation of variables that lives in this AST but not in other AST */
+	LogicSet *getExtraVariables(LogicStatement *other);
+
+	/* Returns a set representation of all variables exists in the current AST */
+	LogicSet *getAllVariables();
+
+	/* Returns true iff var does not appear in the statement at all */
+	virtual bool notOccur(Variable *var) = 0;
+
+    /* Every symbol must match and where a variable is logged to be occur free in one logicstatement, it occurs free
+     * at the same position in the other logicstatement with either it been the same variable or replaced by a
+     * different free variable that has been logged, returns the number of free variables replaced, or -1 if
+     * not leibniz equivalent */
+    virtual int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) = 0;
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -96,13 +116,15 @@ public:
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
-	LogicStatement* replace();
+	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool notOccur(Variable *);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
 };
 
 class Falsity : public LogicStatement {
@@ -114,13 +136,15 @@ public:
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
-	LogicStatement* replace();
+	LogicStatement* replace(IDTable *);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool notOccur(Variable *);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
 };
 
 class Variable : public LogicStatement {
@@ -130,6 +154,10 @@ class Variable : public LogicStatement {
 	Variable *freeVariable;
 	/* Used by rule to indicate variable that binds to logicstatement */
 	Variable *boundedVariable;
+	/* Used by Leibneiz rule */
+	Variable *notOccurVariable;
+	/* Used by Leibneiz rule */
+	Variable *mayOccurVariable;
 protected:
 	void setName(QString *);
 public:
@@ -148,7 +176,7 @@ public:
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 	/* Called from cloned version of rule, delete this removes the cloned version which is no longer accessible
 	 * because it gets replaced */
-	LogicStatement* replace();
+	LogicStatement* replace(IDTable *idTable);
 	LogicStatement* clone();
 	bool operator==(LogicStatement &);
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
@@ -159,6 +187,12 @@ public:
 	Variable *getFreeVariable();
 	Variable *getBoundedVariable();
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool notOccur(Variable *var);
+	void setMayOccurVariable(QString name);
+	void setNotOccurVariable(QString name);
+	Variable *getMayOccurVariable();
+	Variable *getNotOccurVariable();
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -175,7 +209,7 @@ public:
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
-	LogicStatement* replace();
+	LogicStatement* replace(IDTable *idTable);
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~UnaryOpStatement();
@@ -183,6 +217,8 @@ public:
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -211,8 +247,8 @@ public:
 	bool evaluate() = 0;
 	void collectVariables(QVector<QVector<Variable *> *> *);
 	bool equals(LogicStatement *);
-	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
-	LogicStatement* replace();
+	virtual bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement* replace(IDTable *idTable);
 	virtual LogicStatement* clone() = 0;
 	bool operator==(LogicStatement &);
 	virtual ~BinaryOpStatement();
@@ -220,6 +256,8 @@ public:
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -256,24 +294,28 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
+	/* Added just for Leibniz Rule */
+	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 };
 
 class FirstOrderStatement : public LogicStatement {
 public:
 	virtual QString print(bool) = 0;
 	bool isFirstOrderLogic();
-	Symbol getSymbol() = 0;
+	virtual Symbol getSymbol() = 0;
 	bool evaluate();
 	virtual void collectVariables(QVector<QVector<Variable *> *> *) = 0;
 	virtual bool equals(LogicStatement *) = 0;
-	virtual bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) = 0;
+	virtual bool match(LogicStatement *, EquivalenceUtility *) = 0;
 	virtual LogicStatement* clone() = 0;
-	LogicStatement* replace();
+	virtual LogicStatement* replace(IDTable *) = 0;
 	virtual bool operator==(LogicStatement &) = 0;
 	virtual ~FirstOrderStatement();
 	virtual QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) = 0;
 	virtual bool variableBounded(Variable *) = 0;
 	virtual void collectFreeVariable(Variable *, QVector<Variable *> *) = 0;
+	virtual bool notOccur(Variable *) = 0;
+	virtual int numberOfLeibnizReplacedVariable(LogicStatement *, EquivalenceUtility *) = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -298,6 +340,9 @@ public:
 	bool operator==(LogicStatement &);
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement *replace(IDTable *idTable);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -322,6 +367,9 @@ public:
 	bool operator==(LogicStatement &);
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement *replace(IDTable *idTable);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class Parameters : public LogicStatement {
@@ -342,13 +390,15 @@ public:
 	bool equals(LogicStatement *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
 	LogicStatement* clone();
-	LogicStatement* replace();
+	LogicStatement* replace(IDTable *idTable);
 	bool operator==(LogicStatement &);
 	~Parameters();
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool fullBracket);
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable, QVector<Variable *> *collection);
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -373,6 +423,9 @@ public:
 	bool operator==(LogicStatement &);
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement *replace(IDTable *idTable);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -396,6 +449,9 @@ public:
 	bool operator==(LogicStatement &);
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	LogicStatement *replace(IDTable *idTable);
+	bool notOccur(Variable *var);
+	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 };
 
 LogicStatement *parse(QString expression);

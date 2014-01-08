@@ -1,11 +1,13 @@
 #include "logicset.hpp"
 #include "symbol.hpp"
 
+using namespace AST;
+
 bool LogicSet::isEmpty() {
 	return getSet()->isEmpty();
 }
 
-bool LogicSet::exists(Rule *item) {
+bool LogicSet::contains(Rule *item) {
 	for (Rule *set_elem : *set)
 		if (item->equals(set_elem))
 			return true;
@@ -14,7 +16,7 @@ bool LogicSet::exists(Rule *item) {
 }
 
 bool LogicSet::add(Rule *item) {
-	if (!exists(item)) {
+	if (!contains(item)) {
 		set->push_back(item);
 		return true;
 	}
@@ -38,11 +40,32 @@ LogicSet *LogicSet::diff(Rule *item) {
 
 	LogicSet *remaining_set = new LogicSet();
 
-	for (Rule *statement : *set)
-		if (!statement->equals(item))
-			remaining_set->add(statement);
+	if (!isEmpty())
+		for (Rule *statement : *set)
+			if (!statement->equals(item))
+				remaining_set->add(statement);
 
 	return remaining_set;
+}
+
+LogicSet *LogicSet::diff(LogicSet *other) {
+
+	LogicSet *difference = new LogicSet();
+	QVector<LogicStatement *> *currentSet = getSet();
+
+	if (!currentSet->isEmpty()) {
+		if (other->isEmpty()) {
+			for(Rule *statement : *currentSet)
+				difference->add(statement);
+		} else {
+			for (Rule *statement : *currentSet)
+				if (!other->contains(statement))
+					difference->add(statement);
+		}
+	}
+
+	return difference;
+
 }
 
 QString LogicSet::print(bool fullBracket) {

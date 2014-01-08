@@ -6,6 +6,7 @@
 
 namespace AST {
 class Variable;
+
 class LogicStatement;
 }
 

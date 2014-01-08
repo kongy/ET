@@ -1,5 +1,6 @@
 #include "equivalenceengine.hpp"
 #include "ruleparser.hpp"
+#include <QDebug>
 
 EquivalenceEngine::EquivalenceEngine() {
 	RuleParser ruleParser;
@@ -46,7 +47,7 @@ QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, Logic
 			matchingUtility.clear();
 		}
 
-		if (rule->isForwardRule())
+		if (rule->isLeibnizRule())
 			break;
 	}
 
@@ -54,22 +55,42 @@ QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, Logic
 }
 
 LogicStatement *replaceStatement(LogicStatement *input, Rule *baseRule, Rule *transformationRule) {
+	/* A matched leibniz rule does not need further processing */
+	if (baseRule->isLeibnizRule())
+		return transformationRule->clone();
+
 	EquivalenceUtility matchingUtility;
 
-	if (baseRule->match(input, &matchingUtility))
-		return transformationRule->clone()->replace();
+	baseRule->match(input, &matchingUtility);
 
-	return nullptr;
+	Variable *boundVariable = matchingUtility.getBoundVariable();
+	LogicSet *boundVariableSet = matchingUtility.getCandidateBoundVariableSet();
+	QVector<Variable *> *freeVariableList = matchingUtility.getFreeVariableList();
+	IDTable *idTable = matchingUtility.getIDTable();
+
+	LogicSet *undefinedVariableSet = transformationRule->getExtraVariables(baseRule);
+
+	/* Bound Variable Yet to be decided by user */
+	if (boundVariable != nullptr) {
+
+	}
+	if (undefinedVariableSet->isEmpty())
+		return transformationRule->clone()->replace(matchingUtility.getIDTable());
 }
 
 bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet) {
 	EquivalenceUtility matchingUtility;
-
+	qDebug() << "Matching the rule";
 	for (Rule *rule : *ruleSet->getSet()) {
-		if (rule->match(input, &matchingUtility))
+		qDebug() << rule->print(false);
+		if (rule->match(input, &matchingUtility)) {
+			qDebug() << "Matched";
 			return true;
+		}
 
-		if (rule->isForwardRule())
+		qDebug() << "Mismatched";
+
+		if (rule->isLeibnizRule())
 			break;
 
 		matchingUtility.clear();
@@ -77,3 +98,5 @@ bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet)
 
 	return false;
 }
+
+

@@ -60,5 +60,13 @@ void EquivalenceUtility::clear() {
 }
 
 bool EquivalenceUtility::inCandidateBoundVariableSet(Variable *var) {
-    return candidateBoundVariableSet->exists(var);
+    return candidateBoundVariableSet->contains(var);
+}
+
+bool EquivalenceUtility::inFreeVariableListReferencewise(Variable *var) {
+    for (Variable *variable : *getFreeVariableList())
+        if (variable == var)
+            return true;
+
+    return false;
 }

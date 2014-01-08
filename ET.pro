@@ -29,7 +29,6 @@ SOURCES += main.cpp\
     solutiontabwidget.cpp \
     inputpanel.cpp \
     idtable.cpp \
-    equivalencestatement.cpp \
     equivalenceengine.cpp \
     logicset.cpp \
     solutionmodel.cpp \
@@ -46,7 +45,6 @@ HEADERS  += mainwindow.hpp \
     solutiontabwidget.hpp \
     inputpanel.hpp \
     idtable.hpp \
-    equivalencestatement.hpp \
     equivalenceengine.hpp \
     logicset.hpp \
     solutionmodel.hpp \

@@ -78,6 +78,8 @@ Rule *RuleParser::processFalsityStatement(QXmlStreamReader *xml) {
 Rule *RuleParser::processVariableStatement(QXmlStreamReader *xml) {
     QString boundVariableName = xml->attributes().value("NOT_OCCUR_FREE").toString();
     QString freeVariableName = xml->attributes().value("OCCUR_FREE").toString();
+    QString notOccurVariableName = xml->attributes().value("NOT_OCCUR").toString();
+    QString mayOccurVariableName = xml->attributes().value("MAY_OCCUR").toString();
 
     Variable *statement = new Variable(new QString(xml->readElementText()));
 
@@ -86,6 +88,12 @@ Rule *RuleParser::processVariableStatement(QXmlStreamReader *xml) {
 
     if (boundVariableName != "")
         statement->setBoundedVariable(boundVariableName);
+
+    if (notOccurVariableName != "")
+        statement->setNotOccurVariable(notOccurVariableName);
+
+    if (mayOccurVariableName != "")
+        statement->setMayOccurVariable(mayOccurVariableName);
 
     return statement;
 }
@@ -217,13 +225,13 @@ Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
 LogicSet *RuleParser::processStatements(QXmlStreamReader *xml) {
     LogicSet *ruleSet = new LogicSet();
     Rule *rule;
-    bool forwardRule;
+    bool isLeibnizRule;
 
     for (xml->readNextStartElement(); xml->name() != "EquivalentStatements"; xml->readNextStartElement())
         if (xml->name() == "LogicStatement" && xml->tokenType() == QXmlStreamReader::StartElement) {
-            forwardRule = xml->attributes().value("FORWARD").toString() != "";
+            isLeibnizRule = xml->attributes().value("FORWARD").toString() != "";
             rule = processLogicStatement(xml);
-            rule->setRuleForward(forwardRule);
+            rule->setRuleType(isLeibnizRule);
             ruleSet->add(rule);
         }
 

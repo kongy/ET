@@ -64,12 +64,39 @@ int LogicStatement::comparePrecedence(LogicStatement *outer, LogicStatement *inn
 
 LogicStatement::~LogicStatement() {}
 
-void LogicStatement::setRuleForward(bool forwardRule) {
-	this->forwardRule = forwardRule;
+void LogicStatement::setRuleType(bool isLeibnizRule) {
+	this->isLeibniz = isLeibnizRule;
 }
 
-bool LogicStatement::isForwardRule() {
-	return forwardRule;
+bool LogicStatement::isLeibnizRule() {
+	return isLeibniz;
+}
+
+LogicSet *LogicStatement::getAllVariables() {
+	QVector<QVector<Variable *>*> *var_list = new QVector<QVector<Variable *> *>();
+
+	collectVariables(var_list);
+
+	LogicSet *variableSet = new LogicSet();
+
+	if (!var_list->isEmpty())
+		for (QVector<Variable *> *identicalVarList : *var_list)
+			variableSet->add(identicalVarList->front());
+
+	list_destroy(var_list);
+
+	return variableSet;
+}
+
+LogicSet *LogicStatement::getExtraVariables(LogicStatement *other) {
+	LogicSet *currentVariableSet = getAllVariables();
+	LogicSet *otherVariableSet = other->getAllVariables();
+
+	LogicSet *difference = currentVariableSet->diff(otherVariableSet);
+	delete currentVariableSet;
+	delete otherVariableSet;
+
+	return difference;
 }
 
 /* Truth Class */
@@ -99,7 +126,7 @@ bool Truth::match(LogicStatement *matchingStatement, EquivalenceUtility *) {
 	return getSymbol() == matchingStatement->getSymbol();
 }
 
-LogicStatement* Truth::replace() {
+LogicStatement* Truth::replace(IDTable *) {
 	return this;
 }
 
@@ -125,6 +152,17 @@ bool Truth::variableBounded(Variable *) {
 void Truth::collectFreeVariable(Variable *, QVector<Variable *> *) {}
 
 void Truth::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
+bool Truth::notOccur(Variable *) {
+	return true;
+}
+
+int Truth::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+	else
+		return 0;
+}
 
 /* Falsity Class */
 QString Falsity::print(bool) {
@@ -153,7 +191,7 @@ bool Falsity::match(LogicStatement *matchingStatement, EquivalenceUtility *) {
 	return getSymbol() == matchingStatement->getSymbol();
 }
 
-LogicStatement* Falsity::replace() {
+LogicStatement* Falsity::replace(IDTable *) {
 	return this;
 }
 
@@ -180,11 +218,24 @@ void Falsity::collectFreeVariable(Variable *, QVector<Variable *> *) {}
 
 void Falsity::candidateBoundVariables(LogicStatement *, LogicSet *) {}
 
+bool Falsity::notOccur(Variable *) {
+	return true;
+}
+
+int Falsity::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+	else
+		return 0;
+}
+
 /* Variable Class */
 Variable::Variable(QString *name) {
 	setName(name);
 	freeVariable = nullptr;
 	boundedVariable = nullptr;
+	notOccurVariable = nullptr;
+	mayOccurVariable = nullptr;
 }
 
 Variable::~Variable() {
@@ -193,6 +244,12 @@ Variable::~Variable() {
 
 	if (boundedVariable != nullptr)
 		delete boundedVariable;
+
+	if (mayOccurVariable != nullptr)
+		delete mayOccurVariable;
+
+	if (notOccurVariable != nullptr)
+		delete notOccurVariable;
 }
 
 QString Variable::print(bool) {
@@ -245,8 +302,22 @@ void Variable::collectVariables(QVector<QVector<Variable *> *> *var_list) {
 bool Variable::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
 	IDTable *idTable = matchingUtility->getIDTable();
 
+	/* For Leibneiz rule */
+	if (notOccurVariable != nullptr) {
+		/* If did occur, because the rule is Leibneiz so we know the value of y in idTable */
+		if (!matchingStatement->notOccur(dynamic_cast<Variable *>(idTable->valueOf(notOccurVariable))))
+			return false;
+	}
+
+	/* For Leibneiz rule, we log the may occur variable in free Variable list */
+	if (mayOccurVariable != nullptr) {
+		matchingUtility->initFreeVariableList();
+		matchingStatement->collectFreeVariable(dynamic_cast<Variable *>(idTable->valueOf(mayOccurVariable)), matchingUtility->getFreeVariableList());
+	}
+
 	/* NOT_OCCUR_FREE */
 	if (boundedVariable != nullptr) {
+
 		/* Obtain Mapping from nested bound identifier to its mapped variable */
 		Variable *mappedVariable = dynamic_cast<Variable *>(idTable->valueOf(boundedVariable));
 
@@ -258,46 +329,35 @@ bool Variable::match(LogicStatement *matchingStatement, EquivalenceUtility *matc
 
 			/* Variable bounded confirmed */
 
-		/* Mapping not known, need to find possible candidate for the mapping */
+			/* Mapping not known, need to find possible candidate for the mapping */
 		} else {
 			/* Initialise candidate set with its representitive identifier */
 			matchingUtility->initCandidateBoundVariableSet(boundedVariable);
 
 			/* Log all possible bound candidates */
 			matchingStatement->candidateBoundVariables(matchingStatement, matchingUtility->getCandidateBoundVariableSet());
-
-			/* No Candidate found for bound variable, i.e. no bound variable at all */
-			if (matchingUtility->getCandidateBoundVariableSet()->isEmpty())
-				return false;
-
-			/* Candidate Bound Variable successfully collected */
 		}
-	/* OCCUR_FREE */
+		/* OCCUR_FREE */
 	} else if (freeVariable != nullptr) {
+
 		/* Get the mapping from identifier of freeVariable to its corresponding Variable, the mapping is assumed to be known */
 		Variable *mappedVariable = dynamic_cast<Variable *>(idTable->valueOf(freeVariable));
 
-		/* Initialise candidate set with its representitive identifier */
+		/* Initialise free variable list, if not already initialised(checked by function) */
 		matchingUtility->initFreeVariableList();
 
 		/* Log all variables that are free in matchingStatement and equals to mappedVariable */
 		matchingStatement->collectFreeVariable(mappedVariable, matchingUtility->getFreeVariableList());
 
-		/* No Free Variables matched */
-		if (matchingUtility->getFreeVariableList()->isEmpty())
-			return false;
-
-		/* Free Variable Successfully collected */
 	}
 
 	return idTable->add(this, matchingStatement);
 }
 
-LogicStatement* Variable::replace() {
-	//	LogicStatement *replacedStatement = table->valueOf(this);
-	//	delete this;
-	//	return replacedStatement;
-	return this;
+LogicStatement* Variable::replace(IDTable *idTable) {
+	LogicStatement *replacedStatement = idTable->valueOf(this);
+	delete this;
+	return replacedStatement;
 }
 
 LogicStatement* Variable::clone() {
@@ -345,6 +405,57 @@ Variable *Variable::getFreeVariable() {
 
 void Variable::candidateBoundVariables(LogicStatement *, LogicSet *) {}
 
+bool Variable::notOccur(Variable *var) {
+	return !this->equals(var);
+}
+
+void Variable::setMayOccurVariable(QString name) {
+	mayOccurVariable = new Variable(&name);
+}
+
+void Variable::setNotOccurVariable(QString name) {
+	notOccurVariable = new Variable(&name);
+}
+
+Variable *Variable::getMayOccurVariable() {
+	return mayOccurVariable;
+}
+
+Variable *Variable::getNotOccurVariable() {
+	return notOccurVariable;
+}
+
+int Variable::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (!getSymbol() == other->getSymbol())
+		return -1;
+
+	bool currentVariableInFreeList = matchingUtility->inFreeVariableListReferencewise(this);
+	bool otherVariableInFreeList = matchingUtility->inFreeVariableListReferencewise(dynamic_cast<Variable *>(other));
+	bool sameVariableName = this->equals(other);
+
+	/* Both are either the free x or free y */
+	if (currentVariableInFreeList && otherVariableInFreeList) {
+		/* Not replaced */
+		if  (sameVariableName)
+			return 0;
+		/* Replaced */
+		else
+			return 1;
+
+	/* Both not part of free variables */
+	} else if (!currentVariableInFreeList && !otherVariableInFreeList) {
+		/* Matched */
+		if (sameVariableName)
+			return 0;
+		/* Mismatched, different AST */
+		else
+			return -1;
+
+	/* One of them is free whilst other isn't */
+	} else
+		return -1;
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -368,8 +479,8 @@ bool UnaryOpStatement::match(LogicStatement *matchingStatement, EquivalenceUtili
 			getStatement()->match(dynamic_cast<UnaryOpStatement *>(matchingStatement)->getStatement(), matchingUtility);
 }
 
-LogicStatement* UnaryOpStatement::replace() {
-	//	setStatement(getStatement()->replace(table));
+LogicStatement* UnaryOpStatement::replace(IDTable *idTable) {
+	setStatement(getStatement()->replace(idTable));
 	return this;
 }
 
@@ -422,6 +533,17 @@ void UnaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Varia
 
 void UnaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
 	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+}
+
+bool UnaryOpStatement::notOccur(Variable *var) {
+	return getStatement()->notOccur(var);
+}
+
+int UnaryOpStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	return getStatement()->numberOfLeibnizReplacedVariable(dynamic_cast<UnaryOpStatement *>(other)->getStatement(), matchingUtility);
 }
 
 /* NotStatement Class */
@@ -507,9 +629,9 @@ bool BinaryOpStatement::match(LogicStatement *matchingStatement, EquivalenceUtil
 			getRightStatement()->match((dynamic_cast<BinaryOpStatement *>(matchingStatement))->getRightStatement(), matchingUtility);
 }
 
-LogicStatement* BinaryOpStatement::replace() {
-	//	setLeftStatement(getLeftStatement()->replace(table));
-	//	setRightStatement(getRightStatement()->replace(table));
+LogicStatement* BinaryOpStatement::replace(IDTable *idTable) {
+	setLeftStatement(getLeftStatement()->replace(idTable));
+	setRightStatement(getRightStatement()->replace(idTable));
 	return this;
 }
 
@@ -568,6 +690,30 @@ void BinaryOpStatement::collectFreeVariable(Variable *freeVariable, QVector<Vari
 void BinaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet) {
 	getLeftStatement()->candidateBoundVariables(rootStatement, boundSet);
 	getRightStatement()->candidateBoundVariables(rootStatement, boundSet);
+}
+
+bool BinaryOpStatement::notOccur(Variable *var) {
+	return getLeftStatement()->notOccur(var) &&
+			getRightStatement()->notOccur(var);
+}
+
+int BinaryOpStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	BinaryOpStatement *castedOther = dynamic_cast<BinaryOpStatement *>(other);
+
+	int leftReplaced = getLeftStatement()->numberOfLeibnizReplacedVariable(castedOther->getLeftStatement(), matchingUtility);
+
+	if (leftReplaced == -1)
+		return -1;
+
+	int rightReplaced = getRightStatement()->numberOfLeibnizReplacedVariable(castedOther->getRightStatement(), matchingUtility);
+
+	if (rightReplaced == -1)
+		return -1;
+
+	return leftReplaced + rightReplaced;
 }
 
 /* AndStatement Class */
@@ -658,6 +804,35 @@ LogicStatement* ImpliesStatement::clone() {
 	return new ImpliesStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
+bool ImpliesStatement::match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility) {
+	bool matched = BinaryOpStatement::match(matchingStatement, matchingUtility);
+
+	/* has the shape of (x=y) IMPLIES (A IFF B) where x is free  */
+	if (isLeibnizRule()) {
+		/* Confirmed x is free in A and y is free in B and y does not occur in A, so the idTable has mapping
+		 * for x,y,A and B */
+		if (matched) {
+			IDTable *idTable = matchingUtility->getIDTable();
+			QString *A = new QString("A");
+			QString *B = new QString("B");
+			Variable *VAR_A = new Variable(A);
+			Variable *VAR_B = new Variable(B);
+			LogicStatement *matching_A = idTable->valueOf(VAR_A);
+			LogicStatement *matching_B = idTable->valueOf(VAR_B);
+			delete A;
+			delete B;
+			delete VAR_A;
+			delete VAR_B;
+
+			/* When one or more free x gets replaced by y, Leibniz rule matched, if none gets replaced or structural
+			 * mismatch, then failed to match leibniz rule */
+			return matching_A->numberOfLeibnizReplacedVariable(matching_B, matchingUtility) > 0;
+		}
+	}
+
+	return matched;
+}
+
 /* FirstOrderStatement Class */
 bool FirstOrderStatement::isFirstOrderLogic() {
 	return true;
@@ -665,10 +840,6 @@ bool FirstOrderStatement::isFirstOrderLogic() {
 
 bool FirstOrderStatement::evaluate() {
 	return false;
-}
-
-LogicStatement* FirstOrderStatement::replace() {
-	return this;
 }
 
 FirstOrderStatement::~FirstOrderStatement() {}
@@ -795,11 +966,46 @@ bool ForAllStatement::match(LogicStatement *matchingStatement, EquivalenceUtilit
 		 * in fact keeping the information would confuse the matching system */
 		matchingUtility->deleteAuxiliaryItems();
 		matchingUtility->resetAuxiliaryItems();
+		/* Used for renaming bound variables, inserting the x in FORALL(x)A to the free list to be replaced later on */
+	} else if (getStatement()->getSymbol() == VARIABLE_SYMBOL &&
+			   dynamic_cast<Variable *>(getStatement())->getFreeVariable() != nullptr) {
+		matchingUtility->initFreeVariableList();
+		matchingUtility->getFreeVariableList()->append(getQuantifier());
 	}
 
 	/* We proceed adding the quantifier to IDTable as usual and keep matching */
 	return getQuantifier()->match(castedMatchingStatement->getQuantifier(), matchingUtility) &&
 			getStatement()->match(castedMatchingStatement->getStatement(), matchingUtility);
+}
+
+LogicStatement *ForAllStatement::replace(IDTable *idTable) {
+	setIdentifier(dynamic_cast<Variable *>(getQuantifier()->replace(idTable)));
+	setStatement(getStatement()->replace(idTable));
+	return this;
+}
+
+bool ForAllStatement::notOccur(Variable *var) {
+	return getQuantifier()->notOccur(var) &&
+			getStatement()->notOccur(var);
+}
+
+int ForAllStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	ForAllStatement *castedOther = dynamic_cast<ForAllStatement *>(other);
+
+	int quantifierReplaced = getQuantifier()->numberOfLeibnizReplacedVariable(castedOther->getQuantifier(), matchingUtility);
+
+	if (quantifierReplaced == -1)
+		return -1;
+
+	int statementReplaced = getStatement()->numberOfLeibnizReplacedVariable(castedOther->getStatement(), matchingUtility);
+
+	if (statementReplaced == -1)
+		return -1;
+
+	return quantifierReplaced + statementReplaced;
 }
 
 /* ThereExistsStatement Class */
@@ -924,11 +1130,48 @@ bool ThereExistsStatement::match(LogicStatement *matchingStatement, EquivalenceU
 		/* When control reaches this block, the binding has been confirmed and candidate set is no longer needed,
 		 * in fact keeping the information would confuse the matching system */
 		matchingUtility->resetAuxiliaryItems();
+
+		/* Used for renaming bound variables, inserting the x in FORALL(x)A to the free list to be replaced later on */
+	} else if (getStatement()->getSymbol() == VARIABLE_SYMBOL &&
+			   dynamic_cast<Variable *>(getStatement())->getFreeVariable() != nullptr) {
+		matchingUtility->initFreeVariableList();
+		matchingUtility->getFreeVariableList()->append(getQuantifier());
 	}
+
 
 	/* We proceed adding the quantifier to IDTable as usual and keep matching */
 	return getQuantifier()->match(castedMatchingStatement->getQuantifier(), matchingUtility) &&
 			getStatement()->match(castedMatchingStatement->getStatement(), matchingUtility);
+}
+
+LogicStatement *ThereExistsStatement::replace(IDTable *idTable) {
+	setIdentifier(dynamic_cast<Variable *>(getQuantifier()->replace(idTable)));
+	setStatement(getStatement()->replace(idTable));
+	return this;
+}
+
+bool ThereExistsStatement::notOccur(Variable *var) {
+	return getQuantifier()->notOccur(var) &&
+			getStatement()->notOccur(var);
+}
+
+int ThereExistsStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	ThereExistsStatement *castedOther = dynamic_cast<ThereExistsStatement *>(other);
+
+	int quantifierReplaced = getQuantifier()->numberOfLeibnizReplacedVariable(castedOther->getQuantifier(), matchingUtility);
+
+	if (quantifierReplaced == -1)
+		return -1;
+
+	int statementReplaced = getStatement()->numberOfLeibnizReplacedVariable(castedOther->getStatement(), matchingUtility);
+
+	if (statementReplaced == -1)
+		return -1;
+
+	return quantifierReplaced + statementReplaced;
 }
 
 /* Parameters Class */
@@ -974,7 +1217,14 @@ Symbol Parameters::getSymbol() {
 	return Symbol::PARAMETERS_SYMBOL;
 }
 
-void Parameters::collectVariables(QVector<QVector<Variable *> *> *) {}
+void Parameters::collectVariables(QVector<QVector<Variable *> *> *var_list) {
+	getParameter()->collectVariables(var_list);
+
+	Parameters *remainingParams = getRemainingParameters();
+
+	if (remainingParams != nullptr)
+		remainingParams->collectVariables(var_list);
+}
 
 bool Parameters::equals(LogicStatement *statement) {
 
@@ -1028,12 +1278,12 @@ LogicStatement* Parameters::clone() {
 	return new Parameters(dynamic_cast<Variable *>(getParameter()->clone()), newRemainingParameters);
 }
 
-LogicStatement* Parameters::replace() {
-	//	setParameter(dynamic_cast<Variable *>(getParameter()->replace(table)));
+LogicStatement *Parameters::replace(IDTable *idTable) {
+	setParameter(dynamic_cast<Variable *>(getParameter()->replace(idTable)));
 
-	//	Parameters *remainingParameter = getRemainingParameters();
-	//	if (remainingParameter != nullptr)
-	//		setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(table)));
+	Parameters *remainingParameter = getRemainingParameters();
+	if (remainingParameter != nullptr)
+		setRemainingParameters(dynamic_cast<Parameters *>(getRemainingParameters()->replace(idTable)));
 
 	return this;
 }
@@ -1116,6 +1366,50 @@ void Parameters::collectFreeVariable(Variable *freeVariable, QVector<Variable *>
 }
 
 void Parameters::candidateBoundVariables(LogicStatement *, LogicSet *) {}
+
+bool Parameters::notOccur(Variable *var) {
+	if (!getParameter()->notOccur(var))
+		return false;
+
+	Parameters *remainingParams = getRemainingParameters();
+
+	if (remainingParams != nullptr)
+		return remainingParams->notOccur(var);
+
+	return true;
+}
+
+int Parameters::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	Parameters *castedOther = dynamic_cast<Parameters *>(other);
+
+	int parameterReplaced = getParameter()->numberOfLeibnizReplacedVariable(castedOther->getParameter(), matchingUtility);
+
+	if (parameterReplaced == -1)
+		return -1;
+
+	Parameters *remainingParams = getRemainingParameters();
+	Parameters *otherRemainingParams = castedOther->getRemainingParameters();
+
+	/* Both reached end */
+	if (remainingParams == nullptr && otherRemainingParams == nullptr)
+		return parameterReplaced;
+
+	/* Both has remaining */
+	else if (remainingParams != nullptr && otherRemainingParams != nullptr) {
+		int paramsReplaced = remainingParams->numberOfLeibnizReplacedVariable(otherRemainingParams, matchingUtility);
+
+		if (paramsReplaced == -1)
+			return -1;
+
+		return parameterReplaced + paramsReplaced;
+
+	/* One has reached the end whilst other has remaining, structure mismatch */
+	} else
+		return -1;
+}
 
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
@@ -1205,6 +1499,36 @@ bool PredicateSymbolStatement::match(LogicStatement *matchingStatement, Equivale
 			getParameters()->match(dynamic_cast<PredicateSymbolStatement *>(matchingStatement)->getParameters(), matchingUtility);
 }
 
+LogicStatement *PredicateSymbolStatement::replace(IDTable *idTable) {
+	/* Predicate Symbol (function symbol) should not be replaced in any instance */
+	this->setParameters(dynamic_cast<Parameters *>(getParameters()->replace(idTable)));
+	return this;
+}
+
+bool PredicateSymbolStatement::notOccur(Variable *var) {
+	return getPredicateSymbol()->notOccur(var) &&
+			getParameters()->notOccur(var);
+}
+
+int PredicateSymbolStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	PredicateSymbolStatement *otherCasted = dynamic_cast<PredicateSymbolStatement *>(other);
+
+	int predicateSymbolReplaced = getPredicateSymbol()->numberOfLeibnizReplacedVariable(otherCasted->getPredicateSymbol(), matchingUtility);
+
+	if (predicateSymbolReplaced == -1)
+		return -1;
+
+	int parametersReplaced = getParameters()->numberOfLeibnizReplacedVariable(otherCasted->getParameters(), matchingUtility);
+
+	if (parametersReplaced == -1)
+		return -1;
+
+	return predicateSymbolReplaced + parametersReplaced;
+}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -1291,6 +1615,36 @@ bool EqualityStatement::match(LogicStatement *matchingStatement, EquivalenceUtil
 	return getSymbol() == matchingStatement->getSymbol() &&
 			getLeftVariable()->match(dynamic_cast<EqualityStatement *>(matchingStatement)->getLeftVariable(), matchingUtility) &&
 			getRightVariable()->match(dynamic_cast<EqualityStatement *>(matchingStatement)->getRightVariable(), matchingUtility);
+}
+
+LogicStatement *EqualityStatement::replace(IDTable *idTable) {
+	setLeftVariable(dynamic_cast<Variable *>(getLeftVariable()->replace(idTable)));
+	setRightVariable(dynamic_cast<Variable *>(getLeftVariable()->replace(idTable)));
+	return this;
+}
+
+bool EqualityStatement::notOccur(Variable *var) {
+	return getLeftVariable()->notOccur(var) &&
+			getRightVariable()->notOccur(var);
+}
+
+int EqualityStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
+	if (getSymbol() != other->getSymbol())
+		return -1;
+
+	EqualityStatement *castedOther = dynamic_cast<EqualityStatement *>(other);
+
+	int leftVariableReplaced = getLeftVariable()->numberOfLeibnizReplacedVariable(castedOther->getLeftVariable(), matchingUtility);
+
+	if (leftVariableReplaced == -1)
+		return -1;
+
+	int rightVariableReplaced = getRightVariable()->numberOfLeibnizReplacedVariable(castedOther->getRightVariable(), matchingUtility);
+
+	if (rightVariableReplaced == -1)
+		return -1;
+
+	return leftVariableReplaced + rightVariableReplaced;
 }
 
 extern int yyparse();

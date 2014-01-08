@@ -1054,14 +1054,14 @@
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
-				<ID OCCUR_FREE="x">A</ID>
+                                <ID OCCUR_FREE="x" NOT_OCCUR="y">A</ID>
 			</ForAll>
 			</LogicStatement>
 			
 			<LogicStatement>
 			<ForAll>
 				<ID>y</ID>
-				<ID OCCUR_FREE="y">B</ID>
+                                <ID OCCUR_FREE="y" MAY_OCCUR="x">B</ID>
 			</ForAll>
 			</LogicStatement>
 		</EquivalentStatements>

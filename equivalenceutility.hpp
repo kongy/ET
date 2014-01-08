@@ -39,6 +39,7 @@ public:
     void deleteAuxiliaryItems();
     void clear();
     bool inCandidateBoundVariableSet(Variable *var);
+    bool inFreeVariableListReferencewise(Variable *var);
 };
 
 #endif // EQUIVALENCEUTILITY_HPP

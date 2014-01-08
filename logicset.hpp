@@ -9,6 +9,7 @@ class LogicStatement;
 }
 
 typedef AST::LogicStatement Rule;
+
 /* Alternative for C++ set */
 class LogicSet
 {
@@ -22,7 +23,7 @@ public:
 	void deepDeleteContent();
 	bool isEmpty();
 
-	bool exists(Rule *);
+	bool contains(Rule *);
 
 	/* Set Implementation of add() */
 	bool add(Rule *);
@@ -30,8 +31,11 @@ public:
 	/* Returns a vector representing the set */
 	QVector<Rule *> *getSet();
 
-	/* Same Operation for Set difference to delete certain element of the set */
+	/* Same Operation for Set difference to remove certain element of the set, returns newly allocated set */
 	LogicSet *diff(Rule *item);
+
+	/* Set difference between two sets, returning a newly allocated set */
+	LogicSet *diff(LogicSet *other);
 
 	QString print(bool fullBracket);
 };
