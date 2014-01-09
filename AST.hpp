@@ -103,6 +103,11 @@ public:
      * different free variable that has been logged, returns the number of free variables replaced, or -1 if
      * not leibniz equivalent */
     virtual int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) = 0;
+
+    /* Called by the main parent, note oldChildFormula must be exact reference of the parent, not copy, also please
+     * check mainparent != oldChildFormula before calling this function because in that case: the parent has been replaced
+     * and no further processing required i.e. no need to call this function */
+    virtual void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) = 0;
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -125,6 +130,7 @@ public:
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 class Falsity : public LogicStatement {
@@ -145,6 +151,7 @@ public:
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 class Variable : public LogicStatement {
@@ -192,6 +199,7 @@ public:
 	Variable *getMayOccurVariable();
 	Variable *getNotOccurVariable();
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -218,6 +226,7 @@ public:
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -257,6 +266,7 @@ public:
 	void candidateBoundVariables(LogicStatement *rootStatement, LogicSet *boundSet);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -315,6 +325,7 @@ public:
 	virtual void collectFreeVariable(Variable *, QVector<Variable *> *) = 0;
 	virtual bool notOccur(Variable *) = 0;
 	virtual int numberOfLeibnizReplacedVariable(LogicStatement *, EquivalenceUtility *) = 0;
+	virtual void replaceChildStatement(LogicStatement *, LogicStatement *) = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -342,6 +353,7 @@ public:
 	LogicStatement *replace(IDTable *idTable);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -369,6 +381,7 @@ public:
 	LogicStatement *replace(IDTable *idTable);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
 };
 
 class Parameters : public LogicStatement {
@@ -398,6 +411,7 @@ public:
 	void candidateBoundVariables(LogicStatement *, LogicSet *);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -425,6 +439,7 @@ public:
 	LogicStatement *replace(IDTable *idTable);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -451,6 +466,7 @@ public:
 	LogicStatement *replace(IDTable *idTable);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
+	void replaceChildStatement(LogicStatement *, LogicStatement *);
 };
 
 LogicStatement *parse(QString expression);

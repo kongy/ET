@@ -164,6 +164,8 @@ int Truth::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUti
 		return 0;
 }
 
+void Truth::replaceChildStatement(LogicStatement *, LogicStatement *) {}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -228,6 +230,8 @@ int Falsity::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceU
 	else
 		return 0;
 }
+
+void Falsity::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
 /* Variable Class */
 Variable::Variable(QString *name) {
@@ -456,6 +460,8 @@ int Variable::numberOfLeibnizReplacedVariable(LogicStatement *other, Equivalence
 		return -1;
 }
 
+void Variable::replaceChildStatement(LogicStatement *, LogicStatement *) {}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -544,6 +550,15 @@ int UnaryOpStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, Equ
 		return -1;
 
 	return getStatement()->numberOfLeibnizReplacedVariable(dynamic_cast<UnaryOpStatement *>(other)->getStatement(), matchingUtility);
+}
+
+void UnaryOpStatement::replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) {
+	LogicStatement *childStatement = getStatement();
+
+	if (childStatement == oldChildFormula)
+		setStatement(newChildFormula);
+	else
+		childStatement->replaceChildStatement(oldChildFormula, newChildFormula);
 }
 
 /* NotStatement Class */
@@ -714,6 +729,20 @@ int BinaryOpStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, Eq
 		return -1;
 
 	return leftReplaced + rightReplaced;
+}
+
+void BinaryOpStatement::replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) {
+	LogicStatement *leftChild = getLeftStatement();
+	LogicStatement *rightChild = getRightStatement();
+
+	if (leftChild == oldChildFormula)
+		setLeftStatement(newChildFormula);
+	else if (rightChild == oldChildFormula)
+		setRightStatement(newChildFormula);
+	else {
+		leftChild->replaceChildStatement(oldChildFormula, newChildFormula);
+		rightChild->replaceChildStatement(oldChildFormula, newChildFormula);
+	}
 }
 
 /* AndStatement Class */
@@ -1008,6 +1037,15 @@ int ForAllStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, Equi
 	return quantifierReplaced + statementReplaced;
 }
 
+void ForAllStatement::replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) {
+	LogicStatement *child = getStatement();
+
+	if (child == oldChildFormula)
+		setStatement(newChildFormula);
+	else
+		child->replaceChildStatement(oldChildFormula, newChildFormula);
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -1172,6 +1210,15 @@ int ThereExistsStatement::numberOfLeibnizReplacedVariable(LogicStatement *other,
 		return -1;
 
 	return quantifierReplaced + statementReplaced;
+}
+
+void ThereExistsStatement::replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) {
+	LogicStatement *child = getStatement();
+
+	if (child == oldChildFormula)
+		setStatement(newChildFormula);
+	else
+		child->replaceChildStatement(oldChildFormula, newChildFormula);
 }
 
 /* Parameters Class */
@@ -1411,6 +1458,8 @@ int Parameters::numberOfLeibnizReplacedVariable(LogicStatement *other, Equivalen
 		return -1;
 }
 
+void Parameters::replaceChildStatement(LogicStatement *, LogicStatement *) {}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -1454,7 +1503,9 @@ QVector<QPair<QString, LogicStatement *> > PredicateSymbolStatement::getStringMa
 	QVector<QPair<QString, LogicStatement *> > mapping;
 
 	mapping.append(QPair<QString, LogicStatement *>(getPredicateSymbolName(), this));
+	mapping.append(QPair<QString, LogicStatement *>("(", nullptr));
 	mapping += getParameters()->getStringMapping(fullBracket);
+	mapping.append(QPair<QString, LogicStatement *>(")", nullptr));
 
 	return mapping;
 }
@@ -1528,6 +1579,8 @@ int PredicateSymbolStatement::numberOfLeibnizReplacedVariable(LogicStatement *ot
 
 	return predicateSymbolReplaced + parametersReplaced;
 }
+
+void PredicateSymbolStatement::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
@@ -1646,6 +1699,8 @@ int EqualityStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, Eq
 
 	return leftVariableReplaced + rightVariableReplaced;
 }
+
+void EqualityStatement::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
 extern int yyparse();
 
