@@ -60,18 +60,18 @@ void SolutionTabWidget::lineSelected() {
 
 	int lineno = c.blockNumber();
 	if(lineno == model->forwardStack.size() - 1) {
-		selectedStatement = model->forwardStack.top();
+		selectedFormula = model->forwardStack.top();
 		isForward = true;
 	}
 	else if (lineno == model->forwardStack.size() + 1) {
-		selectedStatement = model->backwardStack.top();
+		selectedFormula = model->backwardStack.top();
 		isForward = false;
 	}
 	else {
 		// Blank line, do nothing and return
 		return;
 	}
-	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedStatement, this);
+	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedFormula, this);
 	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
@@ -79,6 +79,8 @@ void SolutionTabWidget::lineSelected() {
 }
 
 void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
+	selectedSubformula = subformula;
+
 	FormulaReplacementDialog *d = new FormulaReplacementDialog(subformula, this);
 	connect(d, SIGNAL(ruleSelected(LogicSet*)), this, SLOT(ruleSelected(LogicSet*)));
 	d->setAttribute(Qt::WA_DeleteOnClose);
@@ -87,7 +89,7 @@ void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
 }
 
 void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
-	QVector<Rule*> *m = ET::eqEng->getMatchedRules(selectedStatement, ruleset);
+	QVector<Rule*> *m = ET::eqEng->getMatchedRules(selectedSubformula, ruleset);
 	if(m->size() == 1) {
 		// Only one match, go ahead an apply it
 		matchedRuleSelected(m->at(0));

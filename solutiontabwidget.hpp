@@ -24,7 +24,8 @@ class SolutionTabWidget : public QWidget
 	 *  save states globally so that no need to pass them all the time.
 	 */
 	bool isForward;
-	AST::LogicStatement *selectedStatement;
+	AST::LogicStatement *selectedSubformula;
+	AST::LogicStatement *selectedFormula;
 
 public:
 	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end, QWidget *parent = 0);
