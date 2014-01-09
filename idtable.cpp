@@ -24,7 +24,7 @@ QVector<QPair<Variable *, LogicStatement *> *> *IDTable::getMapping() {
 LogicStatement* IDTable::valueOf(Variable *key) {
     for (QPair<Variable *, LogicStatement *> *key_value_pair : *getMapping())
         if (key_value_pair->first->equals(key))
-            return key_value_pair->second->clone();
+            return key_value_pair->second;
 
     return nullptr;
 }

@@ -355,7 +355,7 @@ bool Variable::match(LogicStatement *matchingStatement, EquivalenceUtility *matc
 }
 
 LogicStatement* Variable::replace(IDTable *idTable) {
-	LogicStatement *replacedStatement = idTable->valueOf(this);
+	LogicStatement *replacedStatement = idTable->valueOf(this)->clone();
 	delete this;
 	return replacedStatement;
 }

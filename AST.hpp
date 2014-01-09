@@ -158,11 +158,10 @@ class Variable : public LogicStatement {
 	Variable *notOccurVariable;
 	/* Used by Leibneiz rule */
 	Variable *mayOccurVariable;
-protected:
-	void setName(QString *);
 public:
 	Variable(QString *name);
 	~Variable();
+	void setName(QString *);
 	QString print(bool);
 	QString getName();
 	bool isFirstOrderLogic();
