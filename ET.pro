@@ -64,6 +64,7 @@ FORMS    += mainwindow.ui \
     inputpanel.ui \
     subformulaselectiondialog.ui \
     formulareplacementdialog.ui \
+    matchedruleselectiondialog.ui
 
 LIBS += -ll -ly
 
