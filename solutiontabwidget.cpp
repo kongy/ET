@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "matchedruleselectiondialog.hpp"
 #include "solutiontabwidget.hpp"
 #include "subformulaselectiondialog.hpp"
 #include "formulareplacementdialog.hpp"
@@ -87,9 +88,20 @@ void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
 
 void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
 	QVector<Rule*> *m = ET::eqEng->getMatchedRules(selectedStatement, ruleset);
-	for(Rule *i : *m) {
-		qDebug() << i->print(ET::fullBracket);
+	if(m->size() == 1) {
+		// Only one match, go ahead an apply it
+		matchedRuleSelected(m->at(0));
+	} else {
+		MatchedRuleSelectionDialog *d = new MatchedRuleSelectionDialog(m, this);
+		connect(d, SIGNAL(ruleSelected(Rule*)), this, SLOT(matchedRuleSelected(Rule*)));
+		d->setAttribute(Qt::WA_DeleteOnClose);
+		d->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+		d->show();
 	}
+}
+
+void SolutionTabWidget::matchedRuleSelected(Rule *rule) {
+	qDebug() << rule->print(ET::fullBracket);
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {

@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     subformulaselectiondialog.cpp \
     formulareplacementdialog.cpp \
     ruleparser.cpp \
-    equivalenceutility.cpp
+    equivalenceutility.cpp \
+    matchedruleselectiondialog.cpp
 
 HEADERS  += mainwindow.hpp \
     newsolutiondialog.hpp \
@@ -53,7 +54,8 @@ HEADERS  += mainwindow.hpp \
     main.hpp \
     embeddedpushbutton.hpp \
     ruleparser.hpp \
-    equivalenceutility.hpp
+    equivalenceutility.hpp \
+    matchedruleselectiondialog.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
@@ -61,7 +63,7 @@ FORMS    += mainwindow.ui \
     solutiontabwidget.ui \
     inputpanel.ui \
     subformulaselectiondialog.ui \
-    formulareplacementdialog.ui
+    formulareplacementdialog.ui \
 
 LIBS += -ll -ly
 

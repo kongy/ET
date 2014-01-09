@@ -1,4 +1,5 @@
 #include "embeddedpushbutton.hpp"
+#include "equivalenceengine.hpp"
 #include "main.hpp"
 #include "formulareplacementdialog.hpp"
 #include "ui_formulareplacementdialog.h"
@@ -9,7 +10,7 @@
 typedef EmbeddedPushButton<LogicSet*> RulePushButton;
 
 FormulaReplacementDialog::FormulaReplacementDialog(AST::LogicStatement *subformula, QWidget *parent) :
-    QDialog(parent),
+	QDialog(parent),
 	ui(new Ui::FormulaReplacementDialog)
 {
 	ui->setupUi(this);
@@ -30,4 +31,5 @@ FormulaReplacementDialog::~FormulaReplacementDialog()
 void FormulaReplacementDialog::onClick() {
 	RulePushButton *source = static_cast<RulePushButton*>(sender());
 	emit ruleSelected(source->getExtra());
+	close();
 }

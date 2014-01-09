@@ -2,7 +2,6 @@
 #define FORMULAREPLACEMENTDIALOG_HPP
 
 #include "AST.hpp"
-#include "equivalenceengine.hpp"
 #include "logicset.hpp"
 
 #include <QDialog>
@@ -22,7 +21,7 @@ public:
 	~FormulaReplacementDialog();
 
 signals:
-	LogicSet *ruleSelected(LogicSet*);
+	void ruleSelected(LogicSet*);
 
 private slots:
 	void onClick();
