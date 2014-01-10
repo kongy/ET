@@ -66,6 +66,10 @@ void solutionModel::redo() {
 	undoStack.push(o);
 }
 
+bool solutionModel::proofFinished() {
+	return forwardStack.top()->equals(backwardStack.top());
+}
+
 void solutionModel::clearRedoStack() {
 	for(Operation *o : redoStack) {
 		for(LogicStatement *s : o->stats) {

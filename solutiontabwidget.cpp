@@ -26,7 +26,7 @@ void SolutionTabWidget::redraw() const {
 	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
 	ui->textEdit->clear();
 
-	bool proofFinished = model->forwardStack.top()->equals(model->backwardStack.top());
+	bool proofFinished = model->proofFinished();
 
 	QVectorIterator<AST::LogicStatement*> forwardStackIt(model->forwardStack);
 	QVectorIterator<AST::LogicStatement*> backwardStackIt(model->backwardStack);

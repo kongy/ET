@@ -28,6 +28,8 @@ public:
 	void add(bool forward, AST::LogicStatement *formula);
 	void remove(bool forward, int n);
 
+	bool proofFinished();
+
 private:
 	void clearRedoStack();
 };
