@@ -107,21 +107,16 @@ void SolutionTabWidget::matchedRuleSelected(Rule *rule) {
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {
-	if(isForward) {
-		model->forwardStack.append(formula);
-	}
-	else {
-		model->backwardStack.append(formula);
-	}
+	model->add(isForward, formula);
 	redraw();
 }
 
 void SolutionTabWidget::undo() {
-	// TODO
-	qDebug() << "Undo requested";
+	model->undo();
+	redraw();
 }
 
 void SolutionTabWidget::redo() {
-	// TODO
-	qDebug() << "Redo requested";
+	model->redo();
+	redraw();
 }
