@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QFile>
 #include <QMainWindow>
 
 #include "AST.hpp"
@@ -18,6 +19,8 @@ public:
 
 private:
 	Ui::MainWindow *ui;
+	void createSolutionTab(QFile *f);
+	void saveSolutionTab(QFile *f);
 
 private slots:
 	void startNewSolutionDialog();
@@ -29,6 +32,8 @@ private slots:
 	void bracketStatusChanged();
 	void closeTab(int index);
 	void closeTab();
+	void openFromFile();
+	void saveToFile();
 };
 
 #endif // MAINWINDOW_HPP

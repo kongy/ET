@@ -6,6 +6,7 @@
 #include "welcomepagewidget.hpp"
 
 #include <QDebug>
+#include <QFileDialog>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// File menu items
 	connect(ui->actionNewSolution, SIGNAL(triggered()), this, SLOT(startNewSolutionDialog()));
+	connect(ui->actionOpen_Solution, SIGNAL(triggered()), this, SLOT(openFromFile()));
+	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
 	connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeTab()));
 	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -72,12 +75,29 @@ void MainWindow::startAboutDialog() {
  */
 void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end,
 								   QString name) {
-	// TODO: Check AST equivalence
 	if(start == nullptr) qWarning()<<"Begin is NULL";
 	if(end == nullptr) qWarning()<<"End is NULL";
 	QWidget *tab = new SolutionTabWidget(start, end, ui->tabWidget);
 	ui->tabWidget->addTab(tab, name);
 	ui->tabWidget->setCurrentWidget(tab);
+}
+
+/**
+ * @brief Opens new solution tab with given .esf file
+ * @param f Well-formed esf file
+ */
+void MainWindow::createSolutionTab(QFile *f) {
+	// TODO
+	qDebug() << "Requested to create from" << f->fileName();
+}
+
+/**
+ * @brief Save current solution tab to given .esf file
+ * @param f Destination
+ */
+void MainWindow::saveSolutionTab(QFile *f) {
+	// TODO
+	qDebug() << "Requested to save to" << f->fileName();
 }
 
 /** Undo the last operation */
@@ -124,4 +144,40 @@ void MainWindow::closeTab() {
 	ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
 
 	delete(tabItem);
+}
+
+/**
+ * @brief Open a file dialog and construct new tab from user selected file
+ */
+void MainWindow::openFromFile() {
+	QString fileName = QFileDialog::getOpenFileName(this,
+													"Open File",
+													QDir::homePath(),
+													"ET Solution files(*.esf)");
+	if(fileName.isEmpty()) return;
+	QFile f(fileName, this);
+	if(!f.open(QIODevice::ReadOnly)) {
+		QMessageBox::information(this, "Error", f.errorString());
+		return;
+	}
+	createSolutionTab(&f);
+	f.close();
+}
+
+/**
+ * @brief Open a file dialog and save current tab to user selected file
+ */
+void MainWindow::saveToFile() {
+	QString fileName = QFileDialog::getSaveFileName(this,
+													"Save Solution",
+													QDir::homePath(),
+													"ET Solution files(*.esf)");
+	if(fileName.isEmpty()) return;
+	QFile f(fileName, this);
+	if(!f.open(QIODevice::ReadWrite)) {
+		QMessageBox::information(this, "Error", f.errorString());
+		return;
+	}
+	saveSolutionTab(&f);
+	f.close();
 }
