@@ -35,6 +35,7 @@ public:
 	void redraw() const;
 	void undo();
 	void redo();
+	LogicStatement *getReplacement(const QString msg, const QString errorMessage);
 
 signals:
 	void lineSelected(AST::LogicStatement* expr);

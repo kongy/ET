@@ -127,3 +127,16 @@ void SolutionTabWidget::redo() {
 	model->redo();
 	redraw();
 }
+
+LogicStatement *SolutionTabWidget::getReplacement(const QString msg, const QString errorMessage) {
+	//TODO: check if the errorMessage is Not equal to "";
+	LogicStatement *userInput = nullptr;
+
+	if (errorMessage != "") {
+		//Display the error to user and request for the new LogicStatement with msg and return it
+	} else {
+		//Request for new LogicStatement with msg;
+	}
+
+	return userInput;
+}
