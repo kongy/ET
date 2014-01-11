@@ -44,7 +44,7 @@ private slots:
 	void lineSelected();
 	void subformulaSelected(AST::LogicStatement* subformula);
 	void ruleSelected(LogicSet *ruleset);
-	void matchedRuleSelected(Rule *rule);
+	void matchedRuleSelected(Rule *from, Rule *to);
 	void newFormulaGenerated(AST::LogicStatement *formula);
 };
 

@@ -78,6 +78,7 @@ void SolutionTabWidget::lineSelected() {
 		// Blank line, do nothing and return
 		return;
 	}
+	selectedFormula = selectedFormula->clone();
 	SubformulaSelectionDialog* dialog = new SubformulaSelectionDialog(selectedFormula, this);
 	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement*)), this, SLOT(subformulaSelected(AST::LogicStatement*)));
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -97,20 +98,15 @@ void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula) {
 
 void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
 	QVector<Rule*> *m = ET::eqEng->getMatchedRules(selectedSubformula, ruleset);
-	if(m->size() == 1) {
-		// Only one match, go ahead an apply it
-		matchedRuleSelected(m->at(0));
-	} else {
-		MatchedRuleSelectionDialog *d = new MatchedRuleSelectionDialog(m, this);
-		connect(d, SIGNAL(ruleSelected(Rule*)), this, SLOT(matchedRuleSelected(Rule*)));
-		d->setAttribute(Qt::WA_DeleteOnClose);
-		d->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
-		d->show();
-	}
+	MatchedRuleSelectionDialog *d = new MatchedRuleSelectionDialog(m, ruleset, this);
+	connect(d, SIGNAL(ruleSelected(Rule*,Rule*)), this, SLOT(matchedRuleSelected(Rule*,Rule*)));
+	d->setAttribute(Qt::WA_DeleteOnClose);
+	d->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+	d->show();
 }
 
-void SolutionTabWidget::matchedRuleSelected(Rule *rule) {
-	newFormulaGenerated(rule);
+void SolutionTabWidget::matchedRuleSelected(Rule *from, Rule *to) {
+	newFormulaGenerated(ET::eqEng->replaceStatement(selectedSubformula, from, to, this));
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {

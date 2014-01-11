@@ -8,16 +8,17 @@
 
 typedef EmbeddedPushButton<Rule *> RulePushButton;
 
-MatchedRuleSelectionDialog::MatchedRuleSelectionDialog(QVector<Rule *> *rules, QWidget *parent) :
+MatchedRuleSelectionDialog::MatchedRuleSelectionDialog(QVector<Rule *> *rules, LogicSet *ls, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::MatchedRuleSelectionDialog)
+	ui(new Ui::MatchedRuleSelectionDialog),
+	ls(ls)
 {
 	ui->setupUi(this);
 
 	for(Rule *r : *rules) {
 		QPushButton *w = new RulePushButton(r->print(ET::fullBracket), r, this);
-		ui->verticalLayout->addWidget(w);
-		connect(w, SIGNAL(clicked()), this, SLOT(onClick()));
+		ui->fromLayout->addWidget(w);
+		connect(w, SIGNAL(clicked()), this, SLOT(onFromChosen()));
 	}
 }
 
@@ -26,8 +27,19 @@ MatchedRuleSelectionDialog::~MatchedRuleSelectionDialog()
 	delete ui;
 }
 
-void MatchedRuleSelectionDialog::onClick() {
+void MatchedRuleSelectionDialog::onFromChosen() {
 	RulePushButton *source = static_cast<RulePushButton*>(sender());
-	emit ruleSelected(source->getExtra());
+	from = source->getExtra();
+	for(Rule *r : *ls->diff(from)->getSet()) {
+		QPushButton *w = new RulePushButton(r->print(ET::fullBracket), r, this);
+		ui->toLayout->addWidget(w);
+		connect(w, SIGNAL(clicked()), this, SLOT(onToChosen()));
+	}
+}
+
+void MatchedRuleSelectionDialog::onToChosen() {
+	RulePushButton *source = static_cast<RulePushButton*>(sender());
+	to = source->getExtra();
+	emit ruleSelected(from, to);
 	close();
 }

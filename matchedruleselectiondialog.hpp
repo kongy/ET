@@ -4,6 +4,7 @@
 #include "logicset.hpp"
 
 #include <QDialog>
+#include <QPushButton>
 
 namespace Ui {
 class MatchedRuleSelectionDialog;
@@ -13,18 +14,22 @@ class MatchedRuleSelectionDialog : public QDialog
 {
 	Q_OBJECT
 
+	LogicSet *ls;
+	Rule *from, *to;
+
 public:
-	explicit MatchedRuleSelectionDialog(QVector<Rule *> *rules, QWidget *parent = 0);
+	explicit MatchedRuleSelectionDialog(QVector<Rule *> *rules,  LogicSet *ls, QWidget *parent = 0);
 	~MatchedRuleSelectionDialog();
 
 signals:
-	void ruleSelected(Rule *r);
+	void ruleSelected(Rule *from, Rule *to);
 
 private:
 	Ui::MatchedRuleSelectionDialog *ui;
 
 private slots:
-	void onClick();
+	void onFromChosen();
+	void onToChosen();
 };
 
 #endif // MATCHEDRULESELECTIONDIALOG_HPP
