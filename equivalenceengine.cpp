@@ -42,10 +42,10 @@ QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, Logic
 	EquivalenceUtility matchingUtility;
 
 	for (Rule *rule : *ruleSet->getSet()) {
-		if (rule->match(input, &matchingUtility)) {
+		if (rule->match(input, &matchingUtility))
 			matchedRules->append(rule);
-			matchingUtility.clear();
-		}
+
+		matchingUtility.clear();
 
 		if (rule->isLeibnizRule())
 			break;
