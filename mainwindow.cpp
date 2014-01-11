@@ -87,8 +87,9 @@ void MainWindow::createSolutionTab(AST::LogicStatement *start, AST::LogicStateme
  * @param f Well-formed esf file
  */
 void MainWindow::createSolutionTab(QFile *f) {
-	// TODO
-	qDebug() << "Requested to create from" << f->fileName();
+	QWidget *tab = new SolutionTabWidget(f);
+	ui->tabWidget->addTab(tab, f->fileName());
+	ui->tabWidget->setCurrentWidget(tab);
 }
 
 /**

@@ -1,6 +1,7 @@
 #ifndef SOLUTIONMODEL_HPP
 #define SOLUTIONMODEL_HPP
 
+#include <QFile>
 #include <QStack>
 
 #include "AST.hpp"
@@ -18,6 +19,7 @@ class solutionModel
 
 public:
 	solutionModel(AST::LogicStatement* begin, AST::LogicStatement* end);
+	solutionModel(QFile *f);
 	~solutionModel();
 
 	QStack<AST::LogicStatement*> forwardStack;

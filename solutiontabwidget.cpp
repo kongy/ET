@@ -17,6 +17,15 @@ SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicState
 	redraw();
 }
 
+SolutionTabWidget::SolutionTabWidget(QFile *f, QWidget *parent) :
+	QWidget(parent),
+	ui(new Ui::SolutionTabWidget),
+	model(new solutionModel(f)) {
+	ui->setupUi(this);
+
+	redraw();
+}
+
 SolutionTabWidget::~SolutionTabWidget() {
 	delete model;
 	delete ui;
@@ -101,7 +110,7 @@ void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
 }
 
 void SolutionTabWidget::matchedRuleSelected(Rule *rule) {
-	qDebug() << rule->print(ET::fullBracket);
+	newFormulaGenerated(rule);
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {

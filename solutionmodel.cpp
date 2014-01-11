@@ -1,10 +1,24 @@
 #include "solutionmodel.hpp"
 
+#include <QTextStream>
+
 using AST::LogicStatement;
 
 solutionModel::solutionModel(LogicStatement *begin, LogicStatement *end) {
 	forwardStack<<begin;
 	backwardStack<<end;
+}
+
+solutionModel::solutionModel(QFile *f) {
+	QTextStream in(f);
+
+	for(QString line; !(line = in.readLine()).isEmpty();) {
+		forwardStack << AST::parse(line);
+	}
+	while(!in.atEnd()) {
+		QString line = in.readLine();
+		backwardStack << AST::parse(line);
+	}
 }
 
 solutionModel::~solutionModel() {
