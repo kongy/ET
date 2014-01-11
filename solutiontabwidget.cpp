@@ -34,15 +34,13 @@ void SolutionTabWidget::redraw() const {
 
 	if(!proofFinished) {
 		while(forwardStackIt.hasNext()) {
-			while(forwardStackIt.hasNext()) {
-				ui->textEdit->insertPlainText(forwardStackIt.next()->print(ET::fullBracket).append("\n"));
-			}
-			ui->textEdit->insertPlainText("\n");
-			while(backwardStackIt.hasPrevious()) {
-				ui->textEdit->insertPlainText(backwardStackIt.previous()->print(ET::fullBracket).append("\n"));
-			}
-			connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
+			ui->textEdit->insertPlainText(forwardStackIt.next()->print(ET::fullBracket).append("\n"));
 		}
+		ui->textEdit->insertPlainText("\n");
+		while(backwardStackIt.hasPrevious()) {
+			ui->textEdit->insertPlainText(backwardStackIt.previous()->print(ET::fullBracket).append("\n"));
+		}
+		connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(lineSelected()));
 	}
 	else {
 		while(forwardStackIt.hasNext()) {
