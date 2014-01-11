@@ -4,10 +4,6 @@
 #include "equivalenceutility.hpp"
 #include "solutiontabwidget.hpp"
 
-//namespace UI {
-//class SolutionTabWidget;
-//}
-
 using namespace AST;
 
 class EquivalenceEngine {
