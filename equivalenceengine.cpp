@@ -1,5 +1,4 @@
 #include "equivalenceengine.hpp"
-#include "utility.hpp"
 #include <QDebug>
 
 EquivalenceEngine::EquivalenceEngine() {
@@ -116,16 +115,14 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rul
 	if (!undefinedVariableSet->isEmpty()) {
 		bool firstOrder = baseRule->isFirstOrderLogic() || transformationRule->isFirstOrderLogic();
 		Variable *identifier;
-		QString identifierName;
 
 		for (LogicStatement *id : *undefinedVariableSet->getSet()) {
 			identifier = dynamic_cast<Variable *>(id);
-			identifierName = identifier->print(false);
 
 			if (!firstOrder)
-				idTable->add(identifier, getAnyFormula(FORMULA_REQUEST_PREFIX_MESSAGE + identifierName, UI, NONE));
+				idTable->add(identifier, getAnyFormula(FORMULA_REQUEST_PREFIX, identifier, UI, NO_MESSAGE));
 			else
-				idTable->add(identifier, getAnyVariable(VARIABLE_REQUEST_PREFIX_MESSAGE + identifierName, UI, NONE));
+				idTable->add(identifier, getAnyVariable(VARIABLE_REQUEST_PREFIX, identifier, UI, NO_MESSAGE));
 		}
 	}
 
@@ -170,12 +167,11 @@ bool EquivalenceEngine::acceptedBoundedVariable(LogicStatement *originalFormula,
 
 Variable *EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *originalFormula, Variable *toBeReplaced, SolutionTabWidget *UI) {
 
-	QString variableToBeReplaced = toBeReplaced->print(false);
 	Variable *userInputVariable;
-	QString errorMessage = NONE;
+	Message errorMessage = NO_MESSAGE;
 
-	while (!acceptedRenamedVariable(originalFormula, userInputVariable = getAnyVariableCasted(RENAME_PREFIX_MESSAGE + variableToBeReplaced, UI, errorMessage))) {
-		errorMessage = VARIABLE_MUST_NOT_OCCUR_ERROR_MESSAGE;
+	while (!acceptedRenamedVariable(originalFormula, userInputVariable = getAnyVariableCasted(RENAME_PREFIX, toBeReplaced, UI, errorMessage))) {
+		errorMessage = VARIABLE_MUST_NOT_OCCUR_ERROR;
 		delete userInputVariable;
 	}
 
@@ -184,36 +180,35 @@ Variable *EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *original
 
 Variable *EquivalenceEngine::getQualifiedBoundVariable(LogicStatement *originalFormula, Variable *boundIdentifier, SolutionTabWidget *UI) {
 
-	QString identifierName = boundIdentifier->print(false);
 	Variable *userInputVariable;
-	QString errorMessage = NONE;
+	Message errorMessage = NO_MESSAGE;
 
 	while (!acceptedBoundedVariable(originalFormula,
-									userInputVariable = getAnyVariableCasted(BOUND_VARIABLE_REQUEST_PREFIX_MESSAGE + identifierName, UI, errorMessage))) {
-		errorMessage = VARIABLE_OCCURS_FREE_ERROR_MESSAGE;
+									userInputVariable = getAnyVariableCasted(BOUND_VARIABLE_REQUEST_PREFIX, boundIdentifier, UI, errorMessage))) {
+		errorMessage = VARIABLE_OCCURS_FREE_ERROR;
 		delete userInputVariable;
 	}
 
 	return userInputVariable;
 }
 
-LogicStatement *EquivalenceEngine::getAnyVariable(const QString msg, SolutionTabWidget *UI, QString errorMessage) {
+LogicStatement *EquivalenceEngine::getAnyVariable(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, Message errorMessage) {
 	LogicStatement *userInput;
 
-	while (!isVariable(userInput = getAnyFormula(msg, UI, errorMessage))) {
-		errorMessage = EXPECT_VARIABLE_ERROR_MESSAGE;
+	while (!isVariable(userInput = getAnyFormula(prefixMessage, suffix, UI, errorMessage))) {
+		errorMessage = EXPECT_VARIABLE_ERROR;
 		delete userInput;
 	}
 
 	return userInput;
 }
 
-Variable *EquivalenceEngine::getAnyVariableCasted(const QString msg, SolutionTabWidget *UI, QString errorMessage) {
-	return dynamic_cast<Variable *>(getAnyVariable(msg, UI, errorMessage));
+Variable *EquivalenceEngine::getAnyVariableCasted(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, const Message errorMessage) {
+	return dynamic_cast<Variable *>(getAnyVariable(prefixMessage, suffix, UI, errorMessage));
 }
 
-LogicStatement *EquivalenceEngine::getAnyFormula(const QString msg, SolutionTabWidget *UI, const QString errorMessage) {
-	return UI->getReplacement(msg, errorMessage);
+LogicStatement *EquivalenceEngine::getAnyFormula(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, const Message errorMessage) {
+	return UI->getReplacement(prefixMessage, suffix, errorMessage);
 }
 
 bool EquivalenceEngine::addNewPropositionalEquivalence(LogicSet *ruleSet) {

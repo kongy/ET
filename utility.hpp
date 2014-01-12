@@ -45,8 +45,4 @@ static const QVector<QString> messages = {EXPECT_VARIABLE_ERROR_MESSAGE, VARIABL
                                   VARIABLE_REQUEST_PREFIX_MESSAGE, FORMULA_REQUEST_PREFIX_MESSAGE, BOUND_VARIABLE_REQUEST_PREFIX_MESSAGE,
                                   VARIABLE_OCCURS_FREE_ERROR_MESSAGE, NONE};
 
-static const QString getMessage(Message messageID) {
-    return messages.at(messageID);
-}
-
 #endif // UTILITY_HPP

@@ -7,6 +7,7 @@
 #include "AST.hpp"
 #include "solutionmodel.hpp"
 #include "logicset.hpp"
+#include "utility.hpp"
 
 namespace Ui {
 class SolutionTabWidget;
@@ -35,7 +36,7 @@ public:
 	void redraw() const;
 	void undo();
 	void redo();
-	LogicStatement *getReplacement(const QString msg, const QString errorMessage);
+	LogicStatement *getReplacement(const Message prefixMessage, Variable *suffix, const Message errorMessage);
 
 	void saveToFile(QFile *f);
 

@@ -128,11 +128,14 @@ void SolutionTabWidget::redo() {
 	redraw();
 }
 
-LogicStatement *SolutionTabWidget::getReplacement(const QString msg, const QString errorMessage) {
+LogicStatement *SolutionTabWidget::getReplacement(const Message prefixMessage, Variable *suffix, const Message errorMessage) {
 	//TODO: check if the errorMessage is Not equal to "";
+	const QString requestMessageToUser = messages.at(prefixMessage) + suffix->print(false);
+	const QString errorMessageToUser = messages.at(errorMessage);
+
 	LogicStatement *userInput = nullptr;
 
-	if (errorMessage != "") {
+	if (errorMessageToUser != NONE) {
 		//Display the error to user and request for the new LogicStatement with msg and return it
 	} else {
 		//Request for new LogicStatement with msg;
