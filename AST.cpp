@@ -447,7 +447,7 @@ Variable *Variable::getNotOccurVariable() {
 }
 
 int Variable::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility) {
-	if (!getSymbol() == other->getSymbol())
+	if (getSymbol() != other->getSymbol())
 		return -1;
 
 	bool currentVariableInFreeList = matchingUtility->inFreeVariableListReferencewise(this);
