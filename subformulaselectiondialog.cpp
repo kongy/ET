@@ -15,7 +15,7 @@ SubformulaSelectionDialog::SubformulaSelectionDialog(AST::LogicStatement *formul
 {
 	ui->setupUi(this);
 
-	for(QPair<QString, AST::LogicStatement*> i : formula->getStringMapping(false)) {
+	for(QPair<QString, AST::LogicStatement*> i : formula->getStringMapping(ET::fullBracket)) {
 		QWidget *sfw;
 		if(i.second != nullptr) {
 			sfw = new SubformulaButton(i.first, i.second, this);
