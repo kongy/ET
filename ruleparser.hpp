@@ -20,9 +20,16 @@ private:
     Rule *processForAllStatement(QXmlStreamReader *);
     Rule *processThereExistsStatement(QXmlStreamReader *);
     Rule *processEqualityStatement(QXmlStreamReader *);
+    void parseRule(QString fromFilePath, QVector<LogicSet *> *destinationRuleSet);
+    QVector<LogicSet *> *userDefinedRules;
+    QVector<LogicSet *> *allRules;
+    void flushNewRuleToXml();
 public:
     QVector<LogicSet *> *parseRuleXml();
     QVector<LogicSet *> *parseRuleTxt();
+    bool addRule(LogicSet *ruleSet);
+    RuleParser();
+    ~RuleParser();
 };
 
 #endif // RULEPARSER_HPP

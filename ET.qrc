@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>equivalences.txt</file>
         <file>equivalences.xml</file>
+        <file>userDefinedRules.xml</file>
     </qresource>
 </RCC>

@@ -84,3 +84,14 @@ void LogicSet::deepDeleteContent() {
 		for (Rule *rule : *set)
 			delete rule;
 }
+
+bool LogicSet::equals(LogicSet *other) {
+	if (set->size() != other->getSet()->size())
+		return false;
+
+	for (Rule *statement : *set)
+		if (!other->contains(statement))
+			return false;
+
+	return true;
+}

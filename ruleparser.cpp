@@ -2,8 +2,86 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QDebug>
 
 using namespace AST;
+
+#define GENERIC_RULE_PATH QString(":/equivalences.xml")
+#define USER_DEFINED_RULE_PATH QString(":/userDefinedRules.xml")
+
+RuleParser::RuleParser() {
+	userDefinedRules = new QVector<LogicSet *>();
+	allRules = new QVector<LogicSet *>();
+}
+
+RuleParser::~RuleParser() {
+	delete userDefinedRules;
+	delete allRules;
+}
+
+bool RuleParser::addRule(LogicSet *ruleSet) {
+	for (LogicSet *existingRuleSet : *allRules)
+		if (ruleSet->equals(existingRuleSet))
+			return false;
+
+	userDefinedRules->append(ruleSet);
+	allRules->append(ruleSet);
+	flushNewRuleToXml();
+	return true;
+}
+
+void RuleParser::flushNewRuleToXml() {
+	QFile userFile(USER_DEFINED_RULE_PATH);
+
+	if (!userFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QMessageBox::critical(0, "Error", userFile.errorString());
+		return;
+	}
+
+	QXmlStreamWriter xml(&userFile);
+	xml.setAutoFormatting(true);
+
+	xml.writeStartDocument();
+	xml.writeStartElement("PropositionalEquivalences");
+
+	for (LogicSet *ruleSet : *userDefinedRules) {
+		xml.writeStartElement("EquivalentStatements");
+		for (Rule *rule : *ruleSet->getSet()) {
+			xml.writeStartElement("LogicStatement");
+			rule->generateRule(&xml);
+			xml.writeEndElement();
+		}
+		xml.writeEndElement();
+	}
+
+	xml.writeEndElement();
+	xml.writeEndDocument();
+
+	userFile.close();
+}
+
+void RuleParser::parseRule(QString fromFilePath, QVector<LogicSet *> *destinationRuleSet) {
+    QFile file(fromFilePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(0, "Error", file.errorString());
+        return;
+    }
+
+    QXmlStreamReader xml(&file);
+
+    /* Avoid checking start Document in while loop */
+    if (xml.readNext() != QXmlStreamReader::StartDocument)
+        return;
+
+    do {
+        if (xml.readNextStartElement() && xml.name() == "EquivalentStatements")
+            destinationRuleSet->append(processStatements(&xml));
+    } while(!xml.atEnd() && !xml.hasError());
+
+    xml.clear();
+    file.close();
+}
 
 QVector<LogicSet *> *RuleParser::parseRuleTxt() {
 	QFile file(":/equivalences.txt");
@@ -37,32 +115,14 @@ QVector<LogicSet *> *RuleParser::parseRuleTxt() {
 }
 
 QVector<LogicSet *> *RuleParser::parseRuleXml() {
-    QFile file(":/equivalences.xml");
+    parseRule(USER_DEFINED_RULE_PATH, userDefinedRules);
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(0, "Error", file.errorString());
-        return nullptr;
-    }
+    for (LogicSet *ruleSet : *userDefinedRules)
+        allRules->append(ruleSet);
 
-    QXmlStreamReader xml(&file);
+    parseRule(GENERIC_RULE_PATH, allRules);
 
-    /* Avoid checking start Document in while loop */
-    if (xml.readNext() != QXmlStreamReader::StartDocument) {
-        QMessageBox::critical(0, "Error", "Start Document not present at start");
-        return nullptr;
-    }
-
-    /* Initialise to get ready for parsing */
-    QVector<LogicSet *> *rules = new QVector<LogicSet *>();
-
-    do {
-        if (xml.readNextStartElement() && xml.name() == "EquivalentStatements")
-            rules->append(processStatements(&xml));
-    } while(!xml.atEnd() && !xml.hasError());
-
-    xml.clear();
-    file.close();
-    return rules;
+    return allRules;
 }
 
 Rule *RuleParser::processTruthStatement(QXmlStreamReader *xml) {

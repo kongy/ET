@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVector>
 #include <QPair>
+#include <QXmlStreamWriter>
 #include "equivalenceutility.hpp"
 
 class LogicSet;
@@ -108,6 +109,11 @@ public:
      * check mainparent != oldChildFormula before calling this function because in that case: the parent has been replaced
      * and no further processing required i.e. no need to call this function */
     virtual void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula) = 0;
+
+    /* Called to parse user defined rules */
+    virtual void generateRule(QXmlStreamWriter *out) = 0;
+
+    virtual QString XmlSymbol() = 0;
 protected:
 	static inline int comparePrecedence(LogicStatement *outer, LogicStatement* inner);
 };
@@ -131,6 +137,8 @@ public:
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	void generateRule(QXmlStreamWriter *out);
+	QString XmlSymbol();
 };
 
 class Falsity : public LogicStatement {
@@ -152,6 +160,8 @@ public:
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	void generateRule(QXmlStreamWriter *out);
+	QString XmlSymbol();
 };
 
 class Variable : public LogicStatement {
@@ -200,6 +210,8 @@ public:
 	Variable *getNotOccurVariable();
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	void generateRule(QXmlStreamWriter *out);
+	QString XmlSymbol();
 };
 
 class UnaryOpStatement : public LogicStatement {
@@ -227,6 +239,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
+	void generateRule(QXmlStreamWriter *out);
+	virtual QString XmlSymbol() = 0;
 };
 
 class NotStatement : public UnaryOpStatement {
@@ -237,6 +251,7 @@ public:
 	QString symbol();
 	bool evaluate();
 	LogicStatement* clone();
+	QString XmlSymbol();
 };
 
 class BinaryOpStatement : public LogicStatement {
@@ -267,6 +282,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
+	void generateRule(QXmlStreamWriter *out);
+	virtual QString XmlSymbol() = 0;
 };
 
 class AndStatement : public BinaryOpStatement {
@@ -276,6 +293,7 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
+	QString XmlSymbol();
 };
 
 class OrStatement : public BinaryOpStatement {
@@ -285,6 +303,7 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
+	QString XmlSymbol();
 };
 
 class IffStatement : public BinaryOpStatement {
@@ -294,6 +313,7 @@ public:
 	Symbol getSymbol();
 	bool evaluate();
 	LogicStatement* clone();
+	QString XmlSymbol();
 };
 
 class ImpliesStatement : public BinaryOpStatement {
@@ -305,6 +325,7 @@ public:
 	LogicStatement* clone();
 	/* Added just for Leibniz Rule */
 	bool match(LogicStatement *matchingStatement, EquivalenceUtility *matchingUtility);
+	QString XmlSymbol();
 };
 
 class FirstOrderStatement : public LogicStatement {
@@ -326,6 +347,8 @@ public:
 	virtual bool notOccur(Variable *) = 0;
 	virtual int numberOfLeibnizReplacedVariable(LogicStatement *, EquivalenceUtility *) = 0;
 	virtual void replaceChildStatement(LogicStatement *, LogicStatement *) = 0;
+	virtual void generateRule(QXmlStreamWriter *) = 0;
+	virtual QString XmlSymbol() = 0;
 };
 
 class ForAllStatement : public FirstOrderStatement {
@@ -354,6 +377,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
+	QString XmlSymbol();
+	void generateRule(QXmlStreamWriter *out);
 };
 
 class ThereExistsStatement : public FirstOrderStatement {
@@ -382,6 +407,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *oldChildFormula, LogicStatement *newChildFormula);
+	QString XmlSymbol();
+	void generateRule(QXmlStreamWriter *out);
 };
 
 class Parameters : public LogicStatement {
@@ -412,6 +439,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	QString XmlSymbol();
+	void generateRule(QXmlStreamWriter *out);
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement {
@@ -440,6 +469,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	QString XmlSymbol();
+	void generateRule(QXmlStreamWriter *out);
 };
 
 class EqualityStatement : public FirstOrderStatement {
@@ -467,6 +498,8 @@ public:
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUtility *matchingUtility);
 	void replaceChildStatement(LogicStatement *, LogicStatement *);
+	QString XmlSymbol();
+	void generateRule(QXmlStreamWriter *out);
 };
 
 LogicStatement *parse(QString expression);

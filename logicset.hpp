@@ -38,6 +38,9 @@ public:
 	LogicSet *diff(LogicSet *other);
 
 	QString print(bool fullBracket);
+
+	/* Checking whether two sets contains exactly same items */
+	bool equals(LogicSet *other);
 };
 
 #endif // LOGICSET_HPP

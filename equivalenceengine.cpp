@@ -1,10 +1,9 @@
 #include "equivalenceengine.hpp"
-#include "ruleparser.hpp"
 #include <QDebug>
 
 EquivalenceEngine::EquivalenceEngine() {
-	RuleParser ruleParser;
-	rules = ruleParser.parseRuleXml();
+	ruleEngine = new RuleParser();
+	rules = ruleEngine->parseRuleXml();
 }
 
 EquivalenceEngine::~EquivalenceEngine() {
@@ -15,6 +14,7 @@ EquivalenceEngine::~EquivalenceEngine() {
 		}
 
 	delete rules;
+	delete ruleEngine;
 }
 
 EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula, Rule *rule) {
@@ -213,4 +213,8 @@ Variable *EquivalenceEngine::getAnyVariableCasted(const QString msg, SolutionTab
 
 LogicStatement *EquivalenceEngine::getAnyFormula(const QString msg, SolutionTabWidget *UI, const QString errorMessage) {
 	return UI->getReplacement(msg, errorMessage);
+}
+
+bool EquivalenceEngine::addNewPropositionalEquivalence(LogicSet *ruleSet) {
+	return ruleEngine->addRule(ruleSet);
 }

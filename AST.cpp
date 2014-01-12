@@ -2,6 +2,7 @@
 #include "symbol.hpp"
 #include "parser.hpp"
 #include "lexer.hpp"
+#include "utility.hpp"
 
 using namespace AST;
 
@@ -166,6 +167,14 @@ int Truth::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceUti
 
 void Truth::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
+QString Truth::XmlSymbol() {
+	return XML_TRUTH_TAG;
+}
+
+void Truth::generateRule(QXmlStreamWriter *out) {
+	out->writeEmptyElement(XmlSymbol());
+}
+
 /* Falsity Class */
 QString Falsity::print(bool) {
 	return SYMBOL_FALSITY;
@@ -232,6 +241,14 @@ int Falsity::numberOfLeibnizReplacedVariable(LogicStatement *other, EquivalenceU
 }
 
 void Falsity::replaceChildStatement(LogicStatement *, LogicStatement *) {}
+
+QString Falsity::XmlSymbol() {
+	return XML_FALSITY_TAG;
+}
+
+void Falsity::generateRule(QXmlStreamWriter *out) {
+	out->writeEmptyElement(XmlSymbol());
+}
 
 /* Variable Class */
 Variable::Variable(QString *name) {
@@ -462,6 +479,14 @@ int Variable::numberOfLeibnizReplacedVariable(LogicStatement *other, Equivalence
 
 void Variable::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
+QString Variable::XmlSymbol() {
+	return XML_IDENTIFER_TAG;
+}
+
+void Variable::generateRule(QXmlStreamWriter *out) {
+	out->writeTextElement(XmlSymbol(), getName());
+}
+
 /* UnaryOpStatement Class (Virtual) */
 void UnaryOpStatement::setStatement(LogicStatement *statement) {
 	nestedStatement = statement;
@@ -561,6 +586,12 @@ void UnaryOpStatement::replaceChildStatement(LogicStatement *oldChildFormula, Lo
 		childStatement->replaceChildStatement(oldChildFormula, newChildFormula);
 }
 
+void UnaryOpStatement::generateRule(QXmlStreamWriter *out) {
+	out->writeStartElement(XmlSymbol());
+	getStatement()->generateRule(out);
+	out->writeEndElement();
+}
+
 /* NotStatement Class */
 NotStatement::NotStatement(LogicStatement *statement) {
 	setStatement(statement);
@@ -584,6 +615,10 @@ bool NotStatement::evaluate() {
 
 LogicStatement* NotStatement::clone() {
 	return new NotStatement(getStatement()->clone());
+}
+
+QString NotStatement::XmlSymbol() {
+	return XML_NOT_TAG;
 }
 
 /* BinaryOpStatement Class (Virtual) */
@@ -745,6 +780,13 @@ void BinaryOpStatement::replaceChildStatement(LogicStatement *oldChildFormula, L
 	}
 }
 
+void BinaryOpStatement::generateRule(QXmlStreamWriter *out) {
+	out->writeStartElement(XmlSymbol());
+	getLeftStatement()->generateRule(out);
+	getRightStatement()->generateRule(out);
+	out->writeEndElement();;
+}
+
 /* AndStatement Class */
 AndStatement::AndStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -765,6 +807,10 @@ bool AndStatement::evaluate() {
 
 LogicStatement* AndStatement::clone() {
 	return new AndStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+}
+
+QString AndStatement::XmlSymbol() {
+	return XML_AND_TAG;
 }
 
 /* OrStatement Class */
@@ -789,6 +835,10 @@ LogicStatement* OrStatement::clone() {
 	return new OrStatement(getLeftStatement()->clone(), getRightStatement()->clone());
 }
 
+QString OrStatement::XmlSymbol() {
+	return XML_OR_TAG;
+}
+
 /* IffStatement Class */
 IffStatement::IffStatement(LogicStatement *left, LogicStatement *right) {
 	setLeftStatement(left);
@@ -809,6 +859,10 @@ bool IffStatement::evaluate() {
 
 LogicStatement* IffStatement::clone() {
 	return new IffStatement(getLeftStatement()->clone(), getRightStatement()->clone());
+}
+
+QString IffStatement::XmlSymbol() {
+	return XML_IFF_TAG;
 }
 
 /* ImpliesStatement Class */
@@ -860,6 +914,10 @@ bool ImpliesStatement::match(LogicStatement *matchingStatement, EquivalenceUtili
 	}
 
 	return matched;
+}
+
+QString ImpliesStatement::XmlSymbol() {
+	return XML_IMPLIES_TAG;
 }
 
 /* FirstOrderStatement Class */
@@ -1046,6 +1104,17 @@ void ForAllStatement::replaceChildStatement(LogicStatement *oldChildFormula, Log
 		child->replaceChildStatement(oldChildFormula, newChildFormula);
 }
 
+QString ForAllStatement::XmlSymbol() {
+	return XML_FORALL_TAG;
+}
+
+void ForAllStatement::generateRule(QXmlStreamWriter *out) {
+	out->writeStartElement(XmlSymbol());
+	getQuantifier()->generateRule(out);
+	getStatement()->generateRule(out);
+	out->writeEndElement();
+}
+
 /* ThereExistsStatement Class */
 ThereExistsStatement::ThereExistsStatement(
 		Variable *identifier, LogicStatement *thereExistsStatement) {
@@ -1219,6 +1288,17 @@ void ThereExistsStatement::replaceChildStatement(LogicStatement *oldChildFormula
 		setStatement(newChildFormula);
 	else
 		child->replaceChildStatement(oldChildFormula, newChildFormula);
+}
+
+QString ThereExistsStatement::XmlSymbol() {
+	return XML_THEREEXISTS_TAG;
+}
+
+void ThereExistsStatement::generateRule(QXmlStreamWriter *out) {
+	out->writeStartElement(XmlSymbol());
+	getQuantifier()->generateRule(out);
+	getStatement()->generateRule(out);
+	out->writeEndElement();
 }
 
 /* Parameters Class */
@@ -1460,6 +1540,13 @@ int Parameters::numberOfLeibnizReplacedVariable(LogicStatement *other, Equivalen
 
 void Parameters::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
+QString Parameters::XmlSymbol() {
+	/* Unused */
+	return "";
+}
+
+void Parameters::generateRule(QXmlStreamWriter *) {}
+
 /* PredicateSymbolStatement Class */
 PredicateSymbolStatement::PredicateSymbolStatement(Variable *predicateName, Parameters *params) {
 	setPredicateSymbol(predicateName);
@@ -1582,6 +1669,13 @@ int PredicateSymbolStatement::numberOfLeibnizReplacedVariable(LogicStatement *ot
 
 void PredicateSymbolStatement::replaceChildStatement(LogicStatement *, LogicStatement *) {}
 
+QString PredicateSymbolStatement::XmlSymbol() {
+	/* Unused */
+	return "";
+}
+
+void PredicateSymbolStatement::generateRule(QXmlStreamWriter *) {}
+
 /* EqualityStatement Class */
 EqualityStatement::EqualityStatement(Variable *left, Variable *right) {
 	setLeftVariable(left);
@@ -1701,6 +1795,17 @@ int EqualityStatement::numberOfLeibnizReplacedVariable(LogicStatement *other, Eq
 }
 
 void EqualityStatement::replaceChildStatement(LogicStatement *, LogicStatement *) {}
+
+QString EqualityStatement::XmlSymbol() {
+	return XML_EQUALS_TAG;
+}
+
+void EqualityStatement::generateRule(QXmlStreamWriter *out) {
+	out->writeStartElement(XmlSymbol());
+	getLeftVariable()->generateRule(out);
+	getRightVariable()->generateRule(out);
+	out->writeEndElement();
+}
 
 extern int yyparse();
 

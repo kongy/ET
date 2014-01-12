@@ -55,7 +55,8 @@ HEADERS  += mainwindow.hpp \
     embeddedpushbutton.hpp \
     ruleparser.hpp \
     equivalenceutility.hpp \
-    matchedruleselectiondialog.hpp
+    matchedruleselectiondialog.hpp \
+    utility.hpp
 
 FORMS    += mainwindow.ui \
     newsolutiondialog.ui \
@@ -71,7 +72,8 @@ LIBS += -ll -ly
 FLEXSOURCES = lexer.l
 BISONSOURCES = parser.y
 EQUIVALENCESOURCES += equivalences.txt \
-                      equivalences.xml
+                      equivalences.xml \
+                      userDefinedRules.xml
 
 OTHER_FILES +=  \
     $$FLEXSOURCES \
