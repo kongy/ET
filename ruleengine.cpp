@@ -1,4 +1,4 @@
-#include "ruleparser.hpp"
+#include "ruleengine.hpp"
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
@@ -9,17 +9,17 @@ using namespace AST;
 #define GENERIC_RULE_PATH QString(":/equivalences.xml")
 #define USER_DEFINED_RULE_PATH QString(":/userDefinedRules.xml")
 
-RuleParser::RuleParser() {
+RuleEngine::RuleEngine() {
 	userDefinedRules = new QVector<LogicSet *>();
 	allRules = new QVector<LogicSet *>();
 }
 
-RuleParser::~RuleParser() {
+RuleEngine::~RuleEngine() {
 	delete userDefinedRules;
 	delete allRules;
 }
 
-bool RuleParser::addRule(LogicSet *ruleSet) {
+bool RuleEngine::addRule(LogicSet *ruleSet) {
 	for (LogicSet *existingRuleSet : *allRules)
 		if (ruleSet->equals(existingRuleSet))
 			return false;
@@ -30,7 +30,7 @@ bool RuleParser::addRule(LogicSet *ruleSet) {
 	return true;
 }
 
-void RuleParser::flushNewRuleToXml() {
+void RuleEngine::flushNewRuleToXml() {
 	QFile userFile(USER_DEFINED_RULE_PATH);
 
 	if (!userFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -60,7 +60,7 @@ void RuleParser::flushNewRuleToXml() {
 	userFile.close();
 }
 
-void RuleParser::parseRule(QString fromFilePath, QVector<LogicSet *> *destinationRuleSet) {
+void RuleEngine::parseRule(QString fromFilePath, QVector<LogicSet *> *destinationRuleSet) {
     QFile file(fromFilePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -83,7 +83,7 @@ void RuleParser::parseRule(QString fromFilePath, QVector<LogicSet *> *destinatio
     file.close();
 }
 
-QVector<LogicSet *> *RuleParser::parseRuleTxt() {
+QVector<LogicSet *> *RuleEngine::parseRuleTxt() {
 	QFile file(":/equivalences.txt");
 
 	if(!file.open(QIODevice::ReadOnly)) {
@@ -114,7 +114,7 @@ QVector<LogicSet *> *RuleParser::parseRuleTxt() {
 	return rules;
 }
 
-QVector<LogicSet *> *RuleParser::parseRuleXml() {
+QVector<LogicSet *> *RuleEngine::parseRuleXml() {
     parseRule(USER_DEFINED_RULE_PATH, userDefinedRules);
 
     for (LogicSet *ruleSet : *userDefinedRules)
@@ -125,17 +125,17 @@ QVector<LogicSet *> *RuleParser::parseRuleXml() {
     return allRules;
 }
 
-Rule *RuleParser::processTruthStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processTruthStatement(QXmlStreamReader *xml) {
     xml->skipCurrentElement();
     return new Truth();
 }
 
-Rule *RuleParser::processFalsityStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processFalsityStatement(QXmlStreamReader *xml) {
     xml->skipCurrentElement();
     return new Falsity();
 }
 
-Rule *RuleParser::processVariableStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processVariableStatement(QXmlStreamReader *xml) {
     QString boundVariableName = xml->attributes().value("NOT_OCCUR_FREE").toString();
     QString freeVariableName = xml->attributes().value("OCCUR_FREE").toString();
     QString notOccurVariableName = xml->attributes().value("NOT_OCCUR").toString();
@@ -158,7 +158,7 @@ Rule *RuleParser::processVariableStatement(QXmlStreamReader *xml) {
     return statement;
 }
 
-Rule *RuleParser::processNotStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processNotStatement(QXmlStreamReader *xml) {
     /* Evaluate the inner expression inside NOT */
     Rule *nestedStatement = processLogicStatement(xml);
 
@@ -169,7 +169,7 @@ Rule *RuleParser::processNotStatement(QXmlStreamReader *xml) {
     return new NotStatement(nestedStatement);
 }
 
-Rule *RuleParser::processOrStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processOrStatement(QXmlStreamReader *xml) {
 
     /* Process one tree at a time, stopping at delimiter */
     Rule *leftStatement = processLogicStatement(xml);
@@ -181,7 +181,7 @@ Rule *RuleParser::processOrStatement(QXmlStreamReader *xml) {
     return new OrStatement(leftStatement, rightStatement);
 }
 
-Rule *RuleParser::processAndStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processAndStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
     Rule *leftStatement = processLogicStatement(xml);
     Rule *rightStatement = processLogicStatement(xml);
@@ -192,7 +192,7 @@ Rule *RuleParser::processAndStatement(QXmlStreamReader *xml) {
     return new AndStatement(leftStatement, rightStatement);
 }
 
-Rule *RuleParser::processIFFStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processIFFStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
     Rule *leftStatement = processLogicStatement(xml);
     Rule *rightStatement = processLogicStatement(xml);
@@ -203,7 +203,7 @@ Rule *RuleParser::processIFFStatement(QXmlStreamReader *xml) {
     return new IffStatement(leftStatement, rightStatement);
 }
 
-Rule *RuleParser::processImpliesStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processImpliesStatement(QXmlStreamReader *xml) {
     /* Process one tree at a time, stopping at delimiter */
     Rule *leftStatement = processLogicStatement(xml);
     Rule *rightStatement = processLogicStatement(xml);
@@ -214,7 +214,7 @@ Rule *RuleParser::processImpliesStatement(QXmlStreamReader *xml) {
     return new ImpliesStatement(leftStatement, rightStatement);
 }
 
-Rule *RuleParser::processForAllStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processForAllStatement(QXmlStreamReader *xml) {
     /* Quantifier is processed as logicstatement, because it auto moves pointer to next start element and process
      * stops at its delimiter */
     Variable *quantifier = dynamic_cast<Variable *>(processLogicStatement(xml));
@@ -226,7 +226,7 @@ Rule *RuleParser::processForAllStatement(QXmlStreamReader *xml) {
     return new ForAllStatement(quantifier, nestedStatement);
 }
 
-Rule *RuleParser::processThereExistsStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processThereExistsStatement(QXmlStreamReader *xml) {
     /* Quantifier is processed as logicstatement, because it auto moves pointer to next start element and process
      * stops at its delimiter */
     Variable *quantifier = dynamic_cast<Variable *>(processLogicStatement(xml));
@@ -238,7 +238,7 @@ Rule *RuleParser::processThereExistsStatement(QXmlStreamReader *xml) {
     return new ThereExistsStatement(quantifier, nestedStatement);
 }
 
-Rule *RuleParser::processEqualityStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processEqualityStatement(QXmlStreamReader *xml) {
     /* Both variable of = is processed as logicstatement, because it auto moves pointer to next start element and
      * process stops at its delimiter */
     Variable *leftVariable = dynamic_cast<Variable *>(processLogicStatement(xml));
@@ -250,7 +250,7 @@ Rule *RuleParser::processEqualityStatement(QXmlStreamReader *xml) {
     return new EqualityStatement(leftVariable, rightVariable);
 }
 
-Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
+Rule *RuleEngine::processLogicStatement(QXmlStreamReader *xml) {
     /* Move the pointer to the start tag */
     while (!xml->readNextStartElement());
 
@@ -282,7 +282,7 @@ Rule *RuleParser::processLogicStatement(QXmlStreamReader *xml) {
         return nullptr;
 }
 
-LogicSet *RuleParser::processStatements(QXmlStreamReader *xml) {
+LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml) {
     LogicSet *ruleSet = new LogicSet();
     Rule *rule;
     bool isLeibnizRule;

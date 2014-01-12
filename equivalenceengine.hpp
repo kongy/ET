@@ -3,13 +3,13 @@
 
 #include "equivalenceutility.hpp"
 #include "solutiontabwidget.hpp"
-#include "ruleparser.hpp"
+#include "ruleengine.hpp"
 
 using namespace AST;
 
 class EquivalenceEngine {
 private:
-	const QString EXPECT_VARIABLE_ERROR_MESSAGE{"Error: Expecting input of type Variable"};
+	const QString EXPECT_VARIABLE_ERROR_MESSAGE = "Error: Expecting input of type Variable";
 	const QString VARIABLE_MUST_NOT_OCCUR_ERROR_MESSAGE = "Error: Variable must not occur in the statement to be replaced";
 	const QString RENAME_PREFIX_MESSAGE = "Please enter a variable to rename ";
 	const QString VARIABLE_REQUEST_PREFIX_MESSAGE = "Please enter a variable for ";
@@ -28,7 +28,7 @@ private:
 	LogicStatement *getAnyVariable(const QString msg, SolutionTabWidget *UI, QString errorMessage);
 	LogicStatement *getAnyFormula(const QString msg, SolutionTabWidget *UI, const QString errorMessage);
 	Variable *getAnyVariableCasted(const QString msg, SolutionTabWidget *UI, QString errorMessage);
-	RuleParser *ruleEngine;
+	RuleEngine *ruleEngine;
 public:
 	EquivalenceEngine();
 	~EquivalenceEngine();

@@ -1,8 +1,9 @@
 #include "equivalenceengine.hpp"
+#include "utility.hpp"
 #include <QDebug>
 
 EquivalenceEngine::EquivalenceEngine() {
-	ruleEngine = new RuleParser();
+	ruleEngine = new RuleEngine();
 	rules = ruleEngine->parseRuleXml();
 }
 

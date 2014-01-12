@@ -1,10 +1,10 @@
-#ifndef RULEPARSER_HPP
-#define RULEPARSER_HPP
+#ifndef RULEENGINE_HPP
+#define RULEENGINE_HPP
 
 #include "logicset.hpp"
 #include <QXmlStreamReader>
 
-class RuleParser
+class RuleEngine
 {
 private:
     LogicSet *processStatements(QXmlStreamReader *);
@@ -28,8 +28,8 @@ public:
     QVector<LogicSet *> *parseRuleXml();
     QVector<LogicSet *> *parseRuleTxt();
     bool addRule(LogicSet *ruleSet);
-    RuleParser();
-    ~RuleParser();
+    RuleEngine();
+    ~RuleEngine();
 };
 
-#endif // RULEPARSER_HPP
+#endif // RULEENGINE_HPP
