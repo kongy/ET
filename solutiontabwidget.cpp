@@ -62,6 +62,10 @@ void SolutionTabWidget::redraw() const {
 	}
 }
 
+void SolutionTabWidget::saveToFile(QFile *f) {
+	model->saveToFile(f);
+}
+
 void SolutionTabWidget::lineSelected() {
 	QTextCursor c = ui->textEdit->textCursor();
 

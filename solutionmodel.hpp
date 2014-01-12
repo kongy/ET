@@ -32,6 +32,8 @@ public:
 
 	bool proofFinished();
 
+	void saveToFile(QFile *f);
+
 private:
 	void clearRedoStack();
 };

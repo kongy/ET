@@ -97,8 +97,10 @@ void MainWindow::createSolutionTab(QFile *f) {
  * @param f Destination
  */
 void MainWindow::saveSolutionTab(QFile *f) {
-	// TODO
-	qDebug() << "Requested to save to" << f->fileName();
+	SolutionTabWidget *w = dynamic_cast<SolutionTabWidget*>(ui->tabWidget->currentWidget());
+	if(w != nullptr) {
+		w->saveToFile(f);
+	}
 }
 
 /** Undo the last operation */

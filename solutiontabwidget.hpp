@@ -37,6 +37,8 @@ public:
 	void redo();
 	LogicStatement *getReplacement(const QString msg, const QString errorMessage);
 
+	void saveToFile(QFile *f);
+
 signals:
 	void lineSelected(AST::LogicStatement* expr);
 

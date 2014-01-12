@@ -84,6 +84,17 @@ bool solutionModel::proofFinished() {
 	return forwardStack.top()->equals(backwardStack.top());
 }
 
+void solutionModel::saveToFile(QFile *f) {
+	QTextStream out(f);
+	for(LogicStatement *l : forwardStack) {
+		out << l->print(true) << "\n";
+	}
+	out << "\n";
+	for(LogicStatement *l : backwardStack) {
+		out << l->print(true) << "\n";
+	}
+}
+
 void solutionModel::clearRedoStack() {
 	// TODO: Fix memory corruption
 	/*
