@@ -9,14 +9,6 @@ using namespace AST;
 
 class EquivalenceEngine {
 private:
-	const QString EXPECT_VARIABLE_ERROR_MESSAGE = "Error: Expecting input of type Variable";
-	const QString VARIABLE_MUST_NOT_OCCUR_ERROR_MESSAGE = "Error: Variable must not occur in the statement to be replaced";
-	const QString RENAME_PREFIX_MESSAGE = "Please enter a variable to rename ";
-	const QString VARIABLE_REQUEST_PREFIX_MESSAGE = "Please enter a variable for ";
-	const QString FORMULA_REQUEST_PREFIX_MESSAGE = "Please enter a formula for ";
-	const QString BOUND_VARIABLE_REQUEST_PREFIX_MESSAGE = "Please enter a bounded variable for ";
-	const QString VARIABLE_OCCURS_FREE_ERROR_MESSAGE = "Error: User defined variable occured free in the statement to be replaced";
-	const QString NONE = "";
 	QVector<LogicSet *> *rules;
 	bool ruleApplicable(LogicStatement *, LogicSet *);
 	EquivalenceUtility *tryMatchRule(LogicStatement *, Rule *);
