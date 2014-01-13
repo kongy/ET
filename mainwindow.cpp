@@ -178,17 +178,19 @@ void MainWindow::closeTab()
  */
 void MainWindow::openFromFile()
 {
-	QString fileName = QFileDialog::getOpenFileName(
+	QStringList fileNames = QFileDialog::getOpenFileNames(
 	    this, "Open File", QDir::homePath(), "ET Solution files(*.esf)");
-	if (fileName.isEmpty())
+	if (fileNames.isEmpty())
 		return;
-	QFile f(fileName, this);
-	if (!f.open(QIODevice::ReadOnly)) {
-		QMessageBox::information(this, "Error", f.errorString());
-		return;
+	for (QString fileName : fileNames) {
+		QFile f(fileName, this);
+		if (!f.open(QIODevice::ReadOnly)) {
+			QMessageBox::information(this, "Error", f.errorString());
+			return;
+		}
+		createSolutionTab(&f);
+		f.close();
 	}
-	createSolutionTab(&f);
-	f.close();
 }
 
 /**
