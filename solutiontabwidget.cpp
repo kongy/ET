@@ -141,7 +141,7 @@ void SolutionTabWidget::redo() {
 }
 
 LogicStatement *SolutionTabWidget::getReplacement(const Message prefixMessage, Variable *suffix, const Message errorMessage) {
-	QString reqMsg = messages.at(prefixMessage) + suffix->print(false);
+	QString reqMsg = messages.at(prefixMessage) + suffix->print(ET::fullBracket);
 	QString errMsg = messages.at(errorMessage);
 
 	LogicStatement *input = nullptr;
