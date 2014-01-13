@@ -41,6 +41,12 @@ public:
 
 	/* Checking whether two sets contains exactly same items */
 	bool equals(LogicSet *other);
+
+	/* Returns true iff every rule in other logicset exists in the current logicset */
+	bool contains(LogicSet *other);
+
+	/* Adds the entire set to the current one */
+	void add(LogicSet *other);
 };
 
 #endif // LOGICSET_HPP

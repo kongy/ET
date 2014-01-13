@@ -95,3 +95,23 @@ bool LogicSet::equals(LogicSet *other) {
 
 	return true;
 }
+
+bool LogicSet::contains(LogicSet *other) {
+	QVector<LogicStatement *> *otherSet = other->getSet();
+
+	/* The current set cannot contain other set if it has less element than otherset */
+	if (set->size() < otherSet->size())
+		return false;
+
+	for (Rule *otherRule : *otherSet)
+		if (!this->contains(otherRule))
+			return false;
+
+	return true;
+
+}
+
+void LogicSet::add(LogicSet *other) {
+	for (Rule *newRule : *other->getSet())
+		add(newRule);
+}

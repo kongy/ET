@@ -36,3 +36,9 @@ void IDTable::clear() {
 
 	id_table->clear();
 }
+
+void IDTable::deleteValues() {
+	if (!id_table->isEmpty())
+		for (QPair<Variable *, LogicStatement *> *pairs : *id_table)
+			delete pairs->second;
+}

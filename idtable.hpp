@@ -30,6 +30,9 @@ public:
 
 	/* Free up the space allocated by Pairs and empty the mapping table */
 	void clear();
+
+	/* Free memory allocated for values */
+	void deleteValues();
 };
 
 #endif // IDTABLE_HPP

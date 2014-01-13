@@ -24,10 +24,14 @@ private:
     QVector<LogicSet *> *userDefinedRules;
     QVector<LogicSet *> *allRules;
     void flushNewRuleToXml();
+    LogicSet *generateRuleSet(LogicSet *rawEquivalenceFormulas);
+    IDTable *generateRuleVariables(LogicSet *rawVariables);
+    Rule *generateNewRule(LogicStatement *rawFormula, IDTable *replaceTable);
+    Variable *asciiToVariable(const short asciiCode);
 public:
     QVector<LogicSet *> *parseRuleXml();
     QVector<LogicSet *> *parseRuleTxt();
-    bool addRule(LogicSet *ruleSet);
+    bool addRule(LogicSet *newRuleSet);
     RuleEngine();
     ~RuleEngine();
 };

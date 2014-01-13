@@ -35,8 +35,8 @@ public:
 	/* Input must be modifiable i.e. cloned before passed, this function will take care deleting junk originalFormula */
 	LogicStatement *replaceStatement(LogicStatement *originalFormula, Rule *baseRule, Rule *transformationRule, SolutionTabWidget *userWindow);
 
-    /* Function for user defined rules, note the ruleSet must be proven to be equivalent and can only be propositional,
-     * returns true if successfully added and false if already exists */
+    /* Function for user defined rules, note the ruleSet must be proven to be equivalent and can only be propositional
+     * before called, returns true if successfully added and false if already exists, caller handles delete for ruleSet */
 	bool addNewPropositionalEquivalence(LogicSet *ruleSet);
 };
 

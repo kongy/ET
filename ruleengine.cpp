@@ -19,13 +19,15 @@ RuleEngine::~RuleEngine() {
 	delete allRules;
 }
 
-bool RuleEngine::addRule(LogicSet *ruleSet) {
+bool RuleEngine::addRule(LogicSet *newRuleSet) {
+	newRuleSet = generateRuleSet(newRuleSet);
+
 	for (LogicSet *existingRuleSet : *allRules)
-		if (ruleSet->equals(existingRuleSet))
+		if (existingRuleSet->contains(newRuleSet))
 			return false;
 
-	userDefinedRules->append(ruleSet);
-	allRules->append(ruleSet);
+	userDefinedRules->append(newRuleSet);
+	allRules->append(newRuleSet);
 	flushNewRuleToXml();
 	return true;
 }
@@ -296,4 +298,47 @@ LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml) {
         }
 
     return ruleSet;
+}
+
+LogicSet *RuleEngine::generateRuleSet(LogicSet *rawEquivalenceFormulas) {
+    LogicSet *allVariableSet = new LogicSet();
+    LogicSet *rawVariableSet;
+
+    for (LogicStatement *rawFormula : *rawEquivalenceFormulas->getSet()) {
+        rawVariableSet = rawFormula->getAllVariables();
+        allVariableSet->add(rawVariableSet);
+        delete rawVariableSet;
+    }
+
+    IDTable *idTable = generateRuleVariables(allVariableSet);
+    delete allVariableSet;
+
+    LogicSet *newRuleSet = new LogicSet();
+
+    for (LogicStatement *rawFormula : *rawEquivalenceFormulas->getSet())
+        newRuleSet->add(rawFormula->replace(idTable));
+
+    idTable->deleteValues();
+    delete idTable;
+
+    return newRuleSet;
+}
+
+IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables) {
+    IDTable *idTable = new IDTable();
+    short asciiCode = 'A';
+
+    for (LogicStatement *statement : *rawVariables->getSet()) {
+        idTable->add(dynamic_cast<Variable *>(statement), asciiToVariable(asciiCode));
+        ++asciiCode;
+    }
+
+    return idTable;
+}
+
+Variable *RuleEngine::asciiToVariable(const short asciiCode) {
+    QString *name = new QString(QChar(asciiCode));
+    Variable *variable = new Variable(name);
+    delete name;
+    return variable;
 }
