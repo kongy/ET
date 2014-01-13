@@ -6,25 +6,29 @@
 
 #include "AST.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class NewSolutionDialog;
 }
 
-class NewSolutionDialog : public QDialog {
+class NewSolutionDialog : public QDialog
+{
 	Q_OBJECT
 
-public:
+  public:
 	explicit NewSolutionDialog(QWidget *parent = 0);
 	~NewSolutionDialog();
 
 signals:
-	void accepted(AST::LogicStatement *start, AST::LogicStatement *end, QString name);
+	void accepted(AST::LogicStatement *start, AST::LogicStatement *end,
+	              QString name);
 
-private:
+  private:
 	Ui::NewSolutionDialog *ui;
 
-private slots:
-	void onClick(QAbstractButton* btn);
+  private
+slots:
+	void onClick(QAbstractButton *btn);
 	void insertString(QString str);
 	void accept();
 };

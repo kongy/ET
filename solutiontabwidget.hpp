@@ -9,7 +9,8 @@
 #include "logicset.hpp"
 #include "utility.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class SolutionTabWidget;
 }
 
@@ -18,7 +19,7 @@ class SolutionTabWidget : public QWidget
 	Q_OBJECT
 
 	Ui::SolutionTabWidget *ui;
-	solutionModel* model;
+	solutionModel *model;
 
 	/*
 	 *  Can only select one statement for processing at a time,
@@ -28,24 +29,28 @@ class SolutionTabWidget : public QWidget
 	AST::LogicStatement *selectedSubformula;
 	AST::LogicStatement *selectedFormula;
 
-public:
-	explicit SolutionTabWidget(AST::LogicStatement * begin, AST::LogicStatement *end, QWidget *parent = 0);
+  public:
+	explicit SolutionTabWidget(AST::LogicStatement *begin,
+	                           AST::LogicStatement *end, QWidget *parent = 0);
 	explicit SolutionTabWidget(QFile *f, QWidget *parent = 0);
 	~SolutionTabWidget();
 
 	void redraw() const;
 	void undo();
 	void redo();
-	LogicStatement *getReplacement(const Message prefixMessage, Variable *suffix, const Message errorMessage);
+	LogicStatement *getReplacement(const Message prefixMessage,
+	                               Variable *suffix,
+	                               const Message errorMessage);
 
 	void saveToFile(QFile *f);
 
 signals:
-	void lineSelected(AST::LogicStatement* expr);
+	void lineSelected(AST::LogicStatement *expr);
 
-private slots:
+  private
+slots:
 	void lineSelected();
-	void subformulaSelected(AST::LogicStatement* subformula);
+	void subformulaSelected(AST::LogicStatement *subformula);
 	void ruleSelected(LogicSet *ruleset);
 	void matchedRuleSelected(Rule *from, Rule *to);
 	void newFormulaGenerated(AST::LogicStatement *formula);

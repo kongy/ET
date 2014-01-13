@@ -3,7 +3,8 @@
 
 #include "equivalenceengine.hpp"
 
-namespace ET {
+namespace ET
+{
 extern bool fullBracket;
 extern EquivalenceEngine *eqEng;
 }

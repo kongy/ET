@@ -1,72 +1,86 @@
 #include "equivalenceutility.hpp"
 
-EquivalenceUtility::EquivalenceUtility() {
-    idTable = new IDTable();
-    resetAuxiliaryItems();
+EquivalenceUtility::EquivalenceUtility()
+{
+	idTable = new IDTable();
+	resetAuxiliaryItems();
 }
 
-EquivalenceUtility::~EquivalenceUtility() {
-    delete idTable;
-    deleteAuxiliaryItems();
+EquivalenceUtility::~EquivalenceUtility()
+{
+	delete idTable;
+	deleteAuxiliaryItems();
 }
 
-void EquivalenceUtility::deleteAuxiliaryItems() {
+void EquivalenceUtility::deleteAuxiliaryItems()
+{
 
-    if (candidateBoundVariableSet != nullptr)
-        delete candidateBoundVariableSet;
+	if (candidateBoundVariableSet != nullptr)
+		delete candidateBoundVariableSet;
 
-    if (freeVariableList != nullptr)
-        delete freeVariableList;
+	if (freeVariableList != nullptr)
+		delete freeVariableList;
 }
 
-void EquivalenceUtility::resetAuxiliaryItems() {
-    candidateBoundVariableSet = nullptr;
-    freeVariableList = nullptr;
-    boundedVariable = nullptr;
+void EquivalenceUtility::resetAuxiliaryItems()
+{
+	candidateBoundVariableSet = nullptr;
+	freeVariableList = nullptr;
+	boundedVariable = nullptr;
 }
 
-void EquivalenceUtility::initCandidateBoundVariableSet(Variable *boundedVariable) {
-    this->boundedVariable = boundedVariable;
-    if (candidateBoundVariableSet == nullptr)
-        candidateBoundVariableSet = new LogicSet();
+void
+EquivalenceUtility::initCandidateBoundVariableSet(Variable *boundedVariable)
+{
+	this->boundedVariable = boundedVariable;
+	if (candidateBoundVariableSet == nullptr)
+		candidateBoundVariableSet = new LogicSet();
 }
 
-void EquivalenceUtility::initFreeVariableList() {
-    if (freeVariableList == nullptr)
-        freeVariableList = new QVector<Variable *>();
+void EquivalenceUtility::initFreeVariableList()
+{
+	if (freeVariableList == nullptr)
+		freeVariableList = new QVector<Variable *>();
 }
 
-Variable *EquivalenceUtility::getBoundVariable() {
-    return boundedVariable;
+Variable *EquivalenceUtility::getBoundVariable()
+{
+	return boundedVariable;
 }
 
-IDTable *EquivalenceUtility::getIDTable() {
-    return idTable;
+IDTable *EquivalenceUtility::getIDTable()
+{
+	return idTable;
 }
 
-LogicSet *EquivalenceUtility::getCandidateBoundVariableSet() {
-    return candidateBoundVariableSet;
+LogicSet *EquivalenceUtility::getCandidateBoundVariableSet()
+{
+	return candidateBoundVariableSet;
 }
 
-QVector<Variable *> *EquivalenceUtility::getFreeVariableList() {
-    return freeVariableList;
+QVector<Variable *> *EquivalenceUtility::getFreeVariableList()
+{
+	return freeVariableList;
 }
 
-void EquivalenceUtility::clear() {
-    idTable->clear();
+void EquivalenceUtility::clear()
+{
+	idTable->clear();
 
-    deleteAuxiliaryItems();
-    resetAuxiliaryItems();
+	deleteAuxiliaryItems();
+	resetAuxiliaryItems();
 }
 
-bool EquivalenceUtility::inCandidateBoundVariableSet(Variable *var) {
-    return candidateBoundVariableSet->contains(var);
+bool EquivalenceUtility::inCandidateBoundVariableSet(Variable *var)
+{
+	return candidateBoundVariableSet->contains(var);
 }
 
-bool EquivalenceUtility::inFreeVariableListReferencewise(Variable *var) {
-    for (Variable *variable : *getFreeVariableList())
-        if (variable == var)
-            return true;
+bool EquivalenceUtility::inFreeVariableListReferencewise(Variable *var)
+{
+	for (Variable *variable : *getFreeVariableList())
+		if (variable == var)
+			return true;
 
-    return false;
+	return false;
 }

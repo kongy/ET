@@ -6,7 +6,8 @@
 #include <QDialog>
 #include <QPushButton>
 
-namespace Ui {
+namespace Ui
+{
 class MatchedRuleSelectionDialog;
 }
 
@@ -18,14 +19,16 @@ class MatchedRuleSelectionDialog : public QDialog
 	LogicSet *ls;
 	Rule *from, *to;
 
-public:
-	explicit MatchedRuleSelectionDialog(QVector<Rule *> *rules,  LogicSet *ls, QWidget *parent = 0);
+  public:
+	explicit MatchedRuleSelectionDialog(QVector<Rule *> *rules, LogicSet *ls,
+	                                    QWidget *parent = 0);
 	~MatchedRuleSelectionDialog();
 
 signals:
 	void ruleSelected(Rule *from, Rule *to);
 
-private slots:
+  private
+slots:
 	void onFromChosen();
 	void onToChosen();
 };

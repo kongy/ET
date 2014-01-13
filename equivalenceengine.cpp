@@ -1,12 +1,14 @@
 #include "equivalenceengine.hpp"
 #include <QDebug>
 
-EquivalenceEngine::EquivalenceEngine() {
+EquivalenceEngine::EquivalenceEngine()
+{
 	ruleEngine = new RuleEngine();
 	rules = ruleEngine->parseRuleXml();
 }
 
-EquivalenceEngine::~EquivalenceEngine() {
+EquivalenceEngine::~EquivalenceEngine()
+{
 	if (rules != nullptr && !rules->isEmpty())
 		for (LogicSet *logic_set : *rules) {
 			logic_set->deepDeleteContent();
@@ -17,7 +19,9 @@ EquivalenceEngine::~EquivalenceEngine() {
 	delete ruleEngine;
 }
 
-EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula, Rule *rule) {
+EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula,
+                                                    Rule *rule)
+{
 	EquivalenceUtility *matchingUtility = new EquivalenceUtility();
 
 	/* Matched */
@@ -36,7 +40,8 @@ EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula, Rul
 	return nullptr;
 }
 
-QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input) {
+QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input)
+{
 
 	QVector<LogicSet *> *relatedEquivalence = new QVector<LogicSet *>();
 
@@ -47,7 +52,9 @@ QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input) {
 	return relatedEquivalence;
 }
 
-QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, LogicSet *ruleSet) {
+QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input,
+                                                    LogicSet *ruleSet)
+{
 	QVector<Rule *> *matchedRules = new QVector<Rule *>();
 
 	EquivalenceUtility *matchingResult;
@@ -66,7 +73,11 @@ QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input, Logic
 	return matchedRules;
 }
 
-LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rule *baseRule, Rule *transformationRule, SolutionTabWidget *UI) {
+LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
+                                                    Rule *baseRule,
+                                                    Rule *transformationRule,
+                                                    SolutionTabWidget *UI)
+{
 	/* A matched leibniz rule does not need further processing */
 	if (baseRule->isLeibnizRule()) {
 		delete formula;
@@ -75,14 +86,17 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rul
 
 	EquivalenceUtility *matchingUtility = tryMatchRule(formula, baseRule);
 	Variable *boundVariable = matchingUtility->getBoundVariable();
-	QVector<Variable *> *freeVariableList = matchingUtility->getFreeVariableList();
+	QVector<Variable *> *freeVariableList =
+	    matchingUtility->getFreeVariableList();
 	IDTable *idTable = matchingUtility->getIDTable();
-	LogicSet *undefinedVariableSet = transformationRule->getExtraVariables(baseRule);
+	LogicSet *undefinedVariableSet =
+	    transformationRule->getExtraVariables(baseRule);
 	LogicStatement *result;
 
 	/* Bound Variable Yet to be decided by user */
 	if (boundVariable != nullptr) {
-		Variable *userdefinedVariable = getQualifiedBoundVariable(formula, boundVariable, UI);
+		Variable *userdefinedVariable =
+		    getQualifiedBoundVariable(formula, boundVariable, UI);
 		idTable->add(boundVariable, userdefinedVariable);
 
 		result = transformationRule->clone()->replace(idTable);
@@ -93,11 +107,11 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rul
 
 		return result;
 
-	/* Variable Rename */
+		/* Variable Rename */
 	} else if (freeVariableList != nullptr) {
 
-
-		Variable *userdefinedVariable = getQualifiedRenameVariable(formula, freeVariableList->front(), UI);
+		Variable *userdefinedVariable =
+		    getQualifiedRenameVariable(formula, freeVariableList->front(), UI);
 		QString *newName = new QString(userdefinedVariable->getName());
 
 		for (Variable *freeVariable : *freeVariableList)
@@ -113,16 +127,21 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rul
 
 	/* Further input for patterns required */
 	if (!undefinedVariableSet->isEmpty()) {
-		bool firstOrder = baseRule->isFirstOrderLogic() || transformationRule->isFirstOrderLogic();
+		bool firstOrder = baseRule->isFirstOrderLogic() ||
+		                  transformationRule->isFirstOrderLogic();
 		Variable *identifier;
 
 		for (LogicStatement *id : *undefinedVariableSet->getSet()) {
 			identifier = dynamic_cast<Variable *>(id);
 
 			if (!firstOrder)
-				idTable->add(identifier, getAnyFormula(FORMULA_REQUEST_PREFIX, identifier, UI, NO_MESSAGE));
+				idTable->add(identifier,
+				             getAnyFormula(FORMULA_REQUEST_PREFIX, identifier,
+				                           UI, NO_MESSAGE));
 			else
-				idTable->add(identifier, getAnyVariable(VARIABLE_REQUEST_PREFIX, identifier, UI, NO_MESSAGE));
+				idTable->add(identifier,
+				             getAnyVariable(VARIABLE_REQUEST_PREFIX, identifier,
+				                            UI, NO_MESSAGE));
 		}
 	}
 
@@ -135,7 +154,8 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula, Rul
 	return result;
 }
 
-bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet) {
+bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet)
+{
 	EquivalenceUtility *matchingResult;
 
 	for (Rule *rule : *ruleSet->getSet()) {
@@ -153,24 +173,36 @@ bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet)
 	return false;
 }
 
-bool EquivalenceEngine::isVariable(LogicStatement *statement) {
+bool EquivalenceEngine::isVariable(LogicStatement *statement)
+{
 	return statement->getSymbol() == VARIABLE_SYMBOL;
 }
 
-bool EquivalenceEngine::acceptedRenamedVariable(LogicStatement *originalFormula, Variable *userDefinedVariable) {
+bool EquivalenceEngine::acceptedRenamedVariable(LogicStatement *originalFormula,
+                                                Variable *userDefinedVariable)
+{
 	return originalFormula->notOccur(userDefinedVariable);
 }
 
-bool EquivalenceEngine::acceptedBoundedVariable(LogicStatement *originalFormula, Variable *userDefinedVariable) {
+bool EquivalenceEngine::acceptedBoundedVariable(LogicStatement *originalFormula,
+                                                Variable *userDefinedVariable)
+{
 	return originalFormula->variableBounded(userDefinedVariable);
 }
 
-Variable *EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *originalFormula, Variable *toBeReplaced, SolutionTabWidget *UI) {
+Variable *
+EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *originalFormula,
+                                              Variable *toBeReplaced,
+                                              SolutionTabWidget *UI)
+{
 
 	Variable *userInputVariable;
 	Message errorMessage = NO_MESSAGE;
 
-	while (!acceptedRenamedVariable(originalFormula, userInputVariable = getAnyVariableCasted(RENAME_PREFIX, toBeReplaced, UI, errorMessage))) {
+	while (!acceptedRenamedVariable(
+	            originalFormula,
+	            userInputVariable = getAnyVariableCasted(
+	                RENAME_PREFIX, toBeReplaced, UI, errorMessage))) {
 		errorMessage = VARIABLE_MUST_NOT_OCCUR_ERROR;
 		delete userInputVariable;
 	}
@@ -178,13 +210,19 @@ Variable *EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *original
 	return userInputVariable;
 }
 
-Variable *EquivalenceEngine::getQualifiedBoundVariable(LogicStatement *originalFormula, Variable *boundIdentifier, SolutionTabWidget *UI) {
+Variable *
+EquivalenceEngine::getQualifiedBoundVariable(LogicStatement *originalFormula,
+                                             Variable *boundIdentifier,
+                                             SolutionTabWidget *UI)
+{
 
 	Variable *userInputVariable;
 	Message errorMessage = NO_MESSAGE;
 
 	while (!acceptedBoundedVariable(originalFormula,
-									userInputVariable = getAnyVariableCasted(BOUND_VARIABLE_REQUEST_PREFIX, boundIdentifier, UI, errorMessage))) {
+	                                userInputVariable = getAnyVariableCasted(
+	                                    BOUND_VARIABLE_REQUEST_PREFIX,
+	                                    boundIdentifier, UI, errorMessage))) {
 		errorMessage = VARIABLE_OCCURS_FREE_ERROR;
 		delete userInputVariable;
 	}
@@ -192,10 +230,15 @@ Variable *EquivalenceEngine::getQualifiedBoundVariable(LogicStatement *originalF
 	return userInputVariable;
 }
 
-LogicStatement *EquivalenceEngine::getAnyVariable(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, Message errorMessage) {
+LogicStatement *EquivalenceEngine::getAnyVariable(const Message prefixMessage,
+                                                  Variable *suffix,
+                                                  SolutionTabWidget *UI,
+                                                  Message errorMessage)
+{
 	LogicStatement *userInput;
 
-	while (!isVariable(userInput = getAnyFormula(prefixMessage, suffix, UI, errorMessage))) {
+	while (!isVariable(userInput = getAnyFormula(prefixMessage, suffix, UI,
+	                                             errorMessage))) {
 		errorMessage = EXPECT_VARIABLE_ERROR;
 		delete userInput;
 	}
@@ -203,14 +246,24 @@ LogicStatement *EquivalenceEngine::getAnyVariable(const Message prefixMessage, V
 	return userInput;
 }
 
-Variable *EquivalenceEngine::getAnyVariableCasted(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, const Message errorMessage) {
-	return dynamic_cast<Variable *>(getAnyVariable(prefixMessage, suffix, UI, errorMessage));
+Variable *EquivalenceEngine::getAnyVariableCasted(const Message prefixMessage,
+                                                  Variable *suffix,
+                                                  SolutionTabWidget *UI,
+                                                  const Message errorMessage)
+{
+	return dynamic_cast<Variable *>(
+	    getAnyVariable(prefixMessage, suffix, UI, errorMessage));
 }
 
-LogicStatement *EquivalenceEngine::getAnyFormula(const Message prefixMessage, Variable *suffix, SolutionTabWidget *UI, const Message errorMessage) {
+LogicStatement *EquivalenceEngine::getAnyFormula(const Message prefixMessage,
+                                                 Variable *suffix,
+                                                 SolutionTabWidget *UI,
+                                                 const Message errorMessage)
+{
 	return UI->getReplacement(prefixMessage, suffix, errorMessage);
 }
 
-bool EquivalenceEngine::addNewPropositionalEquivalence(LogicSet *ruleSet) {
+bool EquivalenceEngine::addNewPropositionalEquivalence(LogicSet *ruleSet)
+{
 	return ruleEngine->addRule(ruleSet);
 }

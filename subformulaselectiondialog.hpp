@@ -6,7 +6,8 @@
 
 #include "AST.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class SubformulaSelectionDialog;
 }
 
@@ -15,16 +16,18 @@ class SubformulaSelectionDialog : public QDialog
 	Q_OBJECT
 
 	Ui::SubformulaSelectionDialog *ui;
-	AST::LogicStatement* fullFormula;
+	AST::LogicStatement *fullFormula;
 
-public:
-	explicit SubformulaSelectionDialog(AST::LogicStatement* formula, QWidget *parent = 0);
+  public:
+	explicit SubformulaSelectionDialog(AST::LogicStatement *formula,
+	                                   QWidget *parent = 0);
 	~SubformulaSelectionDialog();
 
 signals:
-	void subformulaSelected(AST::LogicStatement*);
+	void subformulaSelected(AST::LogicStatement *);
 
-private slots:
+  private
+slots:
 	void onClick();
 };
 

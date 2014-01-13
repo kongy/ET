@@ -6,7 +6,8 @@
 
 #include "AST.hpp"
 
-struct Operation {
+struct Operation
+{
 	bool add : 1;
 	bool forward : 1;
 	QVector<AST::LogicStatement *> stats;
@@ -14,16 +15,16 @@ struct Operation {
 
 class solutionModel
 {
-	QStack<Operation*> undoStack;
-	QStack<Operation*> redoStack;
+	QStack<Operation *> undoStack;
+	QStack<Operation *> redoStack;
 
-public:
-	solutionModel(AST::LogicStatement* begin, AST::LogicStatement* end);
+  public:
+	solutionModel(AST::LogicStatement *begin, AST::LogicStatement *end);
 	solutionModel(QFile *f);
 	~solutionModel();
 
-	QStack<AST::LogicStatement*> forwardStack;
-	QStack<AST::LogicStatement*> backwardStack;
+	QStack<AST::LogicStatement *> forwardStack;
+	QStack<AST::LogicStatement *> backwardStack;
 
 	void undo();
 	void redo();
@@ -34,7 +35,7 @@ public:
 
 	void saveToFile(QFile *f);
 
-private:
+  private:
 	void clearRedoStack();
 };
 

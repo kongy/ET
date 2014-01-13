@@ -5,7 +5,8 @@
 
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class ReplacementInputDialog;
 }
 
@@ -13,17 +14,20 @@ class ReplacementInputDialog : public QDialog
 {
 	Q_OBJECT
 
-public:
-	explicit ReplacementInputDialog(QString &reqMsg, QString &errMsg, QWidget *parent = 0);
+  public:
+	explicit ReplacementInputDialog(QString &reqMsg, QString &errMsg,
+	                                QWidget *parent = 0);
 	~ReplacementInputDialog();
 
-	static QString getString(QString &reqMsg, QString &errMsg, QWidget *parent = 0);
+	static QString getString(QString &reqMsg, QString &errMsg,
+	                         QWidget *parent = 0);
 
-private:
+  private:
 	Ui::ReplacementInputDialog *ui;
 	QString textValue();
 
-private slots:
+  private
+slots:
 	void insertString(QString str);
 };
 

@@ -4,7 +4,8 @@
 #include <QVector>
 #include "AST.hpp"
 
-namespace AST {
+namespace AST
+{
 class LogicStatement;
 }
 
@@ -13,10 +14,11 @@ typedef AST::LogicStatement Rule;
 /* Alternative for C++ set */
 class LogicSet
 {
-private:
+  private:
 	QVector<Rule *> *set;
 	QString comment;
-public:
+
+  public:
 	LogicSet();
 	~LogicSet();
 
@@ -32,7 +34,8 @@ public:
 	/* Returns a vector representing the set */
 	QVector<Rule *> *getSet();
 
-	/* Same Operation for Set difference to remove certain element of the set, returns newly allocated set */
+	/* Same Operation for Set difference to remove certain element of the set,
+	 * returns newly allocated set */
 	LogicSet *diff(Rule *item);
 
 	/* Set difference between two sets, returning a newly allocated set */
@@ -43,7 +46,8 @@ public:
 	/* Checking whether two sets contains exactly same items */
 	bool equals(LogicSet *other);
 
-	/* Returns true iff every rule in other logicset exists in the current logicset */
+	/* Returns true iff every rule in other logicset exists in the current
+	 * logicset */
 	bool contains(LogicSet *other);
 
 	/* Adds the entire set to the current one */

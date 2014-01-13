@@ -4,7 +4,8 @@
 #include <QPair>
 #include "AST.hpp"
 
-namespace AST {
+namespace AST
+{
 class Variable;
 
 class LogicStatement;
@@ -12,9 +13,10 @@ class LogicStatement;
 
 class IDTable
 {
-private:
+  private:
 	QVector<QPair<AST::Variable *, AST::LogicStatement *> *> *id_table;
-public:
+
+  public:
 	IDTable();
 
 	/* Adding a key value pair that maps identifiers for rules to the filtered

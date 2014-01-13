@@ -6,22 +6,22 @@
 
 #include "ui_inputpanel.h"
 
-
 class InputPanel : public QWidget
 {
 	Q_OBJECT
 
-public:
+  public:
 	InputPanel(QWidget *parent = 0);
 	~InputPanel();
 
 signals:
 	void stringGenerated(QString str);
 
-private slots:
+  private
+slots:
 	void buttonClicked(QWidget *w);
 
-private:
+  private:
 	Ui::InputPanelForm *ui;
 	QSignalMapper signalMapper;
 };

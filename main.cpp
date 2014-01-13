@@ -9,7 +9,8 @@
 bool ET::fullBracket;
 EquivalenceEngine *ET::eqEng;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	QApplication a(argc, argv);
 
 	a.setApplicationName("Equivalence Tutor");
@@ -17,7 +18,7 @@ int main(int argc, char *argv[]) {
 
 	QTranslator qtTranslator;
 	qtTranslator.load("qt_" + QLocale::system().name(),
-					  QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	                  QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 	a.installTranslator(&qtTranslator);
 
 	MainWindow w;

@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class WelcomePageWidget;
 }
 
@@ -11,17 +12,18 @@ class WelcomePageWidget : public QWidget
 {
 	Q_OBJECT
 
-public:
+  public:
 	explicit WelcomePageWidget(QWidget *parent = 0);
 	~WelcomePageWidget();
 
 signals:
 	void startNewSolution();
 
-private:
+  private:
 	Ui::WelcomePageWidget *ui;
 
-private slots:
+  private
+slots:
 	void startNewSolutionSlot();
 };
 

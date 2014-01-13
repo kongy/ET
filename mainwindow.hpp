@@ -6,27 +6,31 @@
 
 #include "AST.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
 	Q_OBJECT
 
-public:
+  public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
-private:
+  private:
 	Ui::MainWindow *ui;
 	void createSolutionTab(QFile *f);
 	void saveSolutionTab(QFile *f);
 
-private slots:
+  private
+slots:
 	void startNewSolutionDialog();
 	void startHelpDialog();
 	void startAboutDialog();
-	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end, QString name);
+	void createSolutionTab(AST::LogicStatement *start, AST::LogicStatement *end,
+	                       QString name);
 	void undo();
 	void redo();
 	void bracketStatusChanged();

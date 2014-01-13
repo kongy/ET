@@ -6,7 +6,8 @@
 
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class FormulaReplacementDialog;
 }
 
@@ -16,14 +17,16 @@ class FormulaReplacementDialog : public QDialog
 
 	Ui::FormulaReplacementDialog *ui;
 
-public:
-	explicit FormulaReplacementDialog(AST::LogicStatement* subformula, QWidget *parent = 0);
+  public:
+	explicit FormulaReplacementDialog(AST::LogicStatement *subformula,
+	                                  QWidget *parent = 0);
 	~FormulaReplacementDialog();
 
 signals:
-	void ruleSelected(LogicSet*);
+	void ruleSelected(LogicSet *);
 
-private slots:
+  private
+slots:
 	void onClick();
 };
 

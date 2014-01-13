@@ -3,11 +3,13 @@
 
 using namespace AST;
 
-bool LogicSet::isEmpty() {
+bool LogicSet::isEmpty()
+{
 	return getSet()->isEmpty();
 }
 
-bool LogicSet::contains(Rule *item) {
+bool LogicSet::contains(Rule *item)
+{
 	for (Rule *set_elem : *set)
 		if (item->equals(set_elem))
 			return true;
@@ -15,7 +17,8 @@ bool LogicSet::contains(Rule *item) {
 	return false;
 }
 
-bool LogicSet::add(Rule *item) {
+bool LogicSet::add(Rule *item)
+{
 	if (!contains(item)) {
 		set->push_back(item);
 		return true;
@@ -24,19 +27,23 @@ bool LogicSet::add(Rule *item) {
 	return false;
 }
 
-LogicSet::LogicSet() {
+LogicSet::LogicSet()
+{
 	set = new QVector<Rule *>();
 }
 
-LogicSet::~LogicSet() {
+LogicSet::~LogicSet()
+{
 	delete set;
 }
 
-QVector<Rule *> *LogicSet::getSet() {
+QVector<Rule *> *LogicSet::getSet()
+{
 	return set;
 }
 
-LogicSet *LogicSet::diff(Rule *item) {
+LogicSet *LogicSet::diff(Rule *item)
+{
 
 	LogicSet *remaining_set = new LogicSet();
 
@@ -48,14 +55,15 @@ LogicSet *LogicSet::diff(Rule *item) {
 	return remaining_set;
 }
 
-LogicSet *LogicSet::diff(LogicSet *other) {
+LogicSet *LogicSet::diff(LogicSet *other)
+{
 
 	LogicSet *difference = new LogicSet();
 	QVector<LogicStatement *> *currentSet = getSet();
 
 	if (!currentSet->isEmpty()) {
 		if (other->isEmpty()) {
-			for(Rule *statement : *currentSet)
+			for (Rule *statement : *currentSet)
 				difference->add(statement);
 		} else {
 			for (Rule *statement : *currentSet)
@@ -65,27 +73,30 @@ LogicSet *LogicSet::diff(LogicSet *other) {
 	}
 
 	return difference;
-
 }
 
-QString LogicSet::print(bool fullBracket) {
+QString LogicSet::print(bool fullBracket)
+{
 	QString s;
-	for(QVector<Rule*>::const_iterator it = set->cbegin(); it != set->cend(); it++) {
+	for (QVector<Rule *>::const_iterator it = set->cbegin(); it != set->cend();
+	     it++) {
 		s += (*it)->print(fullBracket);
-		if(it < set->end() - 1) {
+		if (it < set->end() - 1) {
 			s += SYMBOL_EQUIVALENT;
 		}
 	}
 	return s;
 }
 
-void LogicSet::deepDeleteContent() {
+void LogicSet::deepDeleteContent()
+{
 	if (!isEmpty())
 		for (Rule *rule : *set)
 			delete rule;
 }
 
-bool LogicSet::equals(LogicSet *other) {
+bool LogicSet::equals(LogicSet *other)
+{
 	if (set->size() != other->getSet()->size())
 		return false;
 
@@ -96,10 +107,12 @@ bool LogicSet::equals(LogicSet *other) {
 	return true;
 }
 
-bool LogicSet::contains(LogicSet *other) {
+bool LogicSet::contains(LogicSet *other)
+{
 	QVector<LogicStatement *> *otherSet = other->getSet();
 
-	/* The current set cannot contain other set if it has less element than otherset */
+	/* The current set cannot contain other set if it has less element than
+	 * otherset */
 	if (set->size() < otherSet->size())
 		return false;
 
@@ -108,18 +121,20 @@ bool LogicSet::contains(LogicSet *other) {
 			return false;
 
 	return true;
-
 }
 
-void LogicSet::add(LogicSet *other) {
+void LogicSet::add(LogicSet *other)
+{
 	for (Rule *newRule : *other->getSet())
 		add(newRule);
 }
 
-void LogicSet::setComment(QString ruleComment) {
+void LogicSet::setComment(QString ruleComment)
+{
 	comment = ruleComment;
 }
 
-QString LogicSet::getComment() {
+QString LogicSet::getComment()
+{
 	return comment;
 }
