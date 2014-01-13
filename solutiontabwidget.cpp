@@ -2,6 +2,7 @@
 #include "matchedruleselectiondialog.hpp"
 #include "solutiontabwidget.hpp"
 #include "subformulaselectiondialog.hpp"
+#include "replacementinputdialog.hpp"
 #include "formulareplacementdialog.hpp"
 #include "ui_solutiontabwidget.h"
 
@@ -129,17 +130,14 @@ void SolutionTabWidget::redo() {
 }
 
 LogicStatement *SolutionTabWidget::getReplacement(const Message prefixMessage, Variable *suffix, const Message errorMessage) {
-	//TODO: check if the errorMessage is Not equal to "";
-	const QString requestMessageToUser = messages.at(prefixMessage) + suffix->print(false);
-	const QString errorMessageToUser = messages.at(errorMessage);
+	QString reqMsg = messages.at(prefixMessage) + suffix->print(false);
+	QString errMsg = messages.at(errorMessage);
 
-	LogicStatement *userInput = nullptr;
-
-	if (errorMessageToUser != NONE) {
-		//Display the error to user and request for the new LogicStatement with msg and return it
-	} else {
-		//Request for new LogicStatement with msg;
+	LogicStatement *input = nullptr;
+	while(input == nullptr) {
+		QString inputStr = ReplacementInputDialog::getString(reqMsg, errMsg, this);
+		input = AST::parse(inputStr);
 	}
 
-	return userInput;
+	return input;
 }
