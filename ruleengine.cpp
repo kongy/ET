@@ -7,7 +7,7 @@
 using namespace AST;
 
 #define GENERIC_RULE_PATH QString(":/equivalences.xml")
-#define USER_DEFINED_RULE_PATH QString(":/userDefinedRules.xml")
+#define USER_DEFINED_RULE_PATH QString("userDefinedRules.xml")
 #define NONE ("")
 #define INITIAL_CHARACTER ('A')
 #define FINAL_CHARACTER ('Z')
@@ -42,10 +42,7 @@ void RuleEngine::flushNewRuleToXml()
 {
 	QFile userFile(USER_DEFINED_RULE_PATH);
 
-	if (!userFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		QMessageBox::critical(0, "Error", userFile.errorString());
-		return;
-	}
+	userFile.open(QIODevice::WriteOnly | QIODevice::Text);
 
 	QXmlStreamWriter xml(&userFile);
 	xml.setAutoFormatting(true);
@@ -75,7 +72,9 @@ void RuleEngine::parseRule(QString fromFilePath,
 	QFile file(fromFilePath);
 
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QMessageBox::critical(0, "Error", file.errorString());
+		if (fromFilePath != USER_DEFINED_RULE_PATH)
+			QMessageBox::critical(0, "Error", file.errorString());
+
 		return;
 	}
 
