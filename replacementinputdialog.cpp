@@ -9,6 +9,8 @@ ReplacementInputDialog::ReplacementInputDialog(QString &reqMsg, QString &errMsg,
 
 	ui->label->setText(reqMsg);
 	ui->errorMsgLabel->setText(errMsg);
+
+	connect(ui->inputPanel, SIGNAL(stringGenerated(QString)), this, SLOT(insertString(QString)));
 }
 
 ReplacementInputDialog::~ReplacementInputDialog()
@@ -29,4 +31,8 @@ QString ReplacementInputDialog::getString(QString &reqMsg, QString &errMsg, QWid
 	} else {
 		return QString();
 	}
+}
+
+void ReplacementInputDialog::insertString(QString str) {
+	 ui->lineEdit->insert(str);
 }

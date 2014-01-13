@@ -22,6 +22,9 @@ public:
 private:
 	Ui::ReplacementInputDialog *ui;
 	QString textValue();
+
+private slots:
+	void insertString(QString str);
 };
 
 #endif // REPLACEMENTINPUTDIALOG_HPP
