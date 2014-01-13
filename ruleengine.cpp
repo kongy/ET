@@ -8,6 +8,9 @@ using namespace AST;
 
 #define GENERIC_RULE_PATH QString(":/equivalences.xml")
 #define USER_DEFINED_RULE_PATH QString(":/userDefinedRules.xml")
+#define NONE ("")
+#define INITIAL_CHARACTER ('A')
+#define FINAL_CHARACTER ('Z')
 
 RuleEngine::RuleEngine() {
 	userDefinedRules = new QVector<LogicSet *>();
@@ -145,16 +148,16 @@ Rule *RuleEngine::processVariableStatement(QXmlStreamReader *xml) {
 
     Variable *statement = new Variable(new QString(xml->readElementText()));
 
-    if (freeVariableName != "")
+    if (freeVariableName != NONE)
         statement->setFreeVariable(freeVariableName);
 
-    if (boundVariableName != "")
+    if (boundVariableName != NONE)
         statement->setBoundedVariable(boundVariableName);
 
-    if (notOccurVariableName != "")
+    if (notOccurVariableName != NONE)
         statement->setNotOccurVariable(notOccurVariableName);
 
-    if (mayOccurVariableName != "")
+    if (mayOccurVariableName != NONE)
         statement->setMayOccurVariable(mayOccurVariableName);
 
     return statement;
@@ -291,7 +294,7 @@ LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml) {
 
     for (xml->readNextStartElement(); xml->name() != "EquivalentStatements"; xml->readNextStartElement())
         if (xml->name() == "LogicStatement" && xml->tokenType() == QXmlStreamReader::StartElement) {
-            isLeibnizRule = xml->attributes().value("FORWARD").toString() != "";
+            isLeibnizRule = xml->attributes().value("FORWARD").toString() != NONE;
             rule = processLogicStatement(xml);
             rule->setRuleType(isLeibnizRule);
             ruleSet->add(rule);
@@ -326,7 +329,7 @@ LogicSet *RuleEngine::generateRuleSet(LogicSet *rawEquivalenceFormulas) {
 
 IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables) {
     IDTable *idTable = new IDTable();
-    short asciiCode = 'A';
+    short asciiCode = INITIAL_CHARACTER;
 
     for (LogicStatement *statement : *rawVariables->getSet()) {
         idTable->add(dynamic_cast<Variable *>(statement), asciiToVariable(asciiCode));
@@ -337,7 +340,15 @@ IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables) {
 }
 
 Variable *RuleEngine::asciiToVariable(const short asciiCode) {
-    QString *name = new QString(QChar(asciiCode));
+    QString stringName;
+    const short finalAsciiCode = ((short) FINAL_CHARACTER) + 1;
+    const short maxTimes = asciiCode / finalAsciiCode;
+    const QChar character = asciiCode % finalAsciiCode;
+
+    for (short times = 0; times <= maxTimes; times++)
+        stringName += character;
+
+    QString *name = new QString(stringName);
     Variable *variable = new Variable(name);
     delete name;
     return variable;
