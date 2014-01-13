@@ -128,7 +128,10 @@
   </action>
   <action name="actionOpen_Solution">
    <property name="text">
-    <string>Open Solution</string>
+    <string>Open Solutions</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Solutions</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
