@@ -7,6 +7,7 @@
 #include "ui_solutiontabwidget.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin, AST::LogicStatement *end,
 									 QWidget *parent) :
@@ -60,6 +61,9 @@ void SolutionTabWidget::redraw() const {
 		while(backwardStackIt.hasPrevious()) {
 			ui->textEdit->insertPlainText(backwardStackIt.previous()->print(ET::fullBracket).append("\n"));
 		}
+		QMessageBox msgBox;
+		msgBox.setText("Proof Finished");
+		msgBox.exec();
 	}
 }
 
