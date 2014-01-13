@@ -111,7 +111,14 @@ void SolutionTabWidget::ruleSelected(LogicSet *ruleset) {
 }
 
 void SolutionTabWidget::matchedRuleSelected(Rule *from, Rule *to) {
-	newFormulaGenerated(ET::eqEng->replaceStatement(selectedSubformula, from, to, this));
+	LogicStatement *newSubFormula = ET::eqEng->replaceStatement(selectedSubformula, from, to, this);
+
+	if (selectedSubformula == selectedFormula) {
+		newFormulaGenerated(newSubFormula);
+	} else {
+		selectedFormula->replaceChildStatement(selectedSubformula, newSubFormula);
+		newFormulaGenerated(selectedFormula);
+	}
 }
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula) {

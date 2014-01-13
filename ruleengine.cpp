@@ -342,11 +342,12 @@ IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables) {
 Variable *RuleEngine::asciiToVariable(const short asciiCode) {
     QString stringName;
     const short finalAsciiCode = ((short) FINAL_CHARACTER) + 1;
-    const short maxTimes = asciiCode / finalAsciiCode;
+    short times = asciiCode / finalAsciiCode;
     const QChar character = asciiCode % finalAsciiCode;
 
-    for (short times = 0; times <= maxTimes; times++)
+    do {
         stringName += character;
+    } while (--times >= 0);
 
     QString *name = new QString(stringName);
     Variable *variable = new Variable(name);
