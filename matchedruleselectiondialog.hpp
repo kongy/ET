@@ -14,6 +14,7 @@ class MatchedRuleSelectionDialog : public QDialog
 {
 	Q_OBJECT
 
+	Ui::MatchedRuleSelectionDialog *ui;
 	LogicSet *ls;
 	Rule *from, *to;
 
@@ -23,9 +24,6 @@ public:
 
 signals:
 	void ruleSelected(Rule *from, Rule *to);
-
-private:
-	Ui::MatchedRuleSelectionDialog *ui;
 
 private slots:
 	void onFromChosen();
