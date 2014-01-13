@@ -115,3 +115,11 @@ void LogicSet::add(LogicSet *other) {
 	for (Rule *newRule : *other->getSet())
 		add(newRule);
 }
+
+void LogicSet::setComment(QString ruleComment) {
+	comment = ruleComment;
+}
+
+QString LogicSet::getComment() {
+	return comment;
+}

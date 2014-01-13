@@ -79,9 +79,16 @@ void RuleEngine::parseRule(QString fromFilePath, QVector<LogicSet *> *destinatio
     if (xml.readNext() != QXmlStreamReader::StartDocument)
         return;
 
+    LogicSet *equivalenceSet;
+    QString comments;
+
     do {
-        if (xml.readNextStartElement() && xml.name() == "EquivalentStatements")
-            destinationRuleSet->append(processStatements(&xml));
+        if (xml.readNextStartElement() && xml.name() == "EquivalentStatements") {
+            comments = xml.attributes().value("COMMENT").toString();
+            equivalenceSet = processStatements(&xml);
+            equivalenceSet->setComment(comments);
+            destinationRuleSet->append(equivalenceSet);
+        }
     } while(!xml.atEnd() && !xml.hasError());
 
     xml.clear();

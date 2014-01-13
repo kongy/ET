@@ -15,6 +15,7 @@ class LogicSet
 {
 private:
 	QVector<Rule *> *set;
+	QString comment;
 public:
 	LogicSet();
 	~LogicSet();
@@ -47,6 +48,12 @@ public:
 
 	/* Adds the entire set to the current one */
 	void add(LogicSet *other);
+
+	/* Sets the comment for rules */
+	void setComment(QString ruleComment);
+
+	/* Retreive comment */
+	QString getComment();
 };
 
 #endif // LOGICSET_HPP

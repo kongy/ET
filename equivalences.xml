@@ -874,7 +874,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in A">
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
@@ -895,7 +895,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in A">
 			<LogicStatement>
 			<ThereExists>
 				<ID>x</ID>
@@ -918,7 +918,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in A">
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
@@ -941,7 +941,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in A">
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
@@ -964,7 +964,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in A">
 			<LogicStatement>
 			<ThereExists>
 				<ID>x</ID>
@@ -987,7 +987,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in B">
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
@@ -1010,7 +1010,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="x does not occur free in B">
 			<LogicStatement>
 			<ThereExists>
 				<ID>x</ID>
@@ -1033,7 +1033,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="B is got from A by replacing all free occurence of x in A by a variable y that doesn't occur in A">
 			<LogicStatement>
 			<ThereExists>
 				<ID>x</ID>
@@ -1098,7 +1098,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="B got from A by replacing one or more free occurrences of x by a variable y that does not occur in A">
                         <LogicStatement FORWARD="true">
 			<Implies>
 				<Equals>
