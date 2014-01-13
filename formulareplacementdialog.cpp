@@ -18,6 +18,7 @@ FormulaReplacementDialog::FormulaReplacementDialog(AST::LogicStatement *subformu
 	QVector<LogicSet*> *sl = ET::eqEng->match(subformula);
 	for(LogicSet *l : *sl) {
 		RulePushButton *w = new RulePushButton(l->print(ET::fullBracket), l, this);
+		w->setToolTip(l->getComment());
 		ui->verticalLayout->addWidget(w);
 		connect(w, SIGNAL(clicked()), this, SLOT(onClick()));
 	}

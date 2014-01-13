@@ -1050,7 +1050,7 @@
 		</EquivalentStatements>
 		
 		
-		<EquivalentStatements>
+                <EquivalentStatements COMMENT="B is got from A by replacing all free occurence of x in A by a variable y that doesn't occur in A">
 			<LogicStatement>
 			<ForAll>
 				<ID>x</ID>
