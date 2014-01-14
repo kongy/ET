@@ -4,7 +4,7 @@
 #include "logicset.hpp"
 
 #include <QDialog>
-#include <QPushButton>
+#include <QAbstractButton>
 
 namespace Ui
 {
@@ -31,6 +31,7 @@ signals:
 slots:
 	void onFromChosen();
 	void onToChosen();
+	void onButtonBoxClicked(QAbstractButton* btn);
 };
 
 #endif // MATCHEDRULESELECTIONDIALOG_HPP
