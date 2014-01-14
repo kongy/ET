@@ -12,7 +12,8 @@ typedef EmbeddedPushButton<Rule *> RulePushButton;
 MatchedRuleSelectionDialog::MatchedRuleSelectionDialog(QVector<Rule *> *rules,
 													   LogicSet *ls,
 													   QWidget *parent)
-	: QDialog(parent), ui(new Ui::MatchedRuleSelectionDialog), ls(ls)
+	: QDialog(parent), ui(new Ui::MatchedRuleSelectionDialog), ls(ls),
+	  from(nullptr), to(nullptr)
 {
 	ui->setupUi(this);
 
@@ -54,11 +55,18 @@ void MatchedRuleSelectionDialog::onToChosen()
 void MatchedRuleSelectionDialog::onButtonBoxClicked(QAbstractButton *btn) {
 	switch (ui->buttonBox->standardButton(btn)) {
 	case QDialogButtonBox::Ok: {
-		if(from->equals(to)) {
-			QMessageBox msgBox;
+		if(from == nullptr || to == nullptr) {
+			QMessageBox msgBox(this);
+			msgBox.setIcon(QMessageBox::Warning);
+			msgBox.setText("Select rules first");
+			msgBox.exec();
+			return;
+		} else if(from->equals(to)) {
+			QMessageBox msgBox(this);
 			msgBox.setIcon(QMessageBox::Warning);
 			msgBox.setText("From rule and to rule cannot be the same");
 			msgBox.exec();
+			return;
 		} else {
 			emit ruleSelected(from, to);
 			close();
@@ -69,4 +77,3 @@ void MatchedRuleSelectionDialog::onButtonBoxClicked(QAbstractButton *btn) {
 		qWarning() << "Unimplemented button clicked\n";
 	}
 }
-
