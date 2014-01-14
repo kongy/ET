@@ -1,5 +1,4 @@
 #include "equivalenceengine.hpp"
-#include <QDebug>
 
 EquivalenceEngine::EquivalenceEngine()
 {
@@ -24,18 +23,9 @@ EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula,
 {
 	EquivalenceUtility *matchingUtility = new EquivalenceUtility();
 
-	/* Matched */
-	qDebug() << "Matching the rule";
-	qDebug() << rule->print(false);
-
-	if (rule->match(formula, matchingUtility)) {
-		qDebug() << "Matched";
+	if (rule->match(formula, matchingUtility))
 		return matchingUtility;
-	}
 
-	qDebug() << "Mismatched";
-
-	/* Failed to match */
 	delete matchingUtility;
 	return nullptr;
 }
