@@ -36,9 +36,9 @@ SolutionTabWidget::~SolutionTabWidget()
 
 void SolutionTabWidget::redraw()
 {
-	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this,
-	           SLOT(lineSelected()));
-	ui->textEdit->clear();
+	disconnect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this,
+	           SLOT(lineSelected(QListWidgetItem *)));
+	ui->listWidget->clear();
 
 	bool proofFinished = model->proofFinished();
 
@@ -49,25 +49,25 @@ void SolutionTabWidget::redraw()
 
 	if (!proofFinished) {
 		while (forwardStackIt.hasNext()) {
-			ui->textEdit->insertPlainText(
-			    forwardStackIt.next()->print(ET::fullBracket).append("\n"));
+			AST::LogicStatement *i = forwardStackIt.next();
+			ui->listWidget->addItem(i->print(ET::fullBracket).append("\n"));
 		}
-		ui->textEdit->insertPlainText("\n");
+		ui->listWidget->addItem("\n");
 		while (backwardStackIt.hasPrevious()) {
-			ui->textEdit->insertPlainText(
+			ui->listWidget->addItem(
 			    backwardStackIt.previous()->print(ET::fullBracket).append(
 			        "\n"));
 		}
-		connect(ui->textEdit, SIGNAL(cursorPositionChanged()), this,
-		        SLOT(lineSelected()));
+		connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this,
+		        SLOT(lineSelected(QListWidgetItem *)));
 	} else {
 		while (forwardStackIt.hasNext()) {
-			ui->textEdit->insertPlainText(
+			ui->listWidget->addItem(
 			    forwardStackIt.next()->print(ET::fullBracket).append("\n"));
 		}
 		backwardStackIt.previous();
 		while (backwardStackIt.hasPrevious()) {
-			ui->textEdit->insertPlainText(
+			ui->listWidget->addItem(
 			    backwardStackIt.previous()->print(ET::fullBracket).append(
 			        "\n"));
 		}
@@ -82,11 +82,9 @@ void SolutionTabWidget::saveToFile(QFile *f)
 	model->saveToFile(f);
 }
 
-void SolutionTabWidget::lineSelected()
+void SolutionTabWidget::lineSelected(QListWidgetItem *item)
 {
-	QTextCursor c = ui->textEdit->textCursor();
-
-	int lineno = c.blockNumber();
+	int lineno = ui->listWidget->row(item);
 	if (lineno == model->forwardStack.size() - 1) {
 		selectedFormula = model->forwardStack.top();
 		isForward = true;

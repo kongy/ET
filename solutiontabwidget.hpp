@@ -1,8 +1,7 @@
 #ifndef SOLUTIONTABWIDGET_HPP
 #define SOLUTIONTABWIDGET_HPP
 
-#include <QWidget>
-#include <QVector>
+#include <QListWidgetItem>
 
 #include "AST.hpp"
 #include "solutionmodel.hpp"
@@ -48,7 +47,7 @@ signals:
 
   private
 slots:
-	void lineSelected();
+	void lineSelected(QListWidgetItem *item);
 	void subformulaSelected(AST::LogicStatement *subformula);
 	void ruleSelected(LogicSet *ruleset);
 	void matchedRuleSelected(Rule *from, Rule *to);
