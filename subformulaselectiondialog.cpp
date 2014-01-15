@@ -16,8 +16,6 @@ SubformulaSelectionDialog::SubformulaSelectionDialog(
 {
 	ui->setupUi(this);
 
-	qDebug() << parent;
-
 	for (QPair<QString, AST::LogicStatement *> i :
 	     formula->getStringMapping(ET::fullBracket)) {
 		QWidget *sfw;
