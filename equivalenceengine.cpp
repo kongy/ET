@@ -253,7 +253,8 @@ LogicStatement *EquivalenceEngine::getAnyFormula(QString &prefixMessage,
 	return UI->getReplacement(prefixMessage, suffix, errorMessage);
 }
 
-bool EquivalenceEngine::addNewPropositionalEquivalence(LogicSet *ruleSet)
+bool EquivalenceEngine::addNewPropositionalEquivalence(
+    LogicStatement *rawFormulaFrom, LogicStatement *rawFormulaTo)
 {
-	return ruleEngine->addRule(ruleSet);
+	return ruleEngine->addRule(rawFormulaFrom, rawFormulaTo);
 }

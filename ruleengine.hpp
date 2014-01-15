@@ -33,7 +33,7 @@ class RuleEngine
   public:
 	QVector<LogicSet *> *parseRuleXml();
 	QVector<LogicSet *> *parseRuleTxt();
-	bool addRule(LogicSet *newRuleSet);
+	bool addRule(LogicStatement *formulaFrom, LogicStatement *formulaTo);
 	RuleEngine();
 	~RuleEngine();
 };

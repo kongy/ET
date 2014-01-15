@@ -24,16 +24,27 @@ RuleEngine::~RuleEngine()
 	delete allRules;
 }
 
-bool RuleEngine::addRule(LogicSet *newRuleSet)
+bool RuleEngine::addRule(LogicStatement *formulaFrom, LogicStatement *formulaTo)
 {
-	newRuleSet = generateRuleSet(newRuleSet);
+	if (formulaFrom->isFirstOrderLogic() || formulaTo->isFirstOrderLogic())
+		return false;
+
+	LogicSet *formulaSet = new LogicSet();
+	formulaSet->add(formulaFrom);
+	formulaSet->add(formulaTo);
+
+	LogicSet *generalisedRule = generateRuleSet(formulaSet);
+	delete formulaSet;
 
 	for (LogicSet *existingRuleSet : *allRules)
-		if (existingRuleSet->contains(newRuleSet))
+		if (existingRuleSet->contains(generalisedRule)) {
+			generalisedRule->deepDeleteContent();
+			delete generalisedRule;
 			return false;
+		}
 
-	userDefinedRules->append(newRuleSet);
-	allRules->append(newRuleSet);
+	userDefinedRules->append(generalisedRule);
+	allRules->append(generalisedRule);
 	flushNewRuleToXml();
 	return true;
 }

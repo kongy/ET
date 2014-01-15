@@ -1332,9 +1332,10 @@ bool ForAllStatement::match(LogicStatement *matchingStatement,
 		 * the free list to be replaced later on */
 	} else if (getStatement()->getSymbol() == VARIABLE_SYMBOL &&
 	           dynamic_cast<Variable *>(getStatement())->getFreeVariable() !=
-				   nullptr) {
+	               nullptr) {
 		matchingUtility->initFreeVariableList();
-		matchingUtility->getFreeVariableList()->append(castedMatchingStatement->getQuantifier());
+		matchingUtility->getFreeVariableList()->append(
+		    castedMatchingStatement->getQuantifier());
 	}
 
 	/* We proceed adding the quantifier to IDTable as usual and keep matching */
@@ -1574,7 +1575,8 @@ bool ThereExistsStatement::match(LogicStatement *matchingStatement,
 	           dynamic_cast<Variable *>(getStatement())->getFreeVariable() !=
 	               nullptr) {
 		matchingUtility->initFreeVariableList();
-		matchingUtility->getFreeVariableList()->append(castedMatchingStatement->getQuantifier());
+		matchingUtility->getFreeVariableList()->append(
+		    castedMatchingStatement->getQuantifier());
 	}
 
 	/* We proceed adding the quantifier to IDTable as usual and keep matching */

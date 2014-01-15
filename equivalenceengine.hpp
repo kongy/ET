@@ -51,11 +51,12 @@ class EquivalenceEngine
 	                                 Rule *baseRule, Rule *transformationRule,
 	                                 SolutionTabWidget *userWindow);
 
-	/* Function for user defined rules, note the ruleSet must be proven to be
-	 * equivalent and can only be propositional
-	 * before called, returns true if successfully added and false if already
-	 * exists, caller handles delete for ruleSet */
-	bool addNewPropositionalEquivalence(LogicSet *ruleSet);
+	/* Function for user defined rules, note both rules must be proven to be
+	 * equivalent and returns true if both are propositional
+	 * and successfully added and false if already
+	 * exists or is First order */
+	bool addNewPropositionalEquivalence(LogicStatement *rawFormulaFrom,
+	                                    LogicStatement *rawFormulaTo);
 };
 
 #endif // EQUIVALENCEENGINE_H
