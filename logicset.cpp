@@ -137,3 +137,22 @@ QString LogicSet::getComment()
 {
 	return comment;
 }
+
+bool LogicSet::remove(Rule *ruleRemove) {
+	for (int i = 0; i < set->size(); i++)
+		if (set->at(i)->equals(ruleRemove)) {
+			set->removeAt(i);
+			return true;
+		}
+
+	return false;
+}
+
+bool LogicSet::addFront(Rule *rule) {
+	if (!contains(rule)) {
+		set->push_front(rule);
+		return true;
+	}
+
+	return false;
+}

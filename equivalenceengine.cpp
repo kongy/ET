@@ -147,20 +147,26 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 bool EquivalenceEngine::ruleApplicable(LogicStatement *input, LogicSet *ruleSet)
 {
 	EquivalenceUtility *matchingResult;
+	QVector<Rule *> rulesMatched;
 
 	for (Rule *rule : *ruleSet->getSet()) {
 		matchingResult = tryMatchRule(input, rule);
 
 		if (matchingResult != nullptr) {
 			delete matchingResult;
-			return true;
+			rulesMatched.append(rule);
 		}
 
 		if (rule->isLeibnizRule())
 			break;
 	}
 
-	return false;
+	for (Rule *r : rulesMatched) {
+		ruleSet->remove(r);
+		ruleSet->addFront(r);
+	}
+
+	return !rulesMatched.isEmpty();
 }
 
 bool EquivalenceEngine::isVariable(LogicStatement *statement)

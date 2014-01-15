@@ -31,6 +31,11 @@ class LogicSet
 	/* Set Implementation of add() */
 	bool add(Rule *);
 
+	bool addFront(Rule *);
+
+	/* Remove */
+	bool remove(Rule *);
+
 	/* Returns a vector representing the set */
 	QVector<Rule *> *getSet();
 
