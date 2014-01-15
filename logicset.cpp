@@ -78,8 +78,7 @@ LogicSet *LogicSet::diff(LogicSet *other)
 QString LogicSet::print(bool fullBracket)
 {
 	QString s;
-	for (QVector<Rule *>::const_iterator it = set->cbegin(); it != set->cend();
-	     it++) {
+	for (QVector<Rule *>::iterator it = set->begin(); it != set->end(); it++) {
 		s += (*it)->print(fullBracket);
 		if (it < set->end() - 1) {
 			s += SYMBOL_EQUIVALENT;

@@ -42,8 +42,9 @@ void solutionModel::add(bool forward, LogicStatement *formula)
 	} else {
 		backwardStack.push(formula);
 	}
-	undoStack.push(
-	    new Operation{ true, forward, QVector<LogicStatement *>({ formula }) });
+	QVector<LogicStatement *> v;
+	v.append(formula);
+	undoStack.push(new Operation{ true, forward, v });
 }
 
 void solutionModel::remove(bool forward, int n)

@@ -10,10 +10,10 @@
 typedef EmbeddedPushButton<Rule *> RulePushButton;
 
 MatchedRuleSelectionDialog::MatchedRuleSelectionDialog(QVector<Rule *> *rules,
-													   LogicSet *ls,
-													   QWidget *parent)
-	: QDialog(parent), ui(new Ui::MatchedRuleSelectionDialog), ls(ls),
-	  from(nullptr), to(nullptr)
+                                                       LogicSet *ls,
+                                                       QWidget *parent)
+    : QDialog(parent), ui(new Ui::MatchedRuleSelectionDialog), ls(ls),
+      from(nullptr), to(nullptr)
 {
 	ui->setupUi(this);
 
@@ -32,7 +32,7 @@ MatchedRuleSelectionDialog::MatchedRuleSelectionDialog(QVector<Rule *> *rules,
 		ui->toVLayout->addWidget(w);
 	}
 	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton *)), this,
-			SLOT(onButtonBoxClicked(QAbstractButton *)));
+	        SLOT(onButtonBoxClicked(QAbstractButton *)));
 }
 
 MatchedRuleSelectionDialog::~MatchedRuleSelectionDialog()
@@ -42,26 +42,27 @@ MatchedRuleSelectionDialog::~MatchedRuleSelectionDialog()
 
 void MatchedRuleSelectionDialog::onFromChosen()
 {
-	RulePushButton *sBtn = static_cast<RulePushButton*>(sender());
+	RulePushButton *sBtn = static_cast<RulePushButton *>(sender());
 	from = sBtn->getExtra();
 }
 
 void MatchedRuleSelectionDialog::onToChosen()
 {
-	RulePushButton *sBtn = static_cast<RulePushButton*>(sender());
+	RulePushButton *sBtn = static_cast<RulePushButton *>(sender());
 	to = sBtn->getExtra();
 }
 
-void MatchedRuleSelectionDialog::onButtonBoxClicked(QAbstractButton *btn) {
+void MatchedRuleSelectionDialog::onButtonBoxClicked(QAbstractButton *btn)
+{
 	switch (ui->buttonBox->standardButton(btn)) {
 	case QDialogButtonBox::Ok: {
-		if(from == nullptr || to == nullptr) {
+		if (from == nullptr || to == nullptr) {
 			QMessageBox msgBox(this);
 			msgBox.setIcon(QMessageBox::Warning);
 			msgBox.setText("Select rules first");
 			msgBox.exec();
 			return;
-		} else if(from->equals(to)) {
+		} else if (from->equals(to)) {
 			QMessageBox msgBox(this);
 			msgBox.setIcon(QMessageBox::Warning);
 			msgBox.setText("From rule and to rule cannot be the same");

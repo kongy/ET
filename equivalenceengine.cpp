@@ -126,12 +126,12 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 
 			if (!firstOrder)
 				idTable->add(identifier,
-				             getAnyFormula(FORMULA_REQUEST_PREFIX, identifier,
-				                           UI, NO_MESSAGE));
+				             getAnyFormula(FORMULA_REQUEST_PREFIX_MESSAGE,
+				                           identifier, UI, NO_MESSAGE));
 			else
 				idTable->add(identifier,
-				             getAnyVariable(VARIABLE_REQUEST_PREFIX, identifier,
-				                            UI, NO_MESSAGE));
+				             getAnyVariable(VARIABLE_REQUEST_PREFIX_MESSAGE,
+				                            identifier, UI, NO_MESSAGE));
 		}
 	}
 
@@ -187,13 +187,13 @@ EquivalenceEngine::getQualifiedRenameVariable(LogicStatement *originalFormula,
 {
 
 	Variable *userInputVariable;
-	Message errorMessage = NO_MESSAGE;
+	QString errorMessage;
 
 	while (!acceptedRenamedVariable(
 	            originalFormula,
 	            userInputVariable = getAnyVariableCasted(
-	                RENAME_PREFIX, toBeReplaced, UI, errorMessage))) {
-		errorMessage = VARIABLE_MUST_NOT_OCCUR_ERROR;
+	                RENAME_PREFIX_MESSAGE, toBeReplaced, UI, errorMessage))) {
+		errorMessage = VARIABLE_MUST_NOT_OCCUR_ERROR_MESSAGE;
 		delete userInputVariable;
 	}
 
@@ -207,48 +207,48 @@ EquivalenceEngine::getQualifiedBoundVariable(LogicStatement *originalFormula,
 {
 
 	Variable *userInputVariable;
-	Message errorMessage = NO_MESSAGE;
+	QString errorMessage;
 
 	while (!acceptedBoundedVariable(originalFormula,
 	                                userInputVariable = getAnyVariableCasted(
-	                                    BOUND_VARIABLE_REQUEST_PREFIX,
+	                                    BOUND_VARIABLE_REQUEST_PREFIX_MESSAGE,
 	                                    boundIdentifier, UI, errorMessage))) {
-		errorMessage = VARIABLE_OCCURS_FREE_ERROR;
+		errorMessage = VARIABLE_OCCURS_FREE_ERROR_MESSAGE;
 		delete userInputVariable;
 	}
 
 	return userInputVariable;
 }
 
-LogicStatement *EquivalenceEngine::getAnyVariable(const Message prefixMessage,
+LogicStatement *EquivalenceEngine::getAnyVariable(QString &prefixMessage,
                                                   Variable *suffix,
                                                   SolutionTabWidget *UI,
-                                                  Message errorMessage)
+                                                  QString &errorMessage)
 {
 	LogicStatement *userInput;
 
 	while (!isVariable(userInput = getAnyFormula(prefixMessage, suffix, UI,
 	                                             errorMessage))) {
-		errorMessage = EXPECT_VARIABLE_ERROR;
+		errorMessage = EXPECT_VARIABLE_ERROR_MESSAGE;
 		delete userInput;
 	}
 
 	return userInput;
 }
 
-Variable *EquivalenceEngine::getAnyVariableCasted(const Message prefixMessage,
+Variable *EquivalenceEngine::getAnyVariableCasted(QString &prefixMessage,
                                                   Variable *suffix,
                                                   SolutionTabWidget *UI,
-                                                  const Message errorMessage)
+                                                  QString &errorMessage)
 {
 	return dynamic_cast<Variable *>(
 	    getAnyVariable(prefixMessage, suffix, UI, errorMessage));
 }
 
-LogicStatement *EquivalenceEngine::getAnyFormula(const Message prefixMessage,
+LogicStatement *EquivalenceEngine::getAnyFormula(QString &prefixMessage,
                                                  Variable *suffix,
                                                  SolutionTabWidget *UI,
-                                                 const Message errorMessage)
+                                                 QString &errorMessage)
 {
 	return UI->getReplacement(prefixMessage, suffix, errorMessage);
 }

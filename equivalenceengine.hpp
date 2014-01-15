@@ -25,15 +25,14 @@ class EquivalenceEngine
 	Variable *getQualifiedBoundVariable(LogicStatement *originalFormula,
 	                                    Variable *boundIdentifier,
 	                                    SolutionTabWidget *UI);
-	LogicStatement *getAnyVariable(const Message prefixMessage,
-	                               Variable *suffix, SolutionTabWidget *UI,
-	                               Message errorMessage);
-	LogicStatement *getAnyFormula(const Message prefixMessage, Variable *suffix,
-	                              SolutionTabWidget *UI,
-	                              const Message errorMessage);
-	Variable *getAnyVariableCasted(const Message prefixMessage,
-	                               Variable *suffix, SolutionTabWidget *UI,
-	                               const Message errorMessage);
+	LogicStatement *getAnyVariable(QString &prefixMessage, Variable *suffix,
+	                               SolutionTabWidget *UI,
+	                               QString &errorMessage);
+	LogicStatement *getAnyFormula(QString &prefixMessage, Variable *suffix,
+	                              SolutionTabWidget *UI, QString &errorMessage);
+	Variable *getAnyVariableCasted(QString &prefixMessage, Variable *suffix,
+	                               SolutionTabWidget *UI,
+	                               QString &errorMessage);
 	RuleEngine *ruleEngine;
 
   public:

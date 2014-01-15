@@ -34,7 +34,7 @@ SolutionTabWidget::~SolutionTabWidget()
 	delete ui;
 }
 
-void SolutionTabWidget::redraw() const
+void SolutionTabWidget::redraw()
 {
 	disconnect(ui->textEdit, SIGNAL(cursorPositionChanged()), this,
 	           SLOT(lineSelected()));
@@ -71,7 +71,7 @@ void SolutionTabWidget::redraw() const
 			    backwardStackIt.previous()->print(ET::fullBracket).append(
 			        "\n"));
 		}
-		QMessageBox msgBox;
+		QMessageBox msgBox(this);
 		msgBox.setText("Proof Finished");
 		msgBox.exec();
 	}
@@ -165,18 +165,16 @@ void SolutionTabWidget::redo()
 	redraw();
 }
 
-LogicStatement *SolutionTabWidget::getReplacement(const Message prefixMessage,
+LogicStatement *SolutionTabWidget::getReplacement(QString &prefixMessage,
                                                   Variable *suffix,
-                                                  const Message errorMessage)
+                                                  QString &errorMessage)
 {
-	QString reqMsg =
-	    messages.at(prefixMessage) + suffix->print(ET::fullBracket);
-	QString errMsg = messages.at(errorMessage);
+	QString reqMsg = prefixMessage + suffix->print(ET::fullBracket);
 
 	LogicStatement *input = nullptr;
 	while (input == nullptr) {
 		QString inputStr =
-		    ReplacementInputDialog::getString(reqMsg, errMsg, this);
+		    ReplacementInputDialog::getString(reqMsg, errorMessage, this);
 		input = AST::parse(inputStr);
 	}
 

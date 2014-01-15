@@ -35,12 +35,11 @@ class SolutionTabWidget : public QWidget
 	explicit SolutionTabWidget(QFile *f, QWidget *parent = 0);
 	~SolutionTabWidget();
 
-	void redraw() const;
+	void redraw();
 	void undo();
 	void redo();
-	LogicStatement *getReplacement(const Message prefixMessage,
-	                               Variable *suffix,
-	                               const Message errorMessage);
+	LogicStatement *getReplacement(QString &prefixMessage, Variable *suffix,
+	                               QString &errorMessage);
 
 	void saveToFile(QFile *f);
 

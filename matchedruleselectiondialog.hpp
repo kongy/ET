@@ -31,7 +31,7 @@ signals:
 slots:
 	void onFromChosen();
 	void onToChosen();
-	void onButtonBoxClicked(QAbstractButton* btn);
+	void onButtonBoxClicked(QAbstractButton *btn);
 };
 
 #endif // MATCHEDRULESELECTIONDIALOG_HPP

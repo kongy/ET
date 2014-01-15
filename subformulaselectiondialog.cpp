@@ -3,6 +3,7 @@
 #include "subformulaselectiondialog.hpp"
 #include "ui_subformulaselectiondialog.h"
 
+#include <QDebug>
 #include <QLabel>
 #include <QPair>
 
@@ -14,6 +15,8 @@ SubformulaSelectionDialog::SubformulaSelectionDialog(
       fullFormula(formula)
 {
 	ui->setupUi(this);
+
+	qDebug() << parent;
 
 	for (QPair<QString, AST::LogicStatement *> i :
 	     formula->getStringMapping(ET::fullBracket)) {
