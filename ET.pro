@@ -11,8 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ET
 TEMPLATE = app
 
-VERSION = Alpha
-DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+VERSION = Beta1
 
 greaterThan(QT_MAJOR_VERSION, 4) {
         CONFIG += c++11

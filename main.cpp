@@ -6,6 +6,8 @@
 #include <QLocale>
 #include <QTranslator>
 
+#define APP_VERSION "Beta 1"
+
 bool ET::fullBracket;
 EquivalenceEngine *ET::eqEng;
 
