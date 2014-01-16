@@ -180,7 +180,7 @@ void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula)
 {
 	model->add(isForward, formula);
 	redraw();
-	if(model->isDuplicate(formula, isForward)) {
+	if (model->isDuplicate(formula, isForward)) {
 		QMessageBox msgBox;
 		msgBox.setText("The formula is seen before, you are wasting time.");
 		msgBox.exec();

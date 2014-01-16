@@ -117,9 +117,9 @@ void solutionModel::redo()
 bool solutionModel::isDuplicate(LogicStatement *lstat, bool isForward)
 {
 	QStack<LogicStatement *> *tostack =
-		isForward ? &forwardStack : &backwardStack;
-	for(LogicStatement *l : *tostack) {
-		if(l->equals(lstat)) {
+	    isForward ? &forwardStack : &backwardStack;
+	for (LogicStatement *l : *tostack) {
+		if (l->equals(lstat)) {
 			return true;
 		}
 	}

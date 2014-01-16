@@ -15,6 +15,9 @@ FormulaReplacementDialog::FormulaReplacementDialog(
 {
 	ui->setupUi(this);
 
+	QString s = QString("Choose a rule to apply\nCurrent subformula is: ")
+	                .append(subformula->print(ET::fullBracket));
+	ui->instructionLabel->setText(s);
 	QVector<LogicSet *> *sl = ET::eqEng->match(subformula);
 	for (LogicSet *l : *sl) {
 		RulePushButton *w =

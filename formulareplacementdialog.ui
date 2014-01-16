@@ -18,11 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="instructionLabel">
-     <property name="text">
-      <string>Choose the rule to apply</string>
-     </property>
-    </widget>
+    <widget class="QLabel" name="instructionLabel"/>
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout"/>
