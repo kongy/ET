@@ -114,6 +114,18 @@ void solutionModel::redo()
 	undoStack.push(o);
 }
 
+bool solutionModel::isDuplicate(LogicStatement *lstat, bool isForward)
+{
+	QStack<LogicStatement *> *tostack =
+		isForward ? &forwardStack : &backwardStack;
+	for(LogicStatement *l : *tostack) {
+		if(l->equals(lstat)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool solutionModel::proofFinished()
 {
 	return forwardStack.top()->equals(backwardStack.top());

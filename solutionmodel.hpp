@@ -33,6 +33,7 @@ class solutionModel
 	void remove(AST::LogicStatement *item);
 
 	bool proofFinished();
+	bool isDuplicate(AST::LogicStatement* lsta, bool isForward);
 
 	void saveToFile(QFile *f);
 
