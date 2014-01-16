@@ -6,6 +6,7 @@
 #include "formulareplacementdialog.hpp"
 #include "ui_solutiontabwidget.h"
 
+#include <QClipboard>
 #include <QDebug>
 #include <QMenu>
 #include <QMessageBox>
@@ -223,7 +224,8 @@ void SolutionTabWidget::ShowContextMenu(const QPoint &point)
 	if (selectedItem) {
 		FormulaWidgetItem *fitem = static_cast<FormulaWidgetItem *>(item);
 		if (selectedItem->text() == "Copy") {
-			qDebug() << "Copy" << fitem->lstat->print(ET::fullBracket);
+			QApplication::clipboard()->setText(
+			    fitem->lstat->print(ET::fullBracket));
 		} else if (selectedItem->text() == "Remove") {
 			qDebug() << "Remove" << fitem->lstat->print(ET::fullBracket);
 		}
