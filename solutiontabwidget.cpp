@@ -88,14 +88,19 @@ void SolutionTabWidget::redraw()
 		        SLOT(lineSelected(QListWidgetItem *)));
 	} else {
 		while (forwardStackIt.hasNext()) {
-			ui->listWidget->addItem(
-			    forwardStackIt.next()->print(ET::fullBracket).append("\n"));
+			LogicStatement *lstat = forwardStackIt.next();
+			FormulaWidgetItem *w = new FormulaWidgetItem(
+				lstat->print(ET::fullBracket).append("\n"), lstat,
+				ui->listWidget);
+			ui->listWidget->addItem(w);
 		}
 		backwardStackIt.previous();
 		while (backwardStackIt.hasPrevious()) {
-			ui->listWidget->addItem(
-			    backwardStackIt.previous()->print(ET::fullBracket).append(
-			        "\n"));
+			LogicStatement *lstat = backwardStackIt.previous();
+			FormulaWidgetItem *w = new FormulaWidgetItem(
+				lstat->print(ET::fullBracket).append("\n"), lstat,
+				ui->listWidget);
+			ui->listWidget->addItem(w);
 		}
 		QMessageBox msgBox(this);
 		msgBox.setText("Proof Finished");
