@@ -41,6 +41,7 @@ class SolutionTabWidget : public QWidget
 	                               QString &errorMessage);
 
 	void saveToFile(QFile *f);
+	void saveRule();
 
 signals:
 	void lineSelected(AST::LogicStatement *expr);

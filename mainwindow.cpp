@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->actionOpen_Solution, SIGNAL(triggered()), this,
 	        SLOT(openFromFile()));
 	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveToFile()));
+	connect(ui->actionSave_as_user_rule, SIGNAL(triggered()), this,
+	        SLOT(saveRule()));
 	connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeTab()));
 	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -209,4 +211,12 @@ void MainWindow::saveToFile()
 	}
 	saveSolutionTab(&f);
 	f.close();
+}
+
+void MainWindow::saveRule()
+{
+	QWidget *curWidget = ui->tabWidget->currentWidget();
+	if (typeid(*curWidget) == typeid(SolutionTabWidget)) {
+		static_cast<SolutionTabWidget *>(curWidget)->saveRule();
+	}
 }

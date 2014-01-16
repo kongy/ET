@@ -38,6 +38,7 @@ slots:
 	void closeTab();
 	void openFromFile();
 	void saveToFile();
+	void saveRule();
 };
 
 #endif // MAINWINDOW_HPP

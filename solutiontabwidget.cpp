@@ -242,3 +242,11 @@ void SolutionTabWidget::ShowContextMenu(const QPoint &point)
 		}
 	}
 }
+
+void SolutionTabWidget::saveRule()
+{
+	if (model->proofFinished()) {
+		ET::eqEng->addNewPropositionalEquivalence(model->forwardStack.first(),
+		                                          model->backwardStack.first());
+	}
+}

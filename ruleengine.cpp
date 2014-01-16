@@ -385,7 +385,7 @@ IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables)
 	short asciiCode = INITIAL_CHARACTER;
 
 	for (LogicStatement *statement : *rawVariables->getSet()) {
-		idTable->add(dynamic_cast<Variable *>(statement),
+		idTable->add(dynamic_cast<Variable *>(statement->clone()),
 		             asciiToVariable(asciiCode));
 		++asciiCode;
 	}
