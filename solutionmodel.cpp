@@ -1,6 +1,7 @@
 #include "solutionmodel.hpp"
 
 #include <QTextStream>
+#include <QDebug>
 
 using AST::LogicStatement;
 
@@ -55,6 +56,26 @@ void solutionModel::remove(bool forward, int n)
 		removedlist.append(stack->pop());
 	}
 	undoStack.push(new Operation{ false, forward, removedlist });
+}
+
+void solutionModel::remove(LogicStatement *item)
+{
+	int row;
+	bool isForward;
+	if ((row = forwardStack.indexOf(item)) != -1) {
+		isForward = true;
+	} else if ((row = backwardStack.indexOf(item)) != -1) {
+		isForward = false;
+	}
+	if (row == 0) {
+		// Cannot remove begin/end formulae
+		return;
+	}
+	if (row > 0) {
+		remove(isForward, row);
+		return;
+	}
+	qWarning() << "Removing a non-existant LogicStatement from model";
 }
 
 void solutionModel::undo()

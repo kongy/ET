@@ -30,6 +30,7 @@ class solutionModel
 	void redo();
 	void add(bool forward, AST::LogicStatement *formula);
 	void remove(bool forward, int n);
+	void remove(AST::LogicStatement *item);
 
 	bool proofFinished();
 

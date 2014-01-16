@@ -208,7 +208,8 @@ LogicStatement *SolutionTabWidget::getReplacement(QString &prefixMessage,
 void SolutionTabWidget::ShowContextMenu(const QPoint &point)
 {
 	QListWidgetItem *item = ui->listWidget->itemAt(point);
-	if (!item) {
+	FormulaWidgetItem *fitem = dynamic_cast<FormulaWidgetItem *>(item);
+	if (!fitem) {
 		// No item under point
 		return;
 	}
@@ -222,12 +223,12 @@ void SolutionTabWidget::ShowContextMenu(const QPoint &point)
 	QAction *selectedItem = menu.exec(globalPos);
 
 	if (selectedItem) {
-		FormulaWidgetItem *fitem = static_cast<FormulaWidgetItem *>(item);
 		if (selectedItem->text() == "Copy") {
 			QApplication::clipboard()->setText(
 			    fitem->lstat->print(ET::fullBracket));
 		} else if (selectedItem->text() == "Remove") {
-			qDebug() << "Remove" << fitem->lstat->print(ET::fullBracket);
+			model->remove(fitem->lstat);
+			redraw();
 		}
 	}
 }
