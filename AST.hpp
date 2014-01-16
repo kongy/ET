@@ -96,8 +96,8 @@ class LogicStatement
 
 	/* Forms a set of variables that are completely bounded, not free in any
 	 * part of rootStatement */
-	virtual void candidateBoundVariables(LogicStatement *rootStatement,
-	                                     LogicSet *boundSet) = 0;
+	virtual void rejectionBoundVariables(LogicStatement *rootStatement,
+	                                     LogicSet *rejectionSet) = 0;
 
 	/* Used in the context of rule, infact for the Leibniz rule only */
 	void setRuleType(bool isLeibnizRule);
@@ -162,7 +162,7 @@ class Truth : public LogicStatement
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *, LogicSet *);
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
 	                                    EquivalenceUtility *);
@@ -187,7 +187,7 @@ class Falsity : public LogicStatement
 	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
 	bool variableBounded(Variable *);
 	void collectFreeVariable(Variable *, QVector<Variable *> *);
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *, LogicSet *);
 	bool notOccur(Variable *);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
 	                                    EquivalenceUtility *);
@@ -239,7 +239,7 @@ class Variable : public LogicStatement
 	void setBoundedVariable(QString name);
 	Variable *getFreeVariable();
 	Variable *getBoundedVariable();
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
 	bool notOccur(Variable *var);
 	void setMayOccurVariable(QString name);
 	void setNotOccurVariable(QString name);
@@ -279,8 +279,8 @@ class UnaryOpStatement : public LogicStatement
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable,
 	                         QVector<Variable *> *collection);
-	void candidateBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *boundSet);
+	void rejectionBoundVariables(LogicStatement *rootStatement,
+	                             LogicSet *rejectionSet);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
 	                                    EquivalenceUtility *matchingUtility);
@@ -332,8 +332,8 @@ class BinaryOpStatement : public LogicStatement
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable,
 	                         QVector<Variable *> *collection);
-	void candidateBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *boundSet);
+	void rejectionBoundVariables(LogicStatement *rootStatement,
+	                             LogicSet *rejectionSet);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
 	                                    EquivalenceUtility *matchingUtility);
@@ -441,8 +441,8 @@ class ForAllStatement : public FirstOrderStatement
 	bool equals(LogicStatement *);
 	LogicStatement *clone();
 	bool operator==(LogicStatement &);
-	void candidateBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *boundSet);
+	void rejectionBoundVariables(LogicStatement *rootStatement,
+	                             LogicSet *rejectionSet);
 	bool match(LogicStatement *matchingStatement,
 	           EquivalenceUtility *matchingUtility);
 	LogicStatement *replace(IDTable *idTable);
@@ -480,8 +480,8 @@ class ThereExistsStatement : public FirstOrderStatement
 	bool equals(LogicStatement *);
 	LogicStatement *clone();
 	bool operator==(LogicStatement &);
-	void candidateBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *boundSet);
+	void rejectionBoundVariables(LogicStatement *rootStatement,
+	                             LogicSet *rejectionSet);
 	bool match(LogicStatement *matchingStatement,
 	           EquivalenceUtility *matchingUtility);
 	LogicStatement *replace(IDTable *idTable);
@@ -524,7 +524,7 @@ class Parameters : public LogicStatement
 	bool variableBounded(Variable *boundedVariable);
 	void collectFreeVariable(Variable *freeVariable,
 	                         QVector<Variable *> *collection);
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
 	bool notOccur(Variable *var);
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
 	                                    EquivalenceUtility *matchingUtility);
@@ -557,7 +557,7 @@ class PredicateSymbolStatement : public FirstOrderStatement
 	bool equals(LogicStatement *);
 	LogicStatement *clone();
 	bool operator==(LogicStatement &);
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
 	bool match(LogicStatement *matchingStatement,
 	           EquivalenceUtility *matchingUtility);
 	LogicStatement *replace(IDTable *idTable);
@@ -592,7 +592,7 @@ class EqualityStatement : public FirstOrderStatement
 	bool equals(LogicStatement *);
 	LogicStatement *clone();
 	bool operator==(LogicStatement &);
-	void candidateBoundVariables(LogicStatement *, LogicSet *);
+	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
 	bool match(LogicStatement *matchingStatement,
 	           EquivalenceUtility *matchingUtility);
 	LogicStatement *replace(IDTable *idTable);

@@ -180,7 +180,7 @@ void Truth::collectFreeVariable(Variable *, QVector<Variable *> *)
 {
 }
 
-void Truth::candidateBoundVariables(LogicStatement *, LogicSet *)
+void Truth::rejectionBoundVariables(LogicStatement *, LogicSet *)
 {
 }
 
@@ -280,7 +280,7 @@ void Falsity::collectFreeVariable(Variable *, QVector<Variable *> *)
 {
 }
 
-void Falsity::candidateBoundVariables(LogicStatement *, LogicSet *)
+void Falsity::rejectionBoundVariables(LogicStatement *, LogicSet *)
 {
 }
 
@@ -433,13 +433,13 @@ bool Variable::match(LogicStatement *matchingStatement,
 			/* Mapping not known, need to find possible candidate for the
 			 * mapping */
 		} else {
-			/* Initialise candidate set with its representitive identifier */
-			matchingUtility->initCandidateBoundVariableSet(boundedVariable);
+			/* Initialise rejection set with its representitive identifier */
+			matchingUtility->initRejectionBoundVariableSet(boundedVariable);
 
 			/* Log all possible bound candidates */
-			matchingStatement->candidateBoundVariables(
+			matchingStatement->rejectionBoundVariables(
 			    matchingStatement,
-			    matchingUtility->getCandidateBoundVariableSet());
+			    matchingUtility->getRejectionBoundVariableSet());
 		}
 		/* OCCUR_FREE */
 	} else if (freeVariable != nullptr) {
@@ -523,8 +523,11 @@ Variable *Variable::getFreeVariable()
 	return freeVariable;
 }
 
-void Variable::candidateBoundVariables(LogicStatement *, LogicSet *)
+void Variable::rejectionBoundVariables(LogicStatement *root,
+                                       LogicSet *rejectionSet)
 {
+	if (!root->variableBounded(this))
+		rejectionSet->add(this);
 }
 
 bool Variable::notOccur(Variable *var)
@@ -700,10 +703,10 @@ void UnaryOpStatement::collectFreeVariable(Variable *freeVariable,
 	getStatement()->collectFreeVariable(freeVariable, collection);
 }
 
-void UnaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement,
-                                               LogicSet *boundSet)
+void UnaryOpStatement::rejectionBoundVariables(LogicStatement *rootStatement,
+                                               LogicSet *rejectionSet)
 {
-	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+	getStatement()->rejectionBoundVariables(rootStatement, rejectionSet);
 }
 
 bool UnaryOpStatement::notOccur(Variable *var)
@@ -923,11 +926,11 @@ void BinaryOpStatement::collectFreeVariable(Variable *freeVariable,
 	getRightStatement()->collectFreeVariable(freeVariable, collection);
 }
 
-void BinaryOpStatement::candidateBoundVariables(LogicStatement *rootStatement,
-                                                LogicSet *boundSet)
+void BinaryOpStatement::rejectionBoundVariables(LogicStatement *rootStatement,
+                                                LogicSet *rejectionSet)
 {
-	getLeftStatement()->candidateBoundVariables(rootStatement, boundSet);
-	getRightStatement()->candidateBoundVariables(rootStatement, boundSet);
+	getLeftStatement()->rejectionBoundVariables(rootStatement, rejectionSet);
+	getRightStatement()->rejectionBoundVariables(rootStatement, rejectionSet);
 }
 
 bool BinaryOpStatement::notOccur(Variable *var)
@@ -1287,15 +1290,10 @@ bool ForAllStatement::operator==(LogicStatement &other)
 	           *dynamic_cast<ForAllStatement &>(other).getStatement();
 }
 
-void ForAllStatement::candidateBoundVariables(LogicStatement *rootStatement,
-                                              LogicSet *boundSet)
+void ForAllStatement::rejectionBoundVariables(LogicStatement *rootStatement,
+                                              LogicSet *rejectionSet)
 {
-	Variable *quantifier = getQuantifier();
-
-	if (rootStatement->variableBounded(quantifier))
-		boundSet->add(quantifier);
-
-	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+	getStatement()->rejectionBoundVariables(rootStatement, rejectionSet);
 }
 
 bool ForAllStatement::match(LogicStatement *matchingStatement,
@@ -1319,8 +1317,8 @@ bool ForAllStatement::match(LogicStatement *matchingStatement,
 	    loggedBoundVariable->equals(getQuantifier())) {
 		/* Current quantifier in actual statement is not matched to any
 		 * candidate */
-		if (!matchingUtility->inCandidateBoundVariableSet(
-		         castedMatchingStatement->getQuantifier()))
+		if (matchingUtility->inRejectionBoundVariableSet(
+		        castedMatchingStatement->getQuantifier()))
 			return false;
 
 		/* When control reaches this block, the binding has been confirmed and
@@ -1528,15 +1526,10 @@ bool ThereExistsStatement::operator==(LogicStatement &other)
 }
 
 void
-ThereExistsStatement::candidateBoundVariables(LogicStatement *rootStatement,
-                                              LogicSet *boundSet)
+ThereExistsStatement::rejectionBoundVariables(LogicStatement *rootStatement,
+                                              LogicSet *rejectionSet)
 {
-	Variable *quantifier = getQuantifier();
-
-	if (rootStatement->variableBounded(quantifier))
-		boundSet->add(quantifier);
-
-	getStatement()->candidateBoundVariables(rootStatement, boundSet);
+	getStatement()->rejectionBoundVariables(rootStatement, rejectionSet);
 }
 
 bool ThereExistsStatement::match(LogicStatement *matchingStatement,
@@ -1560,8 +1553,8 @@ bool ThereExistsStatement::match(LogicStatement *matchingStatement,
 	    loggedBoundVariable->equals(getQuantifier())) {
 		/* Current quantifier in actual statement is not matched to any
 		 * candidate */
-		if (!matchingUtility->inCandidateBoundVariableSet(
-		         castedMatchingStatement->getQuantifier()))
+		if (matchingUtility->inRejectionBoundVariableSet(
+		        castedMatchingStatement->getQuantifier()))
 			return false;
 
 		/* When control reaches this block, the binding has been confirmed and
@@ -1873,8 +1866,15 @@ void Parameters::collectFreeVariable(Variable *freeVariable,
 		remainingParameters->collectFreeVariable(freeVariable, collection);
 }
 
-void Parameters::candidateBoundVariables(LogicStatement *, LogicSet *)
+void Parameters::rejectionBoundVariables(LogicStatement *root,
+                                         LogicSet *rejectionSet)
 {
+	getParameter()->rejectionBoundVariables(root, rejectionSet);
+
+	Parameters *remainingParams = getRemainingParameters();
+
+	if (remainingParams != nullptr)
+		remainingParams->rejectionBoundVariables(root, rejectionSet);
 }
 
 bool Parameters::notOccur(Variable *var)
@@ -2053,9 +2053,10 @@ bool PredicateSymbolStatement::operator==(LogicStatement &other)
 	           *dynamic_cast<PredicateSymbolStatement &>(other).getParameters();
 }
 
-void PredicateSymbolStatement::candidateBoundVariables(LogicStatement *,
-                                                       LogicSet *)
+void PredicateSymbolStatement::rejectionBoundVariables(LogicStatement *root,
+                                                       LogicSet *rejectionSet)
 {
+	getParameters()->rejectionBoundVariables(root, rejectionSet);
 }
 
 bool PredicateSymbolStatement::match(LogicStatement *matchingStatement,
@@ -2233,8 +2234,11 @@ bool EqualityStatement::operator==(LogicStatement &other)
 	           *dynamic_cast<EqualityStatement &>(other).getRightVariable();
 }
 
-void EqualityStatement::candidateBoundVariables(LogicStatement *, LogicSet *)
+void EqualityStatement::rejectionBoundVariables(LogicStatement *root,
+                                                LogicSet *rejectionSet)
 {
+	getLeftVariable()->rejectionBoundVariables(root, rejectionSet);
+	getRightVariable()->rejectionBoundVariables(root, rejectionSet);
 }
 
 bool EqualityStatement::match(LogicStatement *matchingStatement,

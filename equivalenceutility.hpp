@@ -26,7 +26,7 @@ class EquivalenceUtility
 	/* Collecting different possible x's in A in a Rule like
 	 * A=FORALL(x)A=THEREEXISTS(x)A where x does not occur free in A and x is
 	 * not matched */
-	LogicSet *candidateBoundVariableSet;
+	LogicSet *rejectionBoundVariableSet;
 
 	/* An identifier for potential candidate for candidateBoundVariableSet,
 	 * usually collected and matched later on */
@@ -36,15 +36,15 @@ class EquivalenceUtility
 	EquivalenceUtility();
 	~EquivalenceUtility();
 	void initFreeVariableList();
-	void initCandidateBoundVariableSet(Variable *boundedVariable);
+	void initRejectionBoundVariableSet(Variable *boundedVariable);
 	QVector<Variable *> *getFreeVariableList();
 	Variable *getBoundVariable();
-	LogicSet *getCandidateBoundVariableSet();
+	LogicSet *getRejectionBoundVariableSet();
 	IDTable *getIDTable();
 	void resetAuxiliaryItems();
 	void deleteAuxiliaryItems();
 	void clear();
-	bool inCandidateBoundVariableSet(Variable *var);
+	bool inRejectionBoundVariableSet(Variable *var);
 	bool inFreeVariableListReferencewise(Variable *var);
 };
 

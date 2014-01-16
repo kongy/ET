@@ -90,16 +90,16 @@ void SolutionTabWidget::redraw()
 		while (forwardStackIt.hasNext()) {
 			LogicStatement *lstat = forwardStackIt.next();
 			FormulaWidgetItem *w = new FormulaWidgetItem(
-				lstat->print(ET::fullBracket).append("\n"), lstat,
-				ui->listWidget);
+			    lstat->print(ET::fullBracket).append("\n"), lstat,
+			    ui->listWidget);
 			ui->listWidget->addItem(w);
 		}
 		backwardStackIt.previous();
 		while (backwardStackIt.hasPrevious()) {
 			LogicStatement *lstat = backwardStackIt.previous();
 			FormulaWidgetItem *w = new FormulaWidgetItem(
-				lstat->print(ET::fullBracket).append("\n"), lstat,
-				ui->listWidget);
+			    lstat->print(ET::fullBracket).append("\n"), lstat,
+			    ui->listWidget);
 			ui->listWidget->addItem(w);
 		}
 		QMessageBox msgBox(this);
