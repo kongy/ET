@@ -178,9 +178,10 @@ void SolutionTabWidget::matchedRuleSelected(Rule *from, Rule *to)
 
 void SolutionTabWidget::newFormulaGenerated(AST::LogicStatement *formula)
 {
+	bool isDuplicate = model->isDuplicate(formula, isForward);
 	model->add(isForward, formula);
 	redraw();
-	if (model->isDuplicate(formula, isForward)) {
+	if (isDuplicate) {
 		QMessageBox msgBox;
 		msgBox.setText("The formula is seen before, you are wasting time.");
 		msgBox.exec();
