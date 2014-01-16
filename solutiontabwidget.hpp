@@ -45,6 +45,9 @@ class SolutionTabWidget : public QWidget
 signals:
 	void lineSelected(AST::LogicStatement *expr);
 
+  private:
+	class FormulaWidgetItem;
+
   private
 slots:
 	void lineSelected(QListWidgetItem *item);
@@ -52,6 +55,8 @@ slots:
 	void ruleSelected(LogicSet *ruleset);
 	void matchedRuleSelected(Rule *from, Rule *to);
 	void newFormulaGenerated(AST::LogicStatement *formula);
+
+	void ShowContextMenu(const QPoint &point);
 };
 
 #endif // SOLUTIONTABWIDGET_HPP

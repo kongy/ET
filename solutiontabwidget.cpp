@@ -7,7 +7,19 @@
 #include "ui_solutiontabwidget.h"
 
 #include <QDebug>
+#include <QMenu>
 #include <QMessageBox>
+
+class SolutionTabWidget::FormulaWidgetItem : public QListWidgetItem
+{
+  public:
+	LogicStatement *lstat;
+	FormulaWidgetItem(const QString &text, LogicStatement *lstat,
+	                  QListWidget *view = 0)
+	    : QListWidgetItem(text, view), lstat(lstat)
+	{
+	}
+};
 
 SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin,
                                      AST::LogicStatement *end, QWidget *parent)
@@ -15,6 +27,10 @@ SolutionTabWidget::SolutionTabWidget(AST::LogicStatement *begin,
       model(new solutionModel(begin, end))
 {
 	ui->setupUi(this);
+
+	ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ui->listWidget, SIGNAL(customContextMenuRequested(const QPoint &)),
+	        this, SLOT(ShowContextMenu(const QPoint &)));
 
 	redraw();
 }
@@ -24,6 +40,10 @@ SolutionTabWidget::SolutionTabWidget(QFile *f, QWidget *parent)
       model(new solutionModel(f))
 {
 	ui->setupUi(this);
+
+	ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ui->listWidget, SIGNAL(customContextMenuRequested(QPoint)), this,
+	        SLOT(ShowContextMenu(QPoint)));
 
 	redraw();
 }
@@ -49,14 +69,19 @@ void SolutionTabWidget::redraw()
 
 	if (!proofFinished) {
 		while (forwardStackIt.hasNext()) {
-			AST::LogicStatement *i = forwardStackIt.next();
-			ui->listWidget->addItem(i->print(ET::fullBracket).append("\n"));
+			LogicStatement *lstat = forwardStackIt.next();
+			FormulaWidgetItem *w = new FormulaWidgetItem(
+			    lstat->print(ET::fullBracket).append("\n"), lstat,
+			    ui->listWidget);
+			ui->listWidget->addItem(w);
 		}
 		ui->listWidget->addItem("\n");
 		while (backwardStackIt.hasPrevious()) {
-			ui->listWidget->addItem(
-			    backwardStackIt.previous()->print(ET::fullBracket).append(
-			        "\n"));
+			LogicStatement *lstat = backwardStackIt.previous();
+			FormulaWidgetItem *w = new FormulaWidgetItem(
+			    lstat->print(ET::fullBracket).append("\n"), lstat,
+			    ui->listWidget);
+			ui->listWidget->addItem(w);
 		}
 		connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this,
 		        SLOT(lineSelected(QListWidgetItem *)));
@@ -177,4 +202,30 @@ LogicStatement *SolutionTabWidget::getReplacement(QString &prefixMessage,
 	}
 
 	return input;
+}
+
+void SolutionTabWidget::ShowContextMenu(const QPoint &point)
+{
+	QListWidgetItem *item = ui->listWidget->itemAt(point);
+	if (!item) {
+		// No item under point
+		return;
+	}
+
+	QMenu menu;
+	QPoint globalPos = ui->listWidget->viewport()->mapToGlobal(point);
+
+	menu.addAction("Copy");
+	menu.addAction("Remove");
+
+	QAction *selectedItem = menu.exec(globalPos);
+
+	if (selectedItem) {
+		FormulaWidgetItem *fitem = static_cast<FormulaWidgetItem *>(item);
+		if (selectedItem->text() == "Copy") {
+			qDebug() << "Copy" << fitem->lstat->print(ET::fullBracket);
+		} else if (selectedItem->text() == "Remove") {
+			qDebug() << "Remove" << fitem->lstat->print(ET::fullBracket);
+		}
+	}
 }
