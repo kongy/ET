@@ -149,16 +149,16 @@ Rule *RuleEngine::processVariableStatement(QXmlStreamReader *xml)
 
 	Variable *statement = new Variable(varName);
 
-	if (freeVariableName != NONE)
+	if (!freeVariableName.isEmpty())
 		statement->setFreeVariable(freeVariableName);
 
-	if (boundVariableName != NONE)
+	if (!boundVariableName.isEmpty())
 		statement->setBoundedVariable(boundVariableName);
 
-	if (notOccurVariableName != NONE)
+	if (!notOccurVariableName.isEmpty())
 		statement->setNotOccurVariable(notOccurVariableName);
 
-	if (mayOccurVariableName != NONE)
+	if (!mayOccurVariableName.isEmpty())
 		statement->setMayOccurVariable(mayOccurVariableName);
 
 	return statement;
@@ -314,7 +314,7 @@ LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml)
 		if (xml->name() == "LogicStatement" &&
 		    xml->tokenType() == QXmlStreamReader::StartElement) {
 			isLeibnizRule =
-			    xml->attributes().value("FORWARD").toString() != NONE;
+			    !xml->attributes().value("FORWARD").toString().isEmpty();
 			rule = processLogicStatement(xml);
 			rule->setRuleType(isLeibnizRule);
 			ruleSet->add(rule);
