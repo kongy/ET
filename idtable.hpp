@@ -19,6 +19,8 @@ class IDTable
   public:
 	IDTable();
 
+	~IDTable();
+
 	/* Adding a key value pair that maps identifiers for rules to the filtered
 	 * version of the logicstatement which user provided */
 	bool add(AST::Variable *key, AST::LogicStatement *value);

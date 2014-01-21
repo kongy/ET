@@ -7,6 +7,11 @@ IDTable::IDTable()
 	id_table = new QVector<QPair<Variable *, LogicStatement *> *>();
 }
 
+IDTable::~IDTable() {
+	for (QPair<Variable *, LogicStatement *> *keyValuePair : *id_table)
+		delete keyValuePair;
+}
+
 bool IDTable::add(Variable *key, LogicStatement *value)
 {
 	for (QPair<Variable *, LogicStatement *> *keyValuePair : *id_table) {
