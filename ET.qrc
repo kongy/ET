@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>equivalences.txt</file>
         <file>equivalences.xml</file>
     </qresource>
 </RCC>

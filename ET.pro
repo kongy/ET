@@ -73,8 +73,7 @@ LIBS += -ll -ly
 
 FLEXSOURCES = lexer.l
 BISONSOURCES = parser.y
-EQUIVALENCESOURCES += equivalences.txt \
-                      equivalences.xml
+EQUIVALENCESOURCES += equivalences.xml
 
 OTHER_FILES +=  \
     $$FLEXSOURCES \

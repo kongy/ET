@@ -112,38 +112,6 @@ void RuleEngine::parseRule(QString fromFilePath,
 	file.close();
 }
 
-QVector<LogicSet *> *RuleEngine::parseRuleTxt()
-{
-	QFile file(":/equivalences.txt");
-
-	if (!file.open(QIODevice::ReadOnly)) {
-		QMessageBox::critical(0, "Error", file.errorString());
-		return nullptr;
-	}
-
-	QTextStream in(&file);
-
-	QString line;
-	QStringList fields;
-	LogicSet *rule_set;
-	QVector<LogicSet *> *rules = new QVector<LogicSet *>();
-
-	while (!in.atEnd()) {
-
-		line = in.readLine();
-		fields = line.split('\t');
-
-		rule_set = new LogicSet();
-		rules->push_back(rule_set);
-
-		for (QString rule : fields)
-			rule_set->add(parse(rule));
-	}
-
-	file.close();
-	return rules;
-}
-
 QVector<LogicSet *> *RuleEngine::parseRuleXml()
 {
 	parseRule(USER_DEFINED_RULE_PATH, userDefinedRules);
