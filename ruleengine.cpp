@@ -145,8 +145,9 @@ Rule *RuleEngine::processVariableStatement(QXmlStreamReader *xml)
 	    xml->attributes().value("NOT_OCCUR").toString();
 	QString mayOccurVariableName =
 	    xml->attributes().value("MAY_OCCUR").toString();
+	QString varName = xml->readElementText();
 
-	Variable *statement = new Variable(new QString(xml->readElementText()));
+	Variable *statement = new Variable(varName);
 
 	if (freeVariableName != NONE)
 		statement->setFreeVariable(freeVariableName);
@@ -372,8 +373,6 @@ Variable *RuleEngine::asciiToVariable(const short asciiCode)
 		stringName += character;
 	} while (--times >= 0);
 
-	auto name = new QString(stringName);
-	auto variable = new Variable(name);
-	delete name;
+	auto variable = new Variable(stringName);
 	return variable;
 }

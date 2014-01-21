@@ -321,7 +321,7 @@ bool Falsity::validFirstOrderStatement()
 }
 
 /* Variable Class */
-Variable::Variable(QString *name)
+Variable::Variable(QString &name)
 {
 	setName(name);
 	freeVariable = nullptr;
@@ -350,14 +350,14 @@ QString Variable::print(bool)
 	return getName();
 }
 
-QString Variable::getName()
+QString &Variable::getName()
 {
 	return name;
 }
 
-void Variable::setName(QString *name)
+void Variable::setName(QString name)
 {
-	this->name = *name;
+	this->name = name;
 }
 
 bool Variable::isFirstOrderLogic()
@@ -479,7 +479,7 @@ LogicStatement *Variable::replace(IDTable *idTable)
 
 LogicStatement *Variable::clone()
 {
-	return new Variable(new QString(getName()));
+	return new Variable(getName());
 }
 
 bool Variable::operator==(LogicStatement &other)
@@ -513,12 +513,12 @@ void Variable::collectFreeVariable(Variable *freeVariable,
 
 void Variable::setBoundedVariable(QString name)
 {
-	boundedVariable = new Variable(&name);
+	boundedVariable = new Variable(name);
 }
 
 void Variable::setFreeVariable(QString name)
 {
-	freeVariable = new Variable(&name);
+	freeVariable = new Variable(name);
 }
 
 Variable *Variable::getBoundedVariable()
@@ -543,14 +543,14 @@ bool Variable::notOccur(Variable *var)
 	return !this->equals(var);
 }
 
-void Variable::setMayOccurVariable(QString name)
+void Variable::setMayOccurVariable(QString &name)
 {
-	mayOccurVariable = new Variable(&name);
+	mayOccurVariable = new Variable(name);
 }
 
-void Variable::setNotOccurVariable(QString name)
+void Variable::setNotOccurVariable(QString &name)
 {
-	notOccurVariable = new Variable(&name);
+	notOccurVariable = new Variable(name);
 }
 
 Variable *Variable::getMayOccurVariable()
@@ -1149,16 +1149,12 @@ bool ImpliesStatement::match(LogicStatement *matchingStatement,
 		 * for x,y,A and B */
 		if (matched) {
 			IDTable *idTable = matchingUtility->getIDTable();
-			auto A = new QString("A");
-			auto B = new QString("B");
-			auto VAR_A = new Variable(A);
-			auto VAR_B = new Variable(B);
-			LogicStatement *matching_A = idTable->valueOf(VAR_A);
-			LogicStatement *matching_B = idTable->valueOf(VAR_B);
-			delete A;
-			delete B;
-			delete VAR_A;
-			delete VAR_B;
+			QString A("A");
+			QString B("B");
+			Variable VAR_A(A);
+			Variable VAR_B(B);
+			LogicStatement *matching_A = idTable->valueOf(&VAR_A);
+			LogicStatement *matching_B = idTable->valueOf(&VAR_B);
 
 			/* When one or more free x gets replaced by y, Leibniz rule matched,
 			 * if none gets replaced or structural

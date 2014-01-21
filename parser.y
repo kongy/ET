@@ -105,7 +105,7 @@ LogicStatement : LBRACKET LogicStatement RBRACKET
                ;
 
 Variable : IDENTIFIER
-         { $$ = new AST::Variable($1);
+         { $$ = new AST::Variable(*$1);
            delete $1;
          }
          ;

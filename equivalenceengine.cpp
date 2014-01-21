@@ -102,12 +102,11 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 
 		Variable *userdefinedVariable =
 		    getQualifiedRenameVariable(formula, freeVariableList->front(), UI);
-		QString *newName = new QString(userdefinedVariable->getName());
+		QString newName(userdefinedVariable->getName());
 
 		for (Variable *freeVariable : *freeVariableList)
 			freeVariable->setName(newName);
 
-		delete newName;
 		delete userdefinedVariable;
 		delete matchingUtility;
 		delete undefinedVariableSet;

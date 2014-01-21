@@ -216,11 +216,11 @@ class Variable : public LogicStatement
 	Variable *mayOccurVariable;
 
   public:
-	Variable(QString *name);
+	Variable(QString &name);
 	~Variable();
-	void setName(QString *);
+	void setName(QString);
 	QString print(bool) override;
-	QString getName();
+	QString &getName();
 	bool isFirstOrderLogic() override;
 	Symbol getSymbol() override;
 
@@ -248,8 +248,8 @@ class Variable : public LogicStatement
 	void rejectionBoundVariables(LogicStatement *root,
 	                             LogicSet *rejectionSet) override;
 	bool notOccur(Variable *var) override;
-	void setMayOccurVariable(QString name);
-	void setNotOccurVariable(QString name);
+	void setMayOccurVariable(QString &name);
+	void setNotOccurVariable(QString &name);
 	Variable *getMayOccurVariable();
 	Variable *getNotOccurVariable();
 	int numberOfLeibnizReplacedVariable(
