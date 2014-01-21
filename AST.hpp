@@ -151,53 +151,55 @@ class LogicStatement
 class Truth : public LogicStatement
 {
   public:
-	QString print(bool);
-	bool isFirstOrderLogic();
-	Symbol getSymbol();
-	bool evaluate();
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
-	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
-	LogicStatement *replace(IDTable *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
-	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
-	bool variableBounded(Variable *);
-	void collectFreeVariable(Variable *, QVector<Variable *> *);
-	void rejectionBoundVariables(LogicStatement *, LogicSet *);
-	bool notOccur(Variable *);
+	QString print(bool) override;
+	bool isFirstOrderLogic() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
+	bool match(LogicStatement *matchingStatement,
+	           EquivalenceUtility *) override;
+	LogicStatement *replace(IDTable *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) override;
+	bool variableBounded(Variable *) override;
+	void collectFreeVariable(Variable *, QVector<Variable *> *) override;
+	void rejectionBoundVariables(LogicStatement *, LogicSet *) override;
+	bool notOccur(Variable *) override;
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	void generateRule(QXmlStreamWriter *out);
-	QString XmlSymbol();
-	bool validFirstOrderStatement();
+	                                    EquivalenceUtility *) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	void generateRule(QXmlStreamWriter *out) override;
+	QString XmlSymbol() override;
+	bool validFirstOrderStatement() override;
 };
 
 class Falsity : public LogicStatement
 {
   public:
-	QString print(bool);
-	bool isFirstOrderLogic();
-	Symbol getSymbol();
-	bool evaluate();
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
-	bool match(LogicStatement *matchingStatement, EquivalenceUtility *);
-	LogicStatement *replace(IDTable *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
-	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
-	bool variableBounded(Variable *);
-	void collectFreeVariable(Variable *, QVector<Variable *> *);
-	void rejectionBoundVariables(LogicStatement *, LogicSet *);
-	bool notOccur(Variable *);
+	QString print(bool) override;
+	bool isFirstOrderLogic() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
+	bool match(LogicStatement *matchingStatement,
+	           EquivalenceUtility *) override;
+	LogicStatement *replace(IDTable *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) override;
+	bool variableBounded(Variable *) override;
+	void collectFreeVariable(Variable *, QVector<Variable *> *) override;
+	void rejectionBoundVariables(LogicStatement *, LogicSet *) override;
+	bool notOccur(Variable *) override;
 	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	void generateRule(QXmlStreamWriter *out);
-	QString XmlSymbol();
-	bool validFirstOrderStatement();
+	                                    EquivalenceUtility *) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	void generateRule(QXmlStreamWriter *out) override;
+	QString XmlSymbol() override;
+	bool validFirstOrderStatement() override;
 };
 
 class Variable : public LogicStatement
@@ -217,44 +219,45 @@ class Variable : public LogicStatement
 	Variable(QString *name);
 	~Variable();
 	void setName(QString *);
-	QString print(bool);
+	QString print(bool) override;
 	QString getName();
-	bool isFirstOrderLogic();
-	Symbol getSymbol();
+	bool isFirstOrderLogic() override;
+	Symbol getSymbol() override;
 
 	/* Used to give variable a boolean value */
 	void setBooleanValue(bool);
-	bool evaluate();
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
+	bool evaluate() override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
+	           EquivalenceUtility *matchingUtility) override;
 	/* Called from cloned version of rule, delete this removes the cloned
 	 * version which is no longer accessible
 	 * because it gets replaced */
-	LogicStatement *replace(IDTable *idTable);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
-	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool);
-	bool variableBounded(Variable *boundedVariable);
+	LogicStatement *replace(IDTable *idTable) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
+	QVector<QPair<QString, LogicStatement *> > getStringMapping(bool) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
+	                         QVector<Variable *> *collection) override;
 	void setFreeVariable(QString name);
 	void setBoundedVariable(QString name);
 	Variable *getFreeVariable();
 	Variable *getBoundedVariable();
-	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
-	bool notOccur(Variable *var);
+	void rejectionBoundVariables(LogicStatement *root,
+	                             LogicSet *rejectionSet) override;
+	bool notOccur(Variable *var) override;
 	void setMayOccurVariable(QString name);
 	void setNotOccurVariable(QString name);
 	Variable *getMayOccurVariable();
 	Variable *getNotOccurVariable();
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	void generateRule(QXmlStreamWriter *out);
-	QString XmlSymbol();
-	bool validFirstOrderStatement();
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	void generateRule(QXmlStreamWriter *out) override;
+	QString XmlSymbol() override;
+	bool validFirstOrderStatement() override;
 };
 
 class UnaryOpStatement : public LogicStatement
@@ -265,47 +268,47 @@ class UnaryOpStatement : public LogicStatement
 	void setStatement(LogicStatement *);
 
   public:
-	QString print(bool);
+	QString print(bool) override;
 	virtual bool isFirstOrderLogic() = 0;
 	LogicStatement *getStatement();
 	virtual Symbol getSymbol() = 0;
 	virtual QString symbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
 	virtual LogicStatement *clone() = 0;
-	bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &) override;
 	virtual ~UnaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
+	                         QVector<Variable *> *collection) override;
 	void rejectionBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *rejectionSet);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
+	                             LogicSet *rejectionSet) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
 	void replaceChildStatement(LogicStatement *oldChildFormula,
-	                           LogicStatement *newChildFormula);
-	void generateRule(QXmlStreamWriter *out);
+	                           LogicStatement *newChildFormula) override;
+	void generateRule(QXmlStreamWriter *out) override;
 	virtual QString XmlSymbol() = 0;
-	bool validFirstOrderStatement();
+	bool validFirstOrderStatement() override;
 };
 
 class NotStatement : public UnaryOpStatement
 {
   public:
 	NotStatement(LogicStatement *);
-	bool isFirstOrderLogic();
-	Symbol getSymbol();
-	QString symbol();
-	bool evaluate();
-	LogicStatement *clone();
-	QString XmlSymbol();
+	bool isFirstOrderLogic() override;
+	Symbol getSymbol() override;
+	QString symbol() override;
+	bool evaluate() override;
+	LogicStatement *clone() override;
+	QString XmlSymbol() override;
 };
 
 class BinaryOpStatement : public LogicStatement
@@ -319,91 +322,91 @@ class BinaryOpStatement : public LogicStatement
 
   public:
 	virtual QString symbol() = 0;
-	bool isFirstOrderLogic();
-	QString print(bool);
+	bool isFirstOrderLogic() override;
+	QString print(bool) override;
 	LogicStatement *getLeftStatement();
 	LogicStatement *getRightStatement();
 	Symbol getSymbol() = 0;
 	bool evaluate() = 0;
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
 	virtual bool match(LogicStatement *matchingStatement,
-	                   EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
+	                   EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
 	virtual LogicStatement *clone() = 0;
-	bool operator==(LogicStatement &);
+	bool operator==(LogicStatement &) override;
 	virtual ~BinaryOpStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
+	                         QVector<Variable *> *collection) override;
 	void rejectionBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *rejectionSet);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
+	                             LogicSet *rejectionSet) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
 	void replaceChildStatement(LogicStatement *oldChildFormula,
-	                           LogicStatement *newChildFormula);
-	void generateRule(QXmlStreamWriter *out);
+	                           LogicStatement *newChildFormula) override;
+	void generateRule(QXmlStreamWriter *out) override;
 	virtual QString XmlSymbol() = 0;
-	bool validFirstOrderStatement();
+	bool validFirstOrderStatement() override;
 };
 
 class AndStatement : public BinaryOpStatement
 {
   public:
 	AndStatement(LogicStatement *, LogicStatement *);
-	QString symbol();
-	Symbol getSymbol();
-	bool evaluate();
-	LogicStatement *clone();
-	QString XmlSymbol();
+	QString symbol() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	LogicStatement *clone() override;
+	QString XmlSymbol() override;
 };
 
 class OrStatement : public BinaryOpStatement
 {
   public:
 	OrStatement(LogicStatement *, LogicStatement *);
-	QString symbol();
-	Symbol getSymbol();
-	bool evaluate();
-	LogicStatement *clone();
-	QString XmlSymbol();
+	QString symbol() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	LogicStatement *clone() override;
+	QString XmlSymbol() override;
 };
 
 class IffStatement : public BinaryOpStatement
 {
   public:
 	IffStatement(LogicStatement *, LogicStatement *);
-	QString symbol();
-	Symbol getSymbol();
-	bool evaluate();
-	LogicStatement *clone();
-	QString XmlSymbol();
+	QString symbol() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	LogicStatement *clone() override;
+	QString XmlSymbol() override;
 };
 
 class ImpliesStatement : public BinaryOpStatement
 {
   public:
 	ImpliesStatement(LogicStatement *, LogicStatement *);
-	QString symbol();
-	Symbol getSymbol();
-	bool evaluate();
-	LogicStatement *clone();
+	QString symbol() override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	LogicStatement *clone() override;
 	/* Added just for Leibniz Rule */
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	QString XmlSymbol();
+	           EquivalenceUtility *matchingUtility) override;
+	QString XmlSymbol() override;
 };
 
 class FirstOrderStatement : public LogicStatement
 {
   public:
 	virtual QString print(bool) = 0;
-	bool isFirstOrderLogic();
+	bool isFirstOrderLogic() override;
 	virtual Symbol getSymbol() = 0;
-	bool evaluate();
+	bool evaluate() override;
 	virtual void collectVariables(QVector<QVector<Variable *> *> *) = 0;
 	virtual bool equals(LogicStatement *) = 0;
 	virtual bool match(LogicStatement *, EquivalenceUtility *) = 0;
@@ -435,33 +438,33 @@ class ForAllStatement : public FirstOrderStatement
 
   public:
 	ForAllStatement(Variable *, LogicStatement *);
-	QString print(bool);
+	QString print(bool) override;
 	LogicStatement *getStatement();
 	Variable *getQuantifier();
-	Symbol getSymbol();
+	Symbol getSymbol() override;
 	~ForAllStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
+	                         QVector<Variable *> *collection) override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
 	void rejectionBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *rejectionSet);
+	                             LogicSet *rejectionSet) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
 	void replaceChildStatement(LogicStatement *oldChildFormula,
-	                           LogicStatement *newChildFormula);
-	QString XmlSymbol();
-	void generateRule(QXmlStreamWriter *out);
-	bool validFirstOrderStatement();
+	                           LogicStatement *newChildFormula) override;
+	QString XmlSymbol() override;
+	void generateRule(QXmlStreamWriter *out) override;
+	bool validFirstOrderStatement() override;
 };
 
 class ThereExistsStatement : public FirstOrderStatement
@@ -475,33 +478,33 @@ class ThereExistsStatement : public FirstOrderStatement
 
   public:
 	ThereExistsStatement(Variable *, LogicStatement *);
-	QString print(bool);
+	QString print(bool) override;
 	LogicStatement *getStatement();
 	Variable *getQuantifier();
-	Symbol getSymbol();
+	Symbol getSymbol() override;
 	~ThereExistsStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
+	                         QVector<Variable *> *collection) override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
 	void rejectionBoundVariables(LogicStatement *rootStatement,
-	                             LogicSet *rejectionSet);
+	                             LogicSet *rejectionSet) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
 	void replaceChildStatement(LogicStatement *oldChildFormula,
-	                           LogicStatement *newChildFormula);
-	QString XmlSymbol();
-	void generateRule(QXmlStreamWriter *out);
-	bool validFirstOrderStatement();
+	                           LogicStatement *newChildFormula) override;
+	QString XmlSymbol() override;
+	void generateRule(QXmlStreamWriter *out) override;
+	bool validFirstOrderStatement() override;
 };
 
 class Parameters : public LogicStatement
@@ -517,31 +520,32 @@ class Parameters : public LogicStatement
 	Parameters(Variable *, Parameters *);
 	Variable *getParameter();
 	Parameters *getRemainingParameters();
-	bool isFirstOrderLogic();
-	QString print(bool);
-	Symbol getSymbol();
-	bool evaluate();
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
+	bool isFirstOrderLogic() override;
+	QString print(bool) override;
+	Symbol getSymbol() override;
+	bool evaluate() override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *clone();
-	LogicStatement *replace(IDTable *idTable);
-	bool operator==(LogicStatement &);
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *clone() override;
+	LogicStatement *replace(IDTable *idTable) override;
+	bool operator==(LogicStatement &) override;
 	~Parameters();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
-	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	QString XmlSymbol();
-	void generateRule(QXmlStreamWriter *out);
-	bool validFirstOrderStatement();
+	                         QVector<Variable *> *collection) override;
+	void rejectionBoundVariables(LogicStatement *root,
+	                             LogicSet *rejectionSet) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	QString XmlSymbol() override;
+	void generateRule(QXmlStreamWriter *out) override;
+	bool validFirstOrderStatement() override;
 };
 
 class PredicateSymbolStatement : public FirstOrderStatement
@@ -556,29 +560,30 @@ class PredicateSymbolStatement : public FirstOrderStatement
 	QString getPredicateSymbolName();
 	Variable *getPredicateSymbol();
 	Parameters *getParameters();
-	QString print(bool);
-	Symbol getSymbol();
+	QString print(bool) override;
+	Symbol getSymbol() override;
 	~PredicateSymbolStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
-	void collectVariables(QVector<QVector<Variable *> *> *);
-	bool equals(LogicStatement *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
-	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
+	                         QVector<Variable *> *collection) override;
+	void collectVariables(QVector<QVector<Variable *> *> *) override;
+	bool equals(LogicStatement *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
+	void rejectionBoundVariables(LogicStatement *root,
+	                             LogicSet *rejectionSet) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	QString XmlSymbol();
-	void generateRule(QXmlStreamWriter *out);
-	bool validFirstOrderStatement();
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	QString XmlSymbol() override;
+	void generateRule(QXmlStreamWriter *out) override;
+	bool validFirstOrderStatement() override;
 };
 
 class EqualityStatement : public FirstOrderStatement
@@ -592,29 +597,30 @@ class EqualityStatement : public FirstOrderStatement
 	EqualityStatement(Variable *, Variable *);
 	Variable *getLeftVariable();
 	Variable *getRightVariable();
-	QString print(bool fullBracket);
-	Symbol getSymbol();
+	QString print(bool fullBracket) override;
+	Symbol getSymbol() override;
 	~EqualityStatement();
 	QVector<QPair<QString, LogicStatement *> >
-	getStringMapping(bool fullBracket);
-	bool variableBounded(Variable *boundedVariable);
+	getStringMapping(bool fullBracket) override;
+	bool variableBounded(Variable *boundedVariable) override;
 	void collectFreeVariable(Variable *freeVariable,
-	                         QVector<Variable *> *collection);
-	void collectVariables(QVector<QVector<Variable *> *> *collection);
-	bool equals(LogicStatement *);
-	LogicStatement *clone();
-	bool operator==(LogicStatement &);
-	void rejectionBoundVariables(LogicStatement *root, LogicSet *rejectionSet);
+	                         QVector<Variable *> *collection) override;
+	void collectVariables(QVector<QVector<Variable *> *> *collection) override;
+	bool equals(LogicStatement *) override;
+	LogicStatement *clone() override;
+	bool operator==(LogicStatement &) override;
+	void rejectionBoundVariables(LogicStatement *root,
+	                             LogicSet *rejectionSet) override;
 	bool match(LogicStatement *matchingStatement,
-	           EquivalenceUtility *matchingUtility);
-	LogicStatement *replace(IDTable *idTable);
-	bool notOccur(Variable *var);
-	int numberOfLeibnizReplacedVariable(LogicStatement *other,
-	                                    EquivalenceUtility *matchingUtility);
-	void replaceChildStatement(LogicStatement *, LogicStatement *);
-	QString XmlSymbol();
-	void generateRule(QXmlStreamWriter *out);
-	bool validFirstOrderStatement();
+	           EquivalenceUtility *matchingUtility) override;
+	LogicStatement *replace(IDTable *idTable) override;
+	bool notOccur(Variable *var) override;
+	int numberOfLeibnizReplacedVariable(
+	    LogicStatement *other, EquivalenceUtility *matchingUtility) override;
+	void replaceChildStatement(LogicStatement *, LogicStatement *) override;
+	QString XmlSymbol() override;
+	void generateRule(QXmlStreamWriter *out) override;
+	bool validFirstOrderStatement() override;
 };
 
 LogicStatement *parse(QString expression);

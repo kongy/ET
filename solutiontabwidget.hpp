@@ -30,8 +30,9 @@ class SolutionTabWidget : public QWidget
 
   public:
 	explicit SolutionTabWidget(AST::LogicStatement *begin,
-	                           AST::LogicStatement *end, QWidget *parent = 0);
-	explicit SolutionTabWidget(QFile *f, QWidget *parent = 0);
+	                           AST::LogicStatement *end,
+	                           QWidget *parent = nullptr);
+	explicit SolutionTabWidget(QFile *f, QWidget *parent = nullptr);
 	~SolutionTabWidget();
 
 	void redraw();

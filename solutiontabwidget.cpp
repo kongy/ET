@@ -16,7 +16,7 @@ class SolutionTabWidget::FormulaWidgetItem : public QListWidgetItem
   public:
 	LogicStatement *lstat;
 	FormulaWidgetItem(const QString &text, LogicStatement *lstat,
-	                  QListWidget *view = 0)
+	                  QListWidget *view = nullptr)
 	    : QListWidgetItem(text, view), lstat(lstat)
 	{
 	}
@@ -127,8 +127,7 @@ void SolutionTabWidget::lineSelected(QListWidgetItem *item)
 		return;
 	}
 	selectedFormula = selectedFormula->clone();
-	SubformulaSelectionDialog *dialog =
-	    new SubformulaSelectionDialog(selectedFormula, this);
+	auto dialog = new SubformulaSelectionDialog(selectedFormula, this);
 	connect(dialog, SIGNAL(subformulaSelected(AST::LogicStatement *)), this,
 	        SLOT(subformulaSelected(AST::LogicStatement *)));
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -140,8 +139,7 @@ void SolutionTabWidget::subformulaSelected(AST::LogicStatement *subformula)
 {
 	selectedSubformula = subformula;
 
-	FormulaReplacementDialog *d =
-	    new FormulaReplacementDialog(subformula, this);
+	auto d = new FormulaReplacementDialog(subformula, this);
 	connect(d, SIGNAL(ruleSelected(LogicSet *)), this,
 	        SLOT(ruleSelected(LogicSet *)));
 	d->setAttribute(Qt::WA_DeleteOnClose);
@@ -153,8 +151,7 @@ void SolutionTabWidget::ruleSelected(LogicSet *ruleset)
 {
 	QVector<Rule *> *m =
 	    ET::eqEng->getMatchedRules(selectedSubformula, ruleset);
-	MatchedRuleSelectionDialog *d =
-	    new MatchedRuleSelectionDialog(m, ruleset, this);
+	auto d = new MatchedRuleSelectionDialog(m, ruleset, this);
 	connect(d, SIGNAL(ruleSelected(Rule *, Rule *)), this,
 	        SLOT(matchedRuleSelected(Rule *, Rule *)));
 	d->setAttribute(Qt::WA_DeleteOnClose);

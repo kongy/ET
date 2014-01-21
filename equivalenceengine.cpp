@@ -21,7 +21,7 @@ EquivalenceEngine::~EquivalenceEngine()
 EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula,
                                                     Rule *rule)
 {
-	EquivalenceUtility *matchingUtility = new EquivalenceUtility();
+	auto matchingUtility = new EquivalenceUtility();
 
 	if (rule->match(formula, matchingUtility))
 		return matchingUtility;
@@ -33,7 +33,7 @@ EquivalenceUtility *EquivalenceEngine::tryMatchRule(LogicStatement *formula,
 QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input)
 {
 
-	QVector<LogicSet *> *relatedEquivalence = new QVector<LogicSet *>();
+	auto relatedEquivalence = new QVector<LogicSet *>();
 
 	for (LogicSet *ruleSet : *rules)
 		if (ruleApplicable(input, ruleSet))
@@ -45,7 +45,7 @@ QVector<LogicSet *> *EquivalenceEngine::match(LogicStatement *input)
 QVector<Rule *> *EquivalenceEngine::getMatchedRules(LogicStatement *input,
                                                     LogicSet *ruleSet)
 {
-	QVector<Rule *> *matchedRules = new QVector<Rule *>();
+	auto matchedRules = new QVector<Rule *>();
 
 	EquivalenceUtility *matchingResult;
 

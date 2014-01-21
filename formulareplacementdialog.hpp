@@ -19,7 +19,7 @@ class FormulaReplacementDialog : public QDialog
 
   public:
 	explicit FormulaReplacementDialog(AST::LogicStatement *subformula,
-	                                  QWidget *parent = 0);
+	                                  QWidget *parent = nullptr);
 	~FormulaReplacementDialog();
 
 signals:

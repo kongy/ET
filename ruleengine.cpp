@@ -29,7 +29,7 @@ bool RuleEngine::addRule(LogicStatement *formulaFrom, LogicStatement *formulaTo)
 	if (formulaFrom->isFirstOrderLogic() || formulaTo->isFirstOrderLogic())
 		return false;
 
-	LogicSet *formulaSet = new LogicSet();
+	auto formulaSet = new LogicSet();
 	formulaSet->add(formulaFrom);
 	formulaSet->add(formulaTo);
 
@@ -84,7 +84,7 @@ void RuleEngine::parseRule(QString fromFilePath,
 
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		if (fromFilePath != USER_DEFINED_RULE_PATH)
-			QMessageBox::critical(0, "Error", file.errorString());
+			QMessageBox::critical(nullptr, "Error", file.errorString());
 
 		return;
 	}
@@ -304,7 +304,7 @@ Rule *RuleEngine::processLogicStatement(QXmlStreamReader *xml)
 
 LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml)
 {
-	LogicSet *ruleSet = new LogicSet();
+	auto ruleSet = new LogicSet();
 	Rule *rule;
 	bool isLeibnizRule;
 
@@ -324,7 +324,7 @@ LogicSet *RuleEngine::processStatements(QXmlStreamReader *xml)
 
 LogicSet *RuleEngine::generateRuleSet(LogicSet *rawEquivalenceFormulas)
 {
-	LogicSet *allVariableSet = new LogicSet();
+	auto allVariableSet = new LogicSet();
 	LogicSet *rawVariableSet;
 
 	for (LogicStatement *rawFormula : *rawEquivalenceFormulas->getSet()) {
@@ -336,7 +336,7 @@ LogicSet *RuleEngine::generateRuleSet(LogicSet *rawEquivalenceFormulas)
 	IDTable *idTable = generateRuleVariables(allVariableSet);
 	delete allVariableSet;
 
-	LogicSet *newRuleSet = new LogicSet();
+	auto newRuleSet = new LogicSet();
 
 	for (LogicStatement *rawFormula : *rawEquivalenceFormulas->getSet())
 		newRuleSet->add(rawFormula->replace(idTable));
@@ -349,7 +349,7 @@ LogicSet *RuleEngine::generateRuleSet(LogicSet *rawEquivalenceFormulas)
 
 IDTable *RuleEngine::generateRuleVariables(LogicSet *rawVariables)
 {
-	IDTable *idTable = new IDTable();
+	auto idTable = new IDTable();
 	short asciiCode = INITIAL_CHARACTER;
 
 	for (LogicStatement *statement : *rawVariables->getSet()) {
@@ -372,8 +372,8 @@ Variable *RuleEngine::asciiToVariable(const short asciiCode)
 		stringName += character;
 	} while (--times >= 0);
 
-	QString *name = new QString(stringName);
-	Variable *variable = new Variable(name);
+	auto name = new QString(stringName);
+	auto variable = new Variable(name);
 	delete name;
 	return variable;
 }

@@ -20,7 +20,7 @@ class SubformulaSelectionDialog : public QDialog
 
   public:
 	explicit SubformulaSelectionDialog(AST::LogicStatement *formula,
-	                                   QWidget *parent = 0);
+	                                   QWidget *parent = nullptr);
 	~SubformulaSelectionDialog();
 
 signals:

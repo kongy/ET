@@ -16,7 +16,7 @@ class NewSolutionDialog : public QDialog
 	Q_OBJECT
 
   public:
-	explicit NewSolutionDialog(QWidget *parent = 0);
+	explicit NewSolutionDialog(QWidget *parent = nullptr);
 	~NewSolutionDialog();
 
 signals:
@@ -30,7 +30,7 @@ signals:
 slots:
 	void onClick(QAbstractButton *btn);
 	void insertString(QString str);
-	void accept();
+	void accept() override;
 };
 
 #endif // NEWSOLUTIONDIALOG_HPP

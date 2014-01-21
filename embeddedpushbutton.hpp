@@ -9,7 +9,7 @@ template <class T> class EmbeddedPushButton : public QPushButton
 
   public:
 	explicit EmbeddedPushButton(const QString &text, T extra,
-	                            QWidget *parent = 0)
+	                            QWidget *parent = nullptr)
 	    : QPushButton(text, parent), extra(extra)
 	{
 	}

@@ -21,7 +21,7 @@ class MatchedRuleSelectionDialog : public QDialog
 
   public:
 	explicit MatchedRuleSelectionDialog(QVector<Rule *> *rules, LogicSet *ls,
-	                                    QWidget *parent = 0);
+	                                    QWidget *parent = nullptr);
 	~MatchedRuleSelectionDialog();
 
 signals:

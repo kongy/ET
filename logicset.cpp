@@ -45,7 +45,7 @@ QVector<Rule *> *LogicSet::getSet()
 LogicSet *LogicSet::diff(Rule *item)
 {
 
-	LogicSet *remaining_set = new LogicSet();
+	auto remaining_set = new LogicSet();
 
 	if (!isEmpty())
 		for (Rule *statement : *set)
@@ -58,7 +58,7 @@ LogicSet *LogicSet::diff(Rule *item)
 LogicSet *LogicSet::diff(LogicSet *other)
 {
 
-	LogicSet *difference = new LogicSet();
+	auto difference = new LogicSet();
 	QVector<LogicStatement *> *currentSet = getSet();
 
 	if (!currentSet->isEmpty()) {

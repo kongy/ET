@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 	        SLOT(startAboutDialog()));
 
 	// Set up tabWidget
-	WelcomePageWidget *welcome = new WelcomePageWidget(ui->tabWidget);
+	auto welcome = new WelcomePageWidget(ui->tabWidget);
 	ui->tabWidget->addTab(welcome, "Welcome");
 	connect(welcome, SIGNAL(startNewSolution()), this,
 	        SLOT(startNewSolutionDialog()));
@@ -55,7 +55,7 @@ MainWindow::~MainWindow()
 /** Start the new solution dialog */
 void MainWindow::startNewSolutionDialog()
 {
-	NewSolutionDialog *dialog = new NewSolutionDialog(this);
+	auto dialog = new NewSolutionDialog(this);
 	connect(dialog, SIGNAL(accepted(AST::LogicStatement *,
 	                                AST::LogicStatement *, QString)),
 	        this, SLOT(createSolutionTab(AST::LogicStatement *,

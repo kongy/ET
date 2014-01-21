@@ -13,7 +13,7 @@ class WelcomePageWidget : public QWidget
 	Q_OBJECT
 
   public:
-	explicit WelcomePageWidget(QWidget *parent = 0);
+	explicit WelcomePageWidget(QWidget *parent = nullptr);
 	~WelcomePageWidget();
 
 signals:

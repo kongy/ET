@@ -11,7 +11,7 @@ class InputPanel : public QWidget
 	Q_OBJECT
 
   public:
-	InputPanel(QWidget *parent = 0);
+	InputPanel(QWidget *parent = nullptr);
 	~InputPanel();
 
 signals:

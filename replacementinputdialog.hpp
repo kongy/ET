@@ -16,11 +16,11 @@ class ReplacementInputDialog : public QDialog
 
   public:
 	explicit ReplacementInputDialog(QString &reqMsg, QString &errMsg,
-	                                QWidget *parent = 0);
+	                                QWidget *parent = nullptr);
 	~ReplacementInputDialog();
 
 	static QString getString(QString &reqMsg, QString &errMsg,
-	                         QWidget *parent = 0);
+	                         QWidget *parent = nullptr);
 
   private:
 	Ui::ReplacementInputDialog *ui;

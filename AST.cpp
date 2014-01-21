@@ -22,8 +22,7 @@ bool LogicStatement::isEquivalent(LogicStatement *statement)
 	if (isFirstOrderLogic() || statement->isFirstOrderLogic())
 		return true;
 
-	QVector<QVector<Variable *> *> *var_list =
-	    new QVector<QVector<Variable *> *>();
+	auto var_list = new QVector<QVector<Variable *> *>();
 
 	collectVariables(var_list);
 	statement->collectVariables(var_list);
@@ -84,12 +83,11 @@ bool LogicStatement::isLeibnizRule()
 
 LogicSet *LogicStatement::getAllVariables()
 {
-	QVector<QVector<Variable *> *> *var_list =
-	    new QVector<QVector<Variable *> *>();
+	auto var_list = new QVector<QVector<Variable *> *>();
 
 	collectVariables(var_list);
 
-	LogicSet *variableSet = new LogicSet();
+	auto variableSet = new LogicSet();
 
 	if (!var_list->isEmpty())
 		for (QVector<Variable *> *identicalVarList : *var_list)
@@ -398,7 +396,7 @@ void Variable::collectVariables(QVector<QVector<Variable *> *> *var_list)
 				return;
 			}
 
-	QVector<Variable *> *new_list = new QVector<Variable *>();
+	auto new_list = new QVector<Variable *>();
 	new_list->push_back(this);
 	var_list->push_back(new_list);
 }
@@ -1151,10 +1149,10 @@ bool ImpliesStatement::match(LogicStatement *matchingStatement,
 		 * for x,y,A and B */
 		if (matched) {
 			IDTable *idTable = matchingUtility->getIDTable();
-			QString *A = new QString("A");
-			QString *B = new QString("B");
-			Variable *VAR_A = new Variable(A);
-			Variable *VAR_B = new Variable(B);
+			auto A = new QString("A");
+			auto B = new QString("B");
+			auto VAR_A = new Variable(A);
+			auto VAR_B = new Variable(B);
 			LogicStatement *matching_A = idTable->valueOf(VAR_A);
 			LogicStatement *matching_B = idTable->valueOf(VAR_B);
 			delete A;
@@ -1716,7 +1714,7 @@ QString Parameters::print(bool fullBracket)
 {
 	QString param = getParameter()->print(fullBracket);
 
-	if (rest != NULL)
+	if (rest != nullptr)
 		return param + QString(", ") +
 		       getRemainingParameters()->print(fullBracket);
 	else
@@ -1750,11 +1748,11 @@ bool Parameters::equals(LogicStatement *statement)
 			    casted_statement->getRemainingParameters();
 			Parameters *current_statement_params = getRemainingParameters();
 
-			if (casted_statement_params == NULL &&
-			    current_statement_params == NULL)
+			if (casted_statement_params == nullptr &&
+			    current_statement_params == nullptr)
 				return true;
-			else if (casted_statement_params == NULL ||
-			         current_statement_params == NULL)
+			else if (casted_statement_params == nullptr ||
+			         current_statement_params == nullptr)
 				return false;
 			else
 				return current_statement_params->equals(
