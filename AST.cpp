@@ -2297,7 +2297,7 @@ LogicStatement *EqualityStatement::replace(IDTable *idTable)
 	setLeftVariable(
 	    dynamic_cast<Variable *>(getLeftVariable()->replace(idTable)));
 	setRightVariable(
-	    dynamic_cast<Variable *>(getLeftVariable()->replace(idTable)));
+	    dynamic_cast<Variable *>(getRightVariable()->replace(idTable)));
 	return this;
 }
 

@@ -114,6 +114,9 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 		return formula;
 	}
 
+	/* Save copies of the extra variables to prevent deleting keys */
+	QVector<Variable *> keyCopies;
+
 	/* Further input for patterns required */
 	if (!undefinedVariableSet->isEmpty()) {
 		bool firstOrder = baseRule->isFirstOrderLogic() ||
@@ -121,7 +124,8 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 		Variable *identifier;
 
 		for (LogicStatement *id : *undefinedVariableSet->getSet()) {
-			identifier = dynamic_cast<Variable *>(id);
+			identifier = dynamic_cast<Variable *>(id->clone());
+			keyCopies.append(identifier);
 
 			if (!firstOrder)
 				idTable->add(identifier,
@@ -139,6 +143,9 @@ LogicStatement *EquivalenceEngine::replaceStatement(LogicStatement *formula,
 	delete matchingUtility;
 	delete formula;
 	delete undefinedVariableSet;
+
+	for (Variable *keyCopy : keyCopies)
+		delete keyCopy;
 
 	return result;
 }
