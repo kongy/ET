@@ -249,5 +249,9 @@ void SolutionTabWidget::saveRule()
 	if (model->proofFinished()) {
 		ET::eqEng->addNewPropositionalEquivalence(model->forwardStack.first(),
 		                                          model->backwardStack.first());
+	} else {
+		QMessageBox msgBox(this);
+		msgBox.setText("You need to prove the equivalence first.");
+		msgBox.exec();
 	}
 }
