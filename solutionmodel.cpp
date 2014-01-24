@@ -145,8 +145,6 @@ void solutionModel::saveToFile(QFile *f)
 
 void solutionModel::clearRedoStack()
 {
-	// TODO: Fix memory corruption
-
 	for (Operation *o : redoStack) {
 		for (LogicStatement *s : o->stats) {
 			delete s;
